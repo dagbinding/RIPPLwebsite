@@ -1,0 +1,581 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RIPPL — Join the tester program</title>
+<style>
+  @font-face { font-family: "Inter"; font-weight: 300; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Light-BETA.otf") format("opentype"); }
+  @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Regular.otf") format("opentype"); }
+  @font-face { font-family: "Inter"; font-weight: 500; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Medium.otf") format("opentype"); }
+  @font-face { font-family: "Inter"; font-weight: 600; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-SemiBold.otf") format("opentype"); }
+  @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Bold.otf") format("opentype"); }
+  @font-face { font-family: "Inter"; font-weight: 900; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Black.otf") format("opentype"); }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  :root {
+    --rippl-cream: #F2EBDC;
+    --rippl-bone: #FAF6EC;
+    --rippl-cocoa: #2E1E10;
+    --rippl-cocoa-soft: #4A3220;
+    --rippl-cocoa-mute: #7A6450;
+    --rippl-ink: #0E0E0E;
+    --rippl-sun: #D97740;
+    --rippl-glow: #F4C04A;
+    --rippl-wave: #4A7C8A;
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--rippl-cocoa);
+    background: var(--rippl-ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ============ Top nav ============ */
+  .nav {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px clamp(24px, 4vw, 56px);
+    color: #fff;
+  }
+  .nav__brand img { display: block; height: 22px; opacity: 0.92; }
+  .nav__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.7);
+    transition: color 160ms var(--ease-out);
+  }
+  .nav__back:hover { color: #fff; }
+
+  /* ============ Hero ============ */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background: var(--rippl-ink);
+    color: #fff;
+    padding: 120px clamp(24px, 6vw, 96px) 80px;
+  }
+  .hero__bg {
+    position: absolute;
+    inset: -4%;
+    background-image: url("assets/photo-sunset-lineup.jpg");
+    background-position: center 35%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    opacity: 0.45;
+    filter: saturate(0.85);
+  }
+  .hero__scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(14,14,14,0.55) 0%, rgba(14,14,14,0.25) 30%, rgba(14,14,14,0.85) 100%),
+      radial-gradient(ellipse at 30% 80%, rgba(217,119,64,0.18) 0%, transparent 55%);
+  }
+  .hero__inner {
+    position: relative;
+    z-index: 2;
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: lowercase;
+    color: rgba(255,255,255,0.78);
+    margin-bottom: clamp(24px, 4vh, 36px);
+  }
+  .hero__eyebrow::before {
+    content: "";
+    width: 36px;
+    height: 1px;
+    background: var(--rippl-sun);
+  }
+  .hero__title {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: clamp(64px, 11vw, 168px);
+    line-height: 0.88;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    margin: 0;
+    max-width: 16ch;
+  }
+  .hero__title em {
+    font-style: normal;
+    color: var(--rippl-sun);
+  }
+  .hero__sub {
+    font-family: var(--font-body);
+    font-size: clamp(18px, 1.6vw, 24px);
+    line-height: 1.45;
+    color: rgba(255,255,255,0.82);
+    max-width: 52ch;
+    margin: clamp(28px, 4vh, 44px) 0 0;
+  }
+  .hero__sub b { color: #fff; font-weight: 700; }
+
+  /* ============ Benefits ============ */
+  .benefits {
+    background: var(--rippl-cream);
+    color: var(--rippl-cocoa);
+    padding: clamp(80px, 12vh, 140px) clamp(24px, 6vw, 96px);
+  }
+  .benefits__inner { max-width: 1280px; margin: 0 auto; }
+  .benefits__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: lowercase;
+    color: var(--rippl-cocoa-mute);
+    margin-bottom: clamp(24px, 4vh, 32px);
+  }
+  .benefits__eyebrow::before {
+    content: "";
+    width: 32px;
+    height: 1px;
+    background: var(--rippl-cocoa-mute);
+  }
+  .benefits__title {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: clamp(48px, 7vw, 96px);
+    line-height: 0.9;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+    margin: 0 0 clamp(48px, 7vh, 80px);
+    color: var(--rippl-cocoa);
+    max-width: 14ch;
+  }
+  .benefits__title em {
+    font-style: normal;
+    color: var(--rippl-sun);
+  }
+  .benefits__list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px;
+    background: rgba(46,30,16,0.16);
+  }
+  .benefit {
+    background: var(--rippl-cream);
+    padding: clamp(32px, 4vw, 48px) clamp(24px, 3vw, 40px);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-height: 360px;
+  }
+  .benefit__num {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--rippl-sun);
+  }
+  .benefit__h {
+    font-size: clamp(28px, 2.8vw, 40px);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--rippl-cocoa);
+  }
+  .benefit__p {
+    font-size: clamp(15px, 1.05vw, 17px);
+    line-height: 1.5;
+    color: var(--rippl-cocoa-soft);
+    margin: 0;
+    max-width: 32ch;
+  }
+  .benefit__tag {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--rippl-cocoa);
+    border: 1px solid var(--rippl-cocoa);
+    padding: 8px 14px;
+    border-radius: 999px;
+    align-self: flex-start;
+  }
+  .benefit__tag b { color: var(--rippl-sun); font-weight: 700; }
+
+  /* ============ Referrals ============ */
+  .refer {
+    background: var(--rippl-cocoa);
+    color: #fff;
+    padding: clamp(80px, 14vh, 160px) clamp(24px, 6vw, 96px);
+    position: relative;
+    overflow: hidden;
+  }
+  .refer::before {
+    content: "";
+    position: absolute;
+    top: -20%;
+    right: -10%;
+    width: 60%;
+    height: 140%;
+    background: radial-gradient(circle at 50% 50%, rgba(217,119,64,0.22) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .refer__inner {
+    position: relative;
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    gap: clamp(48px, 6vw, 96px);
+    align-items: center;
+  }
+  .refer__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: lowercase;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: clamp(20px, 3vh, 28px);
+  }
+  .refer__eyebrow::before {
+    content: "";
+    width: 32px;
+    height: 1px;
+    background: var(--rippl-sun);
+  }
+  .refer__title {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: clamp(48px, 6.5vw, 88px);
+    line-height: 0.9;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+    margin: 0;
+    color: #fff;
+    max-width: 16ch;
+  }
+  .refer__title em {
+    font-style: normal;
+    color: var(--rippl-sun);
+  }
+  .refer__lede {
+    font-size: clamp(16px, 1.3vw, 19px);
+    line-height: 1.55;
+    color: rgba(255,255,255,0.78);
+    margin: clamp(20px, 3vh, 28px) 0 0;
+    max-width: 42ch;
+  }
+  .refer__lede b { color: #fff; font-weight: 700; }
+
+  .tiers { display: flex; flex-direction: column; list-style: none; margin: 0; padding: 0; }
+  .tier {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr) auto;
+    gap: clamp(16px, 2.5vw, 32px);
+    align-items: center;
+    padding: clamp(22px, 3vh, 30px) 0;
+    border-top: 1px solid rgba(255,255,255,0.14);
+  }
+  .tier:last-child { border-bottom: 1px solid rgba(255,255,255,0.14); }
+  .tier__count {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: clamp(40px, 4vw, 56px);
+    line-height: 1;
+    color: var(--rippl-glow);
+    letter-spacing: -0.04em;
+    font-feature-settings: "tnum" 1;
+  }
+  .tier__label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    margin-top: 2px;
+  }
+  .tier__reward {
+    font-size: clamp(18px, 1.5vw, 22px);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .tier__sub {
+    margin-top: 4px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.62);
+    font-weight: 400;
+    line-height: 1.4;
+  }
+  .tier__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    background: rgba(217,119,64,0.16);
+    color: var(--rippl-sun);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  /* ============ Signup form ============ */
+  .signup {
+    background: var(--rippl-bone);
+    color: var(--rippl-cocoa);
+    padding: clamp(80px, 14vh, 160px) clamp(24px, 6vw, 96px);
+    position: relative;
+  }
+  .signup__inner {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .signup__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: lowercase;
+    color: var(--rippl-cocoa-mute);
+    margin-bottom: clamp(20px, 3vh, 28px);
+  }
+  .signup__eyebrow::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--rippl-sun);
+  }
+  .signup__title {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: clamp(56px, 8vw, 112px);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--rippl-cocoa);
+  }
+  .signup__title em {
+    font-style: normal;
+    color: var(--rippl-sun);
+  }
+  .signup__sub {
+    font-size: clamp(16px, 1.3vw, 19px);
+    line-height: 1.55;
+    color: var(--rippl-cocoa-soft);
+    margin: clamp(20px, 3vh, 28px) auto 0;
+    max-width: 42ch;
+  }
+  .signup__form {
+    margin-top: clamp(40px, 6vh, 64px);
+    background: #fff;
+    border: 1px solid rgba(46,30,16,0.10);
+    border-radius: 22px;
+    padding: clamp(24px, 3.5vw, 36px);
+    box-shadow: 0 18px 50px rgba(46,30,16,0.06);
+    text-align: left;
+  }
+  .signup__form iframe {
+    display: block;
+    width: 100%;
+    border: 0;
+  }
+
+  /* ============ Footer ============ */
+  .footer {
+    background: var(--rippl-ink);
+    color: rgba(255,255,255,0.55);
+    padding: 40px clamp(24px, 6vw, 96px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 12.5px;
+    letter-spacing: 0.04em;
+  }
+  .footer a:hover { color: #fff; }
+  .footer__brand img { height: 18px; display: block; }
+
+  /* ============ Responsive ============ */
+  @media (max-width: 880px) {
+    .hero { padding: 110px 24px 64px; min-height: auto; }
+    .hero__title { font-size: clamp(48px, 14vw, 96px); }
+    .benefits__list { grid-template-columns: 1fr; }
+    .benefit { min-height: auto; }
+    .refer__inner { grid-template-columns: 1fr; }
+    .tier { grid-template-columns: 84px minmax(0, 1fr) auto; }
+    .tier__count { font-size: 36px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body data-screen-label="Tester Signup Page">
+  <nav class="nav" aria-label="Primary">
+    <a href="index.html" class="nav__brand" aria-label="RIPPL home">
+      <img src="assets/logo-wordmark-white.png" alt="RIPPL" />
+    </a>
+    <a href="index.html" class="nav__back">← Back to RIPPL surf</a>
+  </nav>
+
+  <!-- ============ Hero ============ -->
+  <section class="hero" data-screen-label="01 Hero">
+    <div class="hero__bg" aria-hidden="true"></div>
+    <div class="hero__scrim" aria-hidden="true"></div>
+
+    <div class="hero__inner">
+      <span class="hero__eyebrow">waitlist · open now</span>
+
+      <h1 class="hero__title">
+        Build the<br />future of<br /><em>surf,</em><br />with us.
+      </h1>
+
+      <p class="hero__sub">We're hand-picking the first surfers to shape RIPPL. You get a free RIPPLsense on your board, platform access during the testing window, and a direct line to the team building it.</p>
+    </div>
+  </section>
+
+  <!-- ============ What you get ============ -->
+  <section class="benefits" data-screen-label="02 Benefits">
+    <div class="benefits__inner">
+      <span class="benefits__eyebrow">what you get</span>
+      <h2 class="benefits__title">FREE SENSOR.<br />EARLY ACCESS.<br />REAL INFLUENCE.</h2>
+
+      <div class="benefits__list">
+        <div class="benefit">
+          <span class="benefit__num">/ 01</span>
+          <h3 class="benefit__h">A RIPPLsense<br />on your board.</h3>
+          <p class="benefit__p">We ship you the hardware — ready to surf. For free.</p>
+          <span class="benefit__tag"><b>Free</b> · shipped worldwide</span>
+        </div>
+        <div class="benefit">
+          <span class="benefit__num">/ 02</span>
+          <h3 class="benefit__h">First platform access.</h3>
+          <p class="benefit__p">Every feature, every new update — you're the first in line.</p>
+          <span class="benefit__tag">First · testing new features</span>
+        </div>
+        <div class="benefit">
+          <span class="benefit__num">/ 03</span>
+          <h3 class="benefit__h">A direct line<br />to the team.</h3>
+          <p class="benefit__p">Private line with the founders. Your feedback shapes what we build next — for real, not for show.</p>
+          <span class="benefit__tag">founder access</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Refer & earn ============ -->
+  <section class="refer" data-screen-label="03 Refer">
+    <div class="refer__inner">
+      <div>
+        <span class="refer__eyebrow">bring your crew</span>
+        <h2 class="refer__title">
+          Refer surfers.<br /><em>Earn the kit.</em>
+        </h2>
+        <p class="refer__lede">At signup we'll give you a unique referral link. Every surfer you bring in unlocks the next tier — better gear, custom finishes, priority access, real coaching.</p>
+      </div>
+
+      <ul class="tiers" aria-label="Referral tiers">
+        <li class="tier">
+          <div>
+            <div class="tier__count">+1</div>
+            <div class="tier__label">referral</div>
+          </div>
+          <div>
+            <div class="tier__reward">Jump the queue</div>
+            <div class="tier__sub">Every accepted referral bumps you up the waitlist.</div>
+          </div>
+          <span class="tier__icon" aria-hidden="true">→</span>
+        </li>
+        <li class="tier">
+          <div>
+            <div class="tier__count">+5</div>
+            <div class="tier__label">referrals</div>
+          </div>
+          <div>
+            <div class="tier__reward">Guaranteed Drop 2</div>
+            <div class="tier__sub">Skip the queue entirely — your sensor ships in the second batch.</div>
+          </div>
+          <span class="tier__icon" aria-hidden="true">★</span>
+        </li>
+        <li class="tier">
+          <div>
+            <div class="tier__count">+10</div>
+            <div class="tier__label">referrals</div>
+          </div>
+          <div>
+            <div class="tier__reward">Drop 1 — with your whole crew</div>
+            <div class="tier__sub">You and every friend you brought in receive your kit in the first drop, together.</div>
+          </div>
+          <span class="tier__icon" aria-hidden="true">◎</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ Signup form (Tally embed) ============ -->
+  <section class="signup" id="signup" data-screen-label="04 Signup form">
+    <div class="signup__inner">
+      <span class="signup__eyebrow">save your spot</span>
+      <h2 class="signup__title">
+        You<br /><em>in?</em>
+      </h2>
+
+      <div class="signup__form" id="tally-embed">
+        <iframe data-tally-src="https://tally.so/embed/7RoY4L?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1&formEventsForwarding=1" loading="lazy" width="100%" height="424" frameborder="0" marginheight="0" marginwidth="0" title="RIPPL Tester Signup"></iframe>
+        <script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Footer ============ -->
+  <footer class="footer">
+    <a href="index.html" class="footer__brand" aria-label="RIPPL home">
+      <img src="assets/logo-wordmark-white.png" alt="RIPPL" />
+    </a>
+    <span>© 2026 RIPPL · built with the testers, for the testers</span>
+    <a href="index.html">← back to the site</a>
+  </footer>
+</body>
+</html>

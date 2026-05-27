@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "rippl-website",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd /Users/dylanbinding/Projects/RIPPLwebsite && python3 -m http.server 8732"],
+      "port": 8732
+    }
+  ]
+}

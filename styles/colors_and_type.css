@@ -1,0 +1,334 @@
+/* =====================================================
+   RIPPL Design System — Colors & Type
+   =====================================================
+   Derived from the RIPPL Product Deck (Mobile v3).
+   Palette: warm naturals — cream, deep cocoa, sand, sea.
+   Type: Helvetica family — three modes:
+     · Compressed → poster moments (huge ALL-CAPS heros)
+     · Rounded Bold → the RIPPL wordmark compound
+     · Helvetica (light / regular / bold / oblique) → body
+   ===================================================== */
+
+@font-face {
+  font-family: "RIPPL Helvetica";
+  src: url("./fonts/helvetica-light-587ebe5a59211.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "RIPPL Helvetica";
+  src: url("./fonts/Helvetica.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "RIPPL Helvetica";
+  src: url("./fonts/Helvetica-Oblique.ttf") format("truetype");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "RIPPL Helvetica";
+  src: url("./fonts/Helvetica-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "RIPPL Helvetica";
+  src: url("./fonts/Helvetica-BoldOblique.ttf") format("truetype");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "RIPPL Helvetica Rounded";
+  src: url("./fonts/helvetica-rounded-bold-5871d05ead8de.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "RIPPL Helvetica Compressed";
+  src: url("./fonts/helvetica-compressed-5871d14b6903a.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ── Inter family (body) ─────────────────────────────── */
+@font-face { font-family: "RIPPL Inter"; src: url("./fonts/Inter-Thin-BETA.otf") format("opentype"); font-weight: 100; font-style: normal; font-display: swap; }
+@font-face { font-family: "RIPPL Inter"; src: url("./fonts/Inter-ThinItalic-BETA.otf") format("opentype"); font-weight: 100; font-style: italic; font-display: swap; }
+@font-face { font-family: "RIPPL Inter"; src: url("./fonts/Inter-ExtraLight-BETA.otf") format("opentype"); font-weight: 200; font-style: normal; font-display: swap; }
+@font-face { font-family: "RIPPL Inter"; src: url("./fonts/Inter-ExtraLightItalic-BETA.otf") format("opentype"); font-weight: 200; font-style: italic; font-display: swap; }
+@font-face { font-family: "RIPPL Inter"; src: url("./fonts/Inter-Light-BETA.otf") format("opentype"); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: "RIPPL Inter"; src: url("./fonts/Inter-LightItalic-BETA.otf") format("opentype"); font-weight: 300; font-style: italic; font-display: swap; }
+@font-face { font-family: "RIPPL Inter"; src: url("./fonts/Inter-Regular.otf") format("opentype"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "RIPPL Inter"; src: url("./fonts/Inter-Italic.otf") format("opentype"); font-weight: 400; font-style: italic; font-display: swap; }
+@font-face { font-family: "RIPPL Inter"; src: url("./fonts/Inter-Medium.otf") format("opentype"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "RIPPL Inter"; src: url("./fonts/Inter-MediumItalic.otf") format("opentype"); font-weight: 500; font-style: italic; font-display: swap; }
+@font-face { font-family: "RIPPL Inter"; src: url("./fonts/Inter-SemiBold.otf") format("opentype"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "RIPPL Inter"; src: url("./fonts/Inter-SemiBoldItalic.otf") format("opentype"); font-weight: 600; font-style: italic; font-display: swap; }
+@font-face { font-family: "RIPPL Inter"; src: url("./fonts/Inter-Bold.otf") format("opentype"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "RIPPL Inter"; src: url("./fonts/Inter-BoldItalic.otf") format("opentype"); font-weight: 700; font-style: italic; font-display: swap; }
+@font-face { font-family: "RIPPL Inter"; src: url("./fonts/Inter-ExtraBold.otf") format("opentype"); font-weight: 800; font-style: normal; font-display: swap; }
+@font-face { font-family: "RIPPL Inter"; src: url("./fonts/Inter-ExtraBoldItalic.otf") format("opentype"); font-weight: 800; font-style: italic; font-display: swap; }
+@font-face { font-family: "RIPPL Inter"; src: url("./fonts/Inter-Black.otf") format("opentype"); font-weight: 900; font-style: normal; font-display: swap; }
+@font-face { font-family: "RIPPL Inter"; src: url("./fonts/Inter-BlackItalic.otf") format("opentype"); font-weight: 900; font-style: italic; font-display: swap; }
+
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  /* ---------- Color: Naturals (Brand Core) ---------- */
+  --rippl-cocoa:        #2E1E10;  /* primary brown — wordmark, headlines */
+  --rippl-cocoa-soft:   #4A3220;  /* secondary brown — body emphasis */
+  --rippl-cocoa-mute:   #7A6450;  /* muted brown — captions, meta */
+  --rippl-cream:        #F2EBDC;  /* page background — warm off-white */
+  --rippl-cream-deep:   #E6DCC4;  /* secondary surfaces */
+  --rippl-sand:         #D9C8A5;  /* dividers, soft accents */
+  --rippl-bone:         #FAF6EC;  /* card surfaces, lifted */
+  --rippl-paper:        #FFFFFF;  /* pure white — rare */
+
+  /* ---------- Color: Dark (App / Product UI) ---------- */
+  --rippl-ink:          #0E0E0E;  /* dark app bg */
+  --rippl-ink-soft:     #1A1A1A;  /* card bg in dark */
+  --rippl-ink-line:     #2A2A2A;  /* dividers in dark */
+  --rippl-ink-fg:       #F2EBDC;  /* fg on ink — cream not pure white */
+  --rippl-ink-fg-mute:  #8A8378;  /* muted fg on ink */
+
+  /* ---------- Color: Accents (Sea & Score) ---------- */
+  --rippl-wave:         #4A7C8A;  /* deep teal — links, sea */
+  --rippl-wave-deep:    #2D5A66;  /* hover/pressed teal */
+  --rippl-sun:          #D97740;  /* orange — warmth, golden hour */
+  --rippl-score:        #7FBE5F;  /* green — RIPPLscore, positive */
+  --rippl-alert:        #C9523C;  /* clay red — wipeout, warnings */
+  --rippl-glow:         #F4C04A;  /* gold — highlights, ride trails */
+
+  /* ---------- Semantic FG ---------- */
+  --fg1:                var(--rippl-cocoa);
+  --fg2:                var(--rippl-cocoa-soft);
+  --fg3:                var(--rippl-cocoa-mute);
+  --fg-inverse:         var(--rippl-cream);
+
+  /* ---------- Semantic BG ---------- */
+  --bg1:                var(--rippl-cream);
+  --bg2:                var(--rippl-cream-deep);
+  --bg-card:            var(--rippl-bone);
+  --bg-dark:            var(--rippl-ink);
+  --bg-dark-card:       var(--rippl-ink-soft);
+
+  /* ---------- Borders ---------- */
+  --border-soft:        rgba(46, 30, 16, 0.10);
+  --border-medium:      rgba(46, 30, 16, 0.20);
+  --border-strong:      rgba(46, 30, 16, 0.45);
+  --border-dark:        rgba(242, 235, 220, 0.12);
+
+  /* ---------- Type: Families ----------
+     Inter → ALL titles, headings, body, UI text (900 weights available)
+     Helvetica Compressed → reserved for rare poster ALL-CAPS hero moments
+     Helvetica Rounded → reserved for the RIPPL wordmark only (logo lockup)
+     JetBrains Mono → numerics, timestamps, code   */
+  --font-compressed:    "RIPPL Helvetica Compressed", "Helvetica Neue", "Arial Narrow", sans-serif;
+  --font-wordmark:      "RIPPL Helvetica Rounded", "RIPPL Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display:       "RIPPL Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display-black: "RIPPL Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-body:          "RIPPL Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono:          "JetBrains Mono", ui-monospace, monospace;
+
+  /* ---------- Type: Size scale ---------- */
+  --text-hero:          clamp(64px, 12vw, 168px);  /* "ONE SENSOR" overflow style */
+  --text-display:       clamp(48px, 8vw, 96px);    /* "RIPPLsense" */
+  --text-h1:            clamp(36px, 5vw, 56px);
+  --text-h2:            clamp(28px, 4vw, 40px);
+  --text-h3:            22px;
+  --text-h4:            18px;
+  --text-body:          16px;
+  --text-body-sm:       14px;
+  --text-caption:       12px;
+  --text-eyebrow:       11px;
+
+  /* ---------- Type: Line heights ---------- */
+  --lh-tight:           0.92;
+  --lh-display:         1.0;
+  --lh-heading:         1.12;
+  --lh-body:            1.5;
+  --lh-loose:           1.65;
+
+  /* ---------- Type: Weights ---------- */
+  --w-light:            300;
+  --w-regular:          400;
+  --w-medium:           500;
+  --w-semibold:         600;
+  --w-bold:             700;
+  --w-black:            800;
+
+  /* ---------- Type: Tracking ---------- */
+  --track-display:      -0.045em;  /* tight on huge type — characters just touching */
+  --track-headline:     -0.03em;
+  --track-body:         0;
+  --track-eyebrow:      0.12em;   /* small caps labels */
+
+  /* ---------- Spacing ---------- */
+  --space-1:            4px;
+  --space-2:            8px;
+  --space-3:            12px;
+  --space-4:            16px;
+  --space-5:            24px;
+  --space-6:            32px;
+  --space-7:            48px;
+  --space-8:            64px;
+  --space-9:            96px;
+
+  /* ---------- Radii ---------- */
+  --radius-sm:          6px;
+  --radius-md:          10px;
+  --radius-lg:          16px;
+  --radius-xl:          24px;
+  --radius-pill:        999px;
+
+  /* ---------- Shadow / Elevation ---------- */
+  --shadow-soft:        0 2px 8px rgba(46, 30, 16, 0.06);
+  --shadow-card:        0 6px 24px rgba(46, 30, 16, 0.08);
+  --shadow-lift:        0 14px 40px rgba(46, 30, 16, 0.14);
+  --shadow-press:       inset 0 1px 0 rgba(255, 255, 255, 0.5);
+
+  /* ---------- Motion ---------- */
+  --ease-out:           cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out:        cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast:           120ms;
+  --dur-base:           220ms;
+  --dur-slow:           420ms;
+}
+
+/* =====================================================
+   Global defaults — light mode (off-white cream + cocoa ink)
+   Any page that loads this stylesheet inherits these.
+   ===================================================== */
+
+html, body {
+  background: var(--bg1);          /* --rippl-cream — warm off-white */
+  color: var(--fg1);               /* --rippl-cocoa — primary ink */
+  font-family: var(--font-body);   /* Inter */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* =====================================================
+   Semantic type — apply directly on elements
+   ===================================================== */
+
+.rp-hero {
+  font-family: var(--font-display);
+  font-size: var(--text-hero);
+  font-weight: 900;
+  line-height: var(--lh-tight);
+  letter-spacing: -0.07em;
+  color: var(--fg1);
+  text-transform: uppercase;
+}
+
+.rp-display {
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  font-weight: var(--w-black);
+  line-height: var(--lh-display);
+  letter-spacing: var(--track-display);
+  color: var(--fg1);
+}
+
+.rp-h1 {
+  font-family: var(--font-display);
+  font-size: var(--text-h1);
+  font-weight: var(--w-black);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--track-headline);
+  color: var(--fg1);
+}
+
+.rp-h2 {
+  font-family: var(--font-body);
+  font-size: var(--text-h2);
+  font-weight: var(--w-bold);
+  line-height: var(--lh-heading);
+  letter-spacing: var(--track-headline);
+  color: var(--fg1);
+}
+
+.rp-h3 {
+  font-family: var(--font-body);
+  font-size: var(--text-h3);
+  font-weight: var(--w-bold);
+  line-height: var(--lh-heading);
+  color: var(--fg1);
+}
+
+.rp-h4 {
+  font-family: var(--font-body);
+  font-size: var(--text-h4);
+  font-weight: var(--w-semibold);
+  line-height: var(--lh-heading);
+  color: var(--fg1);
+}
+
+.rp-body {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--w-regular);
+  line-height: var(--lh-body);
+  color: var(--fg2);
+}
+
+.rp-body-sm {
+  font-family: var(--font-body);
+  font-size: var(--text-body-sm);
+  font-weight: var(--w-regular);
+  line-height: var(--lh-body);
+  color: var(--fg2);
+}
+
+.rp-caption {
+  font-family: var(--font-body);
+  font-size: var(--text-caption);
+  font-weight: var(--w-medium);
+  line-height: var(--lh-body);
+  color: var(--fg3);
+}
+
+.rp-eyebrow {
+  font-family: var(--font-body);
+  font-size: var(--text-eyebrow);
+  font-weight: var(--w-semibold);
+  line-height: 1;
+  letter-spacing: var(--track-eyebrow);
+  color: var(--fg3);
+  text-transform: uppercase;
+}
+
+.rp-mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-body-sm);
+  font-weight: var(--w-regular);
+  color: var(--fg2);
+}
+
+/* The signature RIPPL compound wordmark style
+   ("RIPPLsense", "RIPPLintelligence") — heavy + light, no italic */
+.rp-wordmark {
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  line-height: var(--lh-display);
+  letter-spacing: var(--track-display);
+  color: var(--fg1);
+}
+.rp-wordmark .rp-wordmark__bold {
+  font-weight: 900;
+  font-family: var(--font-body);
+}
+.rp-wordmark .rp-wordmark__light {
+  font-weight: 300;
+  font-family: var(--font-body);
+  font-style: normal;
+}
