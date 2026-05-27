@@ -451,6 +451,18 @@
     * { transition: none !important; animation: none !important; }
   }
 </style>
+
+<!-- PostHog Analytics -->
+<script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+  posthog.init('phc_onPTvoga4RPG4wu6cH9zQeLxMGikXapR8HZj7EtZV6a4', {
+    api_host: 'https://us.i.posthog.com',
+    defaults: '2026-01-30',
+    autocapture: true,
+    capture_pageview: true,
+    capture_pageleave: true,
+  });
+</script>
 </head>
 <body data-screen-label="Tester Signup Page">
   <nav class="nav" aria-label="Primary">
@@ -577,5 +589,53 @@
     <span>© 2026 RIPPL · built with the testers, for the testers</span>
     <a href="index.html">← back to the site</a>
   </footer>
+
+  <!-- PostHog: scroll depth + Tally form submission -->
+  <script>
+    (function () {
+      // --- Scroll depth milestones ---
+      var reached = {};
+      var milestones = [25, 50, 75, 100];
+      function checkScroll() {
+        var scrollTop = window.scrollY || document.documentElement.scrollTop;
+        var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (docHeight <= 0) return;
+        var pct = Math.floor((scrollTop / docHeight) * 100);
+        for (var i = 0; i < milestones.length; i++) {
+          var m = milestones[i];
+          if (pct >= m && !reached[m]) {
+            reached[m] = true;
+            posthog.capture('scroll_depth_reached', {
+              depth_percent: m,
+              page: location.pathname
+            });
+          }
+        }
+      }
+      window.addEventListener('scroll', checkScroll, { passive: true });
+      checkScroll();
+
+      // --- Tally form submission (postMessage from iframe) ---
+      var formFired = false;
+      window.addEventListener('message', function (e) {
+        if (formFired) return;
+        var data = e.data;
+        if (!data) return;
+        // Tally sends events as objects or JSON strings
+        if (typeof data === 'string') {
+          try { data = JSON.parse(data); } catch (_) { return; }
+        }
+        var name = data.name || data.type || '';
+        if (name === 'tally-form-submit' || name === 'Tally.FormSubmit' ||
+            name === 'tally-form-complete' || name === 'Tally.FormComplete') {
+          formFired = true;
+          posthog.capture('waitlist_form_submitted', {
+            form_id: '7RoY4L',
+            page: location.pathname
+          });
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
