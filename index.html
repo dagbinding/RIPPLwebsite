@@ -902,7 +902,21 @@
   .af__rank-meta { font-size: clamp(14px,1.2vw,19px); font-weight: 300; color: rgba(242,235,220,0.60); letter-spacing: 0.06em; }
   .af__rank-meta strong { font-weight: 700; color: rgba(242,235,220,0.85); }
   .af__rank-delta { display: inline-flex; align-items: center; gap: 8px; padding: 7px 16px; border-radius: 999px; border: 1px solid rgba(127,190,95,0.30); background: rgba(127,190,95,0.08); font-size: 13px; font-weight: 600; color: #7FBE5F; backdrop-filter: blur(6px); width: fit-content; }
-  .af__scene--2 { justify-content: space-between; align-items: center; padding: clamp(72px,11vh,110px) clamp(40px,7vw,120px) 0; }
+  .af__scene-title { font-size: clamp(30px,4.2vw,58px); font-weight: 900; line-height: 0.92; letter-spacing: -0.035em; color: #fff; margin: 0 0 4px; text-shadow: 0 2px 20px rgba(8,5,2,0.5); max-width: 16ch; }
+  .af__header {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    z-index: 7;
+    display: flex; align-items: baseline; gap: 20px; flex-wrap: wrap;
+    padding: clamp(28px, 4vh, 48px) clamp(40px, 6vw, 100px);
+    pointer-events: none;
+  }
+  .af__header-num { font-size: clamp(13px, 1vw, 16px); font-weight: 300; letter-spacing: 0.32em; color: rgba(242,235,220,0.45); }
+  .af__header-name { font-size: clamp(22px, 2.4vw, 34px); font-weight: 300; letter-spacing: -0.01em; line-height: 1; color: rgba(242,235,220,0.92); }
+  .af__header-name b { font-weight: 900; letter-spacing: -0.02em; }
+  .af__header-tag { font-size: clamp(11px, 0.85vw, 13px); font-weight: 600; letter-spacing: 0.18em; text-transform: lowercase; color: rgba(242,235,220,0.48); padding: 4px 10px; border: 1px solid rgba(242,235,220,0.18); border-radius: 999px; }
+  @media (max-width: 640px) { .af__header { padding: 22px 24px; gap: 12px; } }
+  .af__scene--2 { justify-content: space-between; align-items: center; padding: clamp(96px,14vh,136px) clamp(40px,7vw,120px) 0; }
   .af__s2-score { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 4px; }
   .af__pts-label { font-size: clamp(11px,0.9vw,14px); font-weight: 600; letter-spacing: 0.28em; text-transform: uppercase; color: rgba(242,235,220,0.42); }
   .af__pts-big { font-size: clamp(80px,14vw,200px); font-weight: 900; line-height: 0.87; letter-spacing: -0.05em; color: #F4C04A; font-variant-numeric: tabular-nums; text-shadow: 0 4px 40px rgba(8,5,2,0.45); }
@@ -913,7 +927,7 @@
   .af__stat-sfx { font-size: 0.44em; font-weight: 300; letter-spacing: 0.06em; color: rgba(242,235,220,0.50); margin-left: 1px; }
   .af__stat-lbl { font-size: clamp(9px,0.75vw,11px); font-weight: 600; letter-spacing: 0.26em; text-transform: lowercase; color: rgba(242,235,220,0.38); }
   .af__stat-div { width: 1px; height: clamp(40px,6vh,64px); background: rgba(242,235,220,0.12); flex-shrink: 0; margin: 0 clamp(8px,1.5vw,20px); }
-  .af__scene--3 { align-items: center; justify-content: center; padding: clamp(40px,6vh,80px) clamp(40px,7vw,120px); text-align: center; gap: clamp(12px,2vh,20px); }
+  .af__scene--3 { align-items: center; justify-content: center; padding: clamp(96px,14vh,136px) clamp(40px,7vw,120px) clamp(40px,6vh,80px); text-align: center; gap: clamp(12px,2vh,20px); }
   .af__lb-sub { font-size: 11px; font-weight: 600; letter-spacing: 0.24em; text-transform: lowercase; color: rgba(242,235,220,0.35); margin: 0; }
   .af__lboard { list-style: none; padding: 0; margin: 0; width: min(680px, 90vw); }
   .af__lrow { display: grid; grid-template-columns: 2.6ch 1fr auto; gap: 14px; align-items: center; padding: clamp(9px,1.6vh,15px) 0; border-bottom: 1px solid rgba(242,235,220,0.07); font-size: clamp(16px,1.9vw,24px); color: rgba(242,235,220,0.58); opacity: 0; transform: translateY(12px); transition: opacity 500ms cubic-bezier(0.22,1,0.36,1), transform 600ms cubic-bezier(0.22,1,0.36,1); }
@@ -924,7 +938,7 @@
   .af__lrow-score { font-weight: 900; color: #F4C04A; font-variant-numeric: tabular-nums; }
   .af__lrow--you .af__lrow-score { color: #D97740; }
   .af__you-chip { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.1em; padding: 2px 7px; border-radius: 999px; background: #D97740; color: #2E1E10; vertical-align: middle; margin-left: 8px; }
-  .af__scene--4 { align-items: center; justify-content: center; padding: clamp(40px,6vh,80px) clamp(40px,7vw,120px); text-align: center; gap: clamp(16px,2.5vh,28px); }
+  .af__scene--4 { align-items: center; justify-content: center; padding: clamp(96px,14vh,136px) clamp(40px,7vw,120px) clamp(40px,6vh,80px); text-align: center; gap: clamp(16px,2.5vh,28px); }
   .af__comm-h { font-size: clamp(44px,6.5vw,92px); font-weight: 900; line-height: 0.9; letter-spacing: -0.04em; margin: 0; text-shadow: 0 4px 28px rgba(8,5,2,0.55); }
   .af__acts { display: flex; flex-direction: column; gap: 9px; width: min(520px, 90vw); }
   .af__act { display: grid; grid-template-columns: auto 1fr; gap: 10px; align-items: baseline; padding: 12px 18px; background: rgba(8,5,2,0.45); backdrop-filter: blur(10px); border: 1px solid rgba(242,235,220,0.08); border-radius: 10px; text-align: left; opacity: 0; transform: translateY(10px); transition: opacity 500ms cubic-bezier(0.22,1,0.36,1), transform 600ms cubic-bezier(0.22,1,0.36,1); }
@@ -983,15 +997,17 @@
     position: sticky; top: 0; height: 100vh;
     display: grid;
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-    gap: clamp(40px, 5vw, 80px);
-    padding: clamp(56px, 8vh, 92px) clamp(40px, 6vw, 100px);
-    align-items: center;
+    grid-template-rows: auto 1fr;
+    gap: 0 clamp(40px, 5vw, 80px);
+    padding: clamp(40px, 6vh, 72px) clamp(40px, 6vw, 100px);
+    align-items: start;
     overflow: hidden;
     background: var(--rippl-cream);
   }
   .sense-copy {
     display: flex; flex-direction: column;
     gap: clamp(28px, 4.5vh, 48px); align-self: center;
+    grid-column: 1;
   }
   .sense-title {
     margin: 0; display: flex; flex-direction: column;
@@ -1020,7 +1036,8 @@
   .sense-beat b { font-weight: 900; color: var(--rippl-cocoa); letter-spacing: -0.01em; }
   .sense-media {
     position: relative; align-self: center;
-    width: 100%; height: min(78vh, 720px);
+    grid-column: 2; grid-row: 2;
+    width: 100%; height: min(68vh, 640px);
   }
   .sense-media__img {
     width: 100%; height: 100%; object-fit: cover;
@@ -1382,28 +1399,27 @@
   <!-- ============ Pillar 01 — RIPPLsense (Editorial) ============ -->
   <section class="pillar" data-screen-label="04 Pillar 01 Sense" id="pillar-sense" style="background:var(--rippl-cream)">
 
-    <!-- Section opener band -->
-    <div class="sense-opener">
-      <div class="sense-opener__row">
-        <span class="sense-opener__num">01</span>
-        <h2 class="sense-opener__name"><b>RIPPL</b>sense</h2>
-        <span class="sense-opener__tag">the hardware</span>
-      </div>
-    </div>
-
     <!-- Sticky 2-col scrollytelling -->
     <div class="sense-track" id="sense-track">
       <div class="sense-sticky">
+        <!-- Section opener — spans both columns at top of sticky -->
+        <div class="sense-opener" style="grid-column:1/-1; padding:0 0 clamp(12px,2vh,24px); border-top:none; background:transparent;">
+          <div class="sense-opener__row">
+            <span class="sense-opener__num">01</span>
+            <h2 class="sense-opener__name"><b>RIPPL</b>sense</h2>
+            <span class="sense-opener__tag">the hardware</span>
+          </div>
+        </div>
         <div class="sense-copy">
           <h3 class="sense-title">
             <span class="sense-title__line">ONE SENSOR.</span>
             <span class="sense-title__line">EVERY BOARD<span class="sense-title__period">.</span></span>
           </h3>
           <ul class="sense-beats">
-            <li class="sense-beat" id="sense-b1">Meet RIPPLsense. A tiny sensor that sits on your tail. Mounts in seconds. Then it disappears.</li>
-            <li class="sense-beat" id="sense-b2">Reads every movement. A 9&#8209;axis IMU and centimeter&#8209;precise positioning measure your rides like never before.</li>
-            <li class="sense-beat" id="sense-b3">One sensor. Every board. Change boards mid-session, snap in the RIPPLsense, get back in the lineup.</li>
-            <li class="sense-beat" id="sense-b4"><b>Built for salt.</b> IP68, marine&#8209;grade, days per charge. Treat it like a fin &#8212; then forget it.</li>
+            <li class="sense-beat" id="sense-b1"><b>Meet RIPPLsense.</b> A tiny sensor that sits on your tail. Mounts in seconds. Then it disappears.</li>
+            <li class="sense-beat" id="sense-b2"><b>Reads every movement.</b> A 9&#8209;axis IMU and centimeter&#8209;precise positioning measure your rides like never before.</li>
+            <li class="sense-beat" id="sense-b3"><b>Easy mounting system.</b> Change boards mid-session, snap in the RIPPLsense, get back in the lineup.</li>
+            <li class="sense-beat" id="sense-b4"><b>Built for the ocean.</b> IP68, marine&#8209;grade, days per charge. Attach before your session &#8212; then forget it.</li>
           </ul>
         </div>
         <div class="sense-media">
@@ -1432,12 +1448,12 @@
     <div class="pillar__track pillar__track--intel">
       <div class="intel-bento-stage">
 
-        <div class="intel-bento-stage__head">
-          <div>
-            <span class="pillar__num pillar__num--light">02</span>
-            <span class="pillar__pill pillar__pill--light">the coach</span>
+        <div class="sense-opener" style="background:transparent; border-top:1px solid rgba(242,235,220,0.12); margin-bottom:0;">
+          <div class="sense-opener__row">
+            <span class="sense-opener__num" style="color:rgba(242,235,220,0.5);">02</span>
+            <h2 class="sense-opener__name" style="color:rgba(242,235,220,0.95);"><b>RIPPL</b>intelligence</h2>
+            <span class="sense-opener__tag" style="color:rgba(242,235,220,0.5); border-color:rgba(242,235,220,0.18);">the coach</span>
           </div>
-          <div class="intel-bento-stage__brand"><b>RIPPL</b>intelligence</div>
         </div>
 
         <h2 class="pillar__sr">Unlock the why of surfing — five ways every session gets sharper.</h2>
@@ -1450,7 +1466,7 @@
               <span class="bento__eyebrow">01 · live in the water</span>
               <h3 class="bento__h">
                 Unlock the<br />why of surfing.
-                <em>with rippl every session gets sharper.</em>
+                <em>with RIPPL every session gets sharper.</em>
               </h3>
               <p class="bento__p">Real-time feedback land on your watch the moment you kick out. Adjust before the next wave, not next session.</p>
             </div>
@@ -1553,13 +1569,13 @@
         <div class="af__photo af__photo--3" id="afph3">
           <img src="uploads/P1040672_dg.jpeg" alt="" /><div class="af__scrim af__scrim--deep"></div>
         </div>
-        <!-- Section wordmark — top left, always visible across all scenes -->
-        <div class="sect-wm sect-wm--l sect-wm--pale" aria-hidden="true">
-          <span class="sect-wm__n">03</span>
-          <span class="sect-wm__name"><b>RIPPL</b>social</span>
-          <span class="sect-wm__tag">the lineup</span>
-        </div>
         <div class="af__grain" aria-hidden="true"></div>
+        <!-- Persistent section header — always visible across all scenes -->
+        <div class="af__header">
+          <span class="af__header-num">03</span>
+          <span class="af__header-name"><b>RIPPL</b>social</span>
+          <span class="af__header-tag">the lineup</span>
+        </div>
         <div class="af__corner af__corner--tl" aria-hidden="true"></div>
         <div class="af__corner af__corner--tr" aria-hidden="true"></div>
         <div class="af__corner af__corner--bl" aria-hidden="true"></div>
@@ -1567,6 +1583,7 @@
         <div class="af__scene af__scene--1 is-on" id="af-s1">
           <div class="af__s1">
             <span class="af__eyebrow">03 · RIPPLsocial · this week</span>
+            <h3 class="af__scene-title">Compete for glory<br>at your local break</h3>
             <div class="af__rank-label">your rank at bondi</div>
             <div class="af__rank-num" id="af-rank" style="height: 262px; opacity: 1">#28</div>
             <div class="af__rank-meta">out of <strong>847 surfers</strong></div>
@@ -1576,6 +1593,7 @@
         <div class="af__scene af__scene--2" id="af-s2">
           <div class="af__s2-score">
             <span class="af__eyebrow">measured to the millisecond</span>
+            <h3 class="af__scene-title" style="text-align:center;">Session stats,<br>sharable</h3>
             <div class="af__pts-label">weekly RIPPLscore</div>
             <div class="af__pts-big" id="af-pts">328.9</div>
             <div class="af__pts-unit">points</div>
@@ -1592,6 +1610,7 @@
         </div>
         <div class="af__scene af__scene--3" id="af-s3">
           <span class="af__eyebrow">bondi beach · week 10</span>
+          <h3 class="af__scene-title">Compete with the locals,<br>the pros, and your friends.</h3>
           <p class="af__lb-sub">local leaderboard · cumulative RIPPLscore</p>
           <ol class="af__lboard">
             <li class="af__lrow" style="transition-delay:0ms"><span class="af__lrow-rank">1.</span><span class="af__lrow-name">Jared Cohen</span><span class="af__lrow-score">410.3</span></li>
@@ -1604,7 +1623,7 @@
         </div>
         <div class="af__scene af__scene--4" id="af-s4">
           <span class="af__eyebrow">your lineup · this morning</span>
-          <h3 class="af__comm-h">Catch up with friends sessions near you.</h3>
+          <h3 class="af__scene-title">Stay connected<br>to your crew.</h3>
           <div class="af__acts">
             <div class="af__act" style="transition-delay:0ms"><span class="af__act-name">Ricky S.</span><span class="af__act-detail">395.0 points this week at Bondi · 2h ago</span></div>
             <div class="af__act" style="transition-delay:110ms"><span class="af__act-name">Maya F.</span><span class="af__act-detail">finished a session · 14 rides · 1h ago</span></div>
@@ -1638,16 +1657,9 @@
 
           <h2 class="cta__headline">
             <span class="cta__line">
-              <span class="cta__word">built</span>
-              <span class="cta__word">with</span>
-            </span>
-            <span class="cta__line">
-              <span class="cta__word cta__word--accent">YOU.</span>
-            </span>
-            <span class="cta__line">
-              <span class="cta__word">ride</span>
-              <span class="cta__word">with</span>
-              <span class="cta__word cta__word--accent">us<span class="cta__period">.</span></span>
+              <span class="cta__word">RIDE</span>
+              <span class="cta__word">WITH</span>
+              <span class="cta__word cta__word--accent">US<span class="cta__period">.</span></span>
             </span>
           </h2>
 
