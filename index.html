@@ -287,6 +287,7 @@
     inset: 0;
     display: flex;
     align-items: flex-start;
+    gap: 0.28em;
     font-family: var(--font-body);
     font-weight: 900;
     font-size: clamp(56px, 9vw, 136px);
@@ -399,9 +400,9 @@
 
     .hero__headline { left: 20px; right: 20px; bottom: 32px; }
     .headline__lead { font-size: clamp(28px, 8vw, 56px); }
-    .headline__rotator { height: clamp(52px, 13vw, 92px); }
-    .headline__word { font-size: clamp(40px, 12vw, 88px); }
-    .hero__scroll { display: none; }
+    .headline__rotator { height: clamp(40px, 7.5vw, 78px); }
+    .headline__word { font-size: clamp(36px, 7vw, 72px); }
+    .hero__scroll { display: flex; }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1012,7 +1013,7 @@
   .sense-title {
     margin: 0; display: flex; flex-direction: column;
     font-weight: 900; line-height: 0.9; letter-spacing: -0.045em;
-    font-size: clamp(56px, 8vw, 132px); color: var(--rippl-cocoa);
+    font-size: clamp(56px, 8vw, 88px); color: var(--rippl-cocoa);
   }
   .sense-title__line { display: block; }
   .sense-title__period { color: var(--rippl-sun); }
@@ -1041,7 +1042,7 @@
   }
   .sense-media__img {
     width: 100%; height: 100%; object-fit: cover;
-    object-position: 60% 50%; border-radius: 24px; display: block;
+    object-position: left 50%; border-radius: 24px; display: block;
     box-shadow: 0 36px 80px rgba(46, 30, 16, 0.22);
     transition: transform 200ms linear;
   }
@@ -1074,7 +1075,7 @@
     .sense-track { height: auto; }
     .sense-media { height: 64vh; min-height: 380px; order: 2; }
     .sense-copy { order: 1; }
-    .sense-title { font-size: clamp(48px, 13vw, 88px); }
+    .sense-title { font-size: clamp(40px, 9vw, 78px); }
     .sense-callout--a, .sense-callout--c { left: 4%; }
     .sense-callout--b { right: 4%; }
   }
@@ -1314,8 +1315,11 @@
     .hero__main { padding: 48px 16px 0; }
     .hero__headline { left: 16px; right: 16px; bottom: 26px; }
     .headline__lead { font-size: clamp(24px, 8.5vw, 44px); }
-    .headline__rotator { height: clamp(44px, 13vw, 76px); }
-    .headline__word { font-size: clamp(34px, 12.5vw, 72px); }
+    /* Explicit line breaks via .line2 — no soft-wrapping needed.
+       height: 2.2em always covers exactly 2 lines relative to the font size. */
+    .headline__rotator { font-size: clamp(30px, 9.5vw, 56px); height: 2.2em; }
+    .headline__word { display: block; font-size: inherit; line-height: 1.05; }
+    .headline__word .line2 { display: block; }
     .hero__wordmark { width: 82vw; }
 
     /* Section opener bands (01/02/03) — tighter, allow wrap */
@@ -1323,24 +1327,17 @@
     .af__header { padding-left: 16px; padding-right: 16px; gap: 10px 14px; }
     .sense-opener__row { gap: 8px 14px; }
 
-    /* RIPPLsense editorial pillar */
-    .sense-sticky { padding: 40px 16px; gap: 28px; }
-    .sense-title { font-size: clamp(40px, 13vw, 64px); }
-    .sense-media { height: 52vh; min-height: 300px; }
-    .sense-beats { gap: 18px; }
+    /* RIPPLsense mobile: flex column so order works (grid ignores order on explicitly-placed items) */
+    .sense-sticky { display: flex; flex-direction: column; padding: 32px 16px; gap: 20px; }
+    /* Dissolve sense-copy so title + beats become direct flex children */
+    .sense-copy { display: contents; }
+    .sense-title { order: 1; font-size: clamp(40px, 13vw, 64px); }
+    .sense-media { order: 2; height: clamp(180px, 52vw, 240px); min-height: 180px; width: 100%; }
+    .sense-beats { order: 3; display: flex; flex-direction: column; gap: 24px; }
     .sense-beat { font-size: 15px; }
-    /* Spec callouts overlap the photo badly at phone width — stack them
-       below the image as a tidy inline row instead of floating. */
-    .sense-media__callouts {
-      position: static;
-      display: flex; flex-wrap: wrap; gap: 8px;
-      margin-top: 16px;
-    }
-    .sense-callout {
-      position: static !important;
-      inset: auto !important;
-      opacity: 1 !important; transform: none !important;
-    }
+    /* Hide labels on mobile; contain zoom within rounded corners */
+    .sense-media__callouts { display: none; }
+    .sense-media { overflow: hidden; border-radius: 20px; }
 
     /* Intelligence bento → single column */
     .bento {
@@ -1395,7 +1392,7 @@
 
   @media (max-width: 400px) {
     .headline__lead { font-size: clamp(22px, 8vw, 34px); }
-    .headline__word { font-size: clamp(30px, 12vw, 56px); }
+    .headline__word { font-size: inherit; }
     .sense-title { font-size: clamp(34px, 13vw, 52px); }
     .af__stat { flex: 0 0 50%; }
     .nav__cta { font-size: 11px; padding: 8px 13px; }
@@ -1475,16 +1472,16 @@
         <span class="headline__lead">a new way to</span>
         <span class="headline__rotator" aria-live="polite">
           <span class="headline__rotator-inner" id="rotator">
-            <span class="headline__word is-active">analyze and improve</span>
-            <span class="headline__word">share your sessions</span>
-            <span class="headline__word">record your rides</span>
+            <span class="headline__word is-active">record<span class="line2">your rides</span></span>
+            <span class="headline__word">analyze<span class="line2">and improve</span></span>
+            <span class="headline__word">share<span class="line2">your sessions</span></span>
           </span>
         </span>
       </h1>
       <div class="headline__progress" role="tablist" aria-label="Rotating taglines">
-        <button class="is-active" type="button" aria-label="analyze and improve"></button>
+        <button class="is-active" type="button" aria-label="record your rides"></button>
+        <button type="button" aria-label="analyze and improve"></button>
         <button type="button" aria-label="share your sessions"></button>
-        <button type="button" aria-label="record your rides"></button>
       </div>
     </div>
 
@@ -1927,7 +1924,7 @@
           if (idx === 0) fireRank();
           if (idx === 1 && !fired.stats) {
             fired.stats = true;
-            afCount(ptsEl, 0, 328.9, 1300, function(v){ return v.toFixed(1); });
+            afCount(ptsEl, 0, 328.7, 1300, function(v){ return v.toFixed(1); });
             afCount(waveEl, 0, 2.65, 1100, function(v){ return v.toFixed(2); });
             afCount(speedEl, 0, 4250, 1000, null);
             afCount(ridesEl, 0, 14, 900, null);
@@ -1980,6 +1977,161 @@
           }
         });
       }
+    })();
+  </script>
+
+  <!-- ============ Tweaks panel ============ -->
+  <style>
+    .tweaks {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 280px;
+      background: rgba(22, 20, 24, 0.88);
+      backdrop-filter: blur(20px) saturate(140%);
+      -webkit-backdrop-filter: blur(20px) saturate(140%);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 18px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+      padding: 14px 16px 16px;
+      font-family: var(--font-body);
+      z-index: 9999;
+      display: none;
+    }
+    .tweaks.is-open { display: block; }
+    .tweaks__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+    .tweaks__title {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.7);
+      margin: 0;
+    }
+    .tweaks__close {
+      background: transparent;
+      border: 0;
+      color: rgba(255,255,255,0.6);
+      font-size: 20px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 2px 6px;
+      border-radius: 6px;
+      transition: background 160ms ease, color 160ms ease;
+    }
+    .tweaks__close:hover { background: rgba(255,255,255,0.08); color: #fff; }
+    .tweaks__section { margin-top: 10px; }
+    .tweaks__label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      margin: 0 0 8px;
+    }
+    .tweaks__swatches {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .tweaks__swatch {
+      position: relative;
+      height: 44px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.10);
+      cursor: pointer;
+      padding: 0;
+      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+    }
+    .tweaks__swatch:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.32); }
+    .tweaks__swatch.is-active {
+      border-color: var(--rippl-sun);
+      box-shadow: 0 0 0 2px rgba(217,119,64,0.32);
+    }
+    .tweaks__swatch--black { background: #0a0a0a; }
+    .tweaks__swatch--cream { background: #f6f2ea; }
+    .tweaks__swatch--ink   { background: #2e1e10; }
+    .tweaks__swatch-name {
+      position: absolute;
+      bottom: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.5);
+      text-transform: lowercase;
+    }
+    .tweaks__section + .tweaks__section { margin-top: 26px; }
+  </style>
+
+  <div class="tweaks" id="tweaks-panel" aria-label="Design tweaks" role="dialog">
+    <div class="tweaks__head">
+      <h3 class="tweaks__title">Tweaks</h3>
+      <button class="tweaks__close" aria-label="Close tweaks">×</button>
+    </div>
+
+    <div class="tweaks__section">
+      <p class="tweaks__label">Film grain</p>
+      <div class="tweaks__swatches" data-tweak="grainIntensity">
+        <button class="tweaks__swatch" data-value="off" aria-label="Off" style="background:#181410">
+          <span class="tweaks__swatch-name">off</span>
+        </button>
+        <button class="tweaks__swatch" data-value="medium" aria-label="Medium" style="background:#2a2018">
+          <span class="tweaks__swatch-name">medium</span>
+        </button>
+        <button class="tweaks__swatch" data-value="strong" aria-label="Strong" style="background:#40302a">
+          <span class="tweaks__swatch-name">strong</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const panel = document.getElementById('tweaks-panel');
+      const closeBtn = panel.querySelector('.tweaks__close');
+      const state = { grainIntensity: 'medium' };
+
+      const grainOpacity = { off: 0, medium: 0.28, strong: 0.48 };
+
+      function apply() {
+        var grainEl = document.querySelector('#pillar-social .af__grain');
+        if (grainEl) {
+          grainEl.style.opacity = (grainOpacity[state.grainIntensity] !== undefined
+            ? grainOpacity[state.grainIntensity] : 0.28);
+        }
+        panel.querySelectorAll('[data-tweak="grainIntensity"] .tweaks__swatch').forEach(function (btn) {
+          btn.classList.toggle('is-active', btn.dataset.value === state.grainIntensity);
+        });
+      }
+      apply();
+
+      panel.querySelectorAll('[data-tweak="grainIntensity"] .tweaks__swatch').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          state.grainIntensity = btn.dataset.value;
+          apply();
+        });
+      });
+
+      function open()  { panel.classList.add('is-open'); }
+      function close() { panel.classList.remove('is-open'); }
+      closeBtn.addEventListener('click', close);
+
+      window.addEventListener('message', function (e) {
+        const d = e.data || {};
+        if (d.type === '__activate_edit_mode')   open();
+        if (d.type === '__deactivate_edit_mode') panel.classList.remove('is-open');
+      });
+
+      window.parent.postMessage({ type: '__edit_mode_available' }, '*');
     })();
   </script>
 
