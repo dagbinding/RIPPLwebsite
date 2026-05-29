@@ -1301,6 +1301,106 @@
     .cta__bg { transform: none !important; }
   }
 
+  /* ============================================================
+     Phone-width responsive overrides  (≤600px and ≤400px)
+     ============================================================ */
+  @media (max-width: 600px) {
+    /* Nav — keep brand + CTA on one comfortable row */
+    .nav { padding: 14px 16px; gap: 12px; }
+    .nav__brand img { height: 24px; }
+    .nav__cta { font-size: 12px; padding: 9px 16px; white-space: nowrap; }
+
+    /* Hero — guarantee the headline never clips its container */
+    .hero__main { padding: 48px 16px 0; }
+    .hero__headline { left: 16px; right: 16px; bottom: 26px; }
+    .headline__lead { font-size: clamp(24px, 8.5vw, 44px); }
+    .headline__rotator { height: clamp(44px, 13vw, 76px); }
+    .headline__word { font-size: clamp(34px, 12.5vw, 72px); }
+    .hero__wordmark { width: 82vw; }
+
+    /* Section opener bands (01/02/03) — tighter, allow wrap */
+    .sense-opener,
+    .af__header { padding-left: 16px; padding-right: 16px; gap: 10px 14px; }
+    .sense-opener__row { gap: 8px 14px; }
+
+    /* RIPPLsense editorial pillar */
+    .sense-sticky { padding: 40px 16px; gap: 28px; }
+    .sense-title { font-size: clamp(40px, 13vw, 64px); }
+    .sense-media { height: 52vh; min-height: 300px; }
+    .sense-beats { gap: 18px; }
+    .sense-beat { font-size: 15px; }
+    /* Spec callouts overlap the photo badly at phone width — stack them
+       below the image as a tidy inline row instead of floating. */
+    .sense-media__callouts {
+      position: static;
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-top: 16px;
+    }
+    .sense-callout {
+      position: static !important;
+      inset: auto !important;
+      opacity: 1 !important; transform: none !important;
+    }
+
+    /* Intelligence bento → single column */
+    .bento {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto;
+      gap: 12px;
+    }
+    .bento__cell { min-height: 0; }
+    .bento__cell--live .bento__h { font-size: clamp(30px, 9vw, 40px); }
+
+    /* Social film section — keep scenes readable */
+    .af__scene--2 { padding: 84px 16px 0; }
+    .af__scene--3, .af__scene--4 { padding: 84px 16px 36px; }
+    .af__scene-title { font-size: clamp(26px, 8vw, 40px); max-width: 18ch; }
+    .af__rank-num { font-size: clamp(96px, 30vw, 150px); }
+    /* The 4-up stat strip is too tight on a phone → 2×2 grid that wraps */
+    .af__stat-strip {
+      flex-wrap: wrap;
+      gap: 8px 0;
+      padding: 16px 16px;
+    }
+    .af__stat { flex: 0 0 50%; }
+    .af__stat-num { font-size: clamp(30px, 9vw, 46px); }
+    .af__stat-div { display: none; }
+
+    /* CTA */
+    .cta__inner { padding: 48px 16px; }
+    .cta__headline { font-size: clamp(34px, 12vw, 64px); }
+    .cta__sub { font-size: 15px; }
+    .cta__btn { padding: 16px 22px 16px 26px; font-size: 15px; }
+
+    /* Session-stats overlay → readable label/value pairs */
+    .stats { margin-top: 20px; }
+    .stats__inner { padding: 22px 18px; border-radius: 18px; }
+    .stats__title { font-size: clamp(26px, 7.5vw, 36px); }
+    .stats__grid {
+      grid-template-columns: 1fr auto;
+      column-gap: 16px;
+    }
+    .stats__cell { font-size: 14px; padding: 11px 0; }
+    .stats__grid > .stats__cell:nth-last-child(-n+4) {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .stats__grid > .stats__cell:nth-last-child(-n+2) {
+      border-bottom: 0;
+    }
+    .stats__board { grid-template-columns: 1fr auto; gap: 8px 16px; }
+
+    /* Leaderboard head wraps */
+    .lboard__head { flex-wrap: wrap; gap: 6px 16px; }
+  }
+
+  @media (max-width: 400px) {
+    .headline__lead { font-size: clamp(22px, 8vw, 34px); }
+    .headline__word { font-size: clamp(30px, 12vw, 56px); }
+    .sense-title { font-size: clamp(34px, 13vw, 52px); }
+    .af__stat { flex: 0 0 50%; }
+    .nav__cta { font-size: 11px; padding: 8px 13px; }
+  }
+
   /* ============ Pillars responsive ============ */
   @media (max-width: 1024px) {
     .pillar--sense .pillar__track,
@@ -1629,7 +1729,7 @@
             <div class="af__act" style="transition-delay:110ms"><span class="af__act-name">Maya F.</span><span class="af__act-detail">finished a session · 14 rides · 1h ago</span></div>
             <div class="af__act" style="transition-delay:220ms"><span class="af__act-name">Nico G.</span><span class="af__act-detail">just scored all time biggest wave · 5.35m · 3h ago</span></div>
           </div>
-          <a href="Tester Signup.html" class="af__cta">join the lineup &#8594;</a>
+          <a href="#signup" class="af__cta">join the lineup &#8594;</a>
         </div>
         <div class="af__dots" aria-hidden="true">
           <div class="af__dot is-on" id="afd0"></div>

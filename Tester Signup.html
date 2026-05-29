@@ -450,6 +450,72 @@
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
   }
+
+  /* ============ Scroll-telling reveals ============ */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 900ms var(--ease-out),
+      transform 1000ms var(--ease-out);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+  [data-reveal="slow"] {
+    transform: translateY(44px);
+    transition-duration: 1100ms, 1200ms;
+  }
+  [data-reveal].is-on {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Hero parallax target */
+  .hero__bg {
+    will-change: transform;
+    transition: transform 60ms linear;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] { opacity: 1 !important; transform: none !important; }
+    .hero__bg { transform: none !important; }
+  }
+
+  /* ============ Phone refinements (≤600 / ≤420) ============ */
+  @media (max-width: 600px) {
+    .hero { padding: 96px 18px 52px; }
+    .hero__title { font-size: clamp(40px, 15vw, 72px); }
+    .hero__meta { flex-wrap: wrap; gap: 10px 18px; }
+
+    .benefits { padding: 64px 18px; }
+    .benefits__title { font-size: clamp(38px, 11vw, 64px); }
+    .benefit { min-height: auto; padding: 28px 22px; gap: 14px; }
+    .benefit__h { font-size: clamp(26px, 7vw, 34px); }
+
+    .refer { padding-left: 18px; padding-right: 18px; }
+    .refer__inner { gap: 36px; }
+    /* Reward tiers: drop the trailing icon, keep count + reward legible */
+    .tier {
+      grid-template-columns: 60px minmax(0, 1fr);
+      gap: 14px 16px;
+      padding: 20px 0;
+    }
+    .tier__count { font-size: 34px; }
+    .tier__reward { font-size: 17px; }
+    .tier__icon { display: none; }
+
+    .signup { padding: 64px 18px; }
+    .signup__title { font-size: clamp(44px, 14vw, 80px); }
+    .signup__form { padding: 20px 16px; border-radius: 18px; }
+  }
+
+  @media (max-width: 420px) {
+    .hero__title { font-size: clamp(34px, 15vw, 60px); }
+    .benefits__title { font-size: clamp(32px, 11vw, 52px); }
+    .signup__title { font-size: clamp(38px, 14vw, 64px); }
+    .tier { grid-template-columns: 52px minmax(0, 1fr); }
+    .tier__count { font-size: 30px; }
+  }
 </style>
 
 <!-- PostHog Analytics -->
@@ -523,9 +589,9 @@
       <div>
         <span class="refer__eyebrow">bring your crew</span>
         <h2 class="refer__title">
-          Refer surfers.<br /><em>Earn the kit.</em>
+          Refer surfers.<br /><em>GET RIPPL SOONER.</em>
         </h2>
-        <p class="refer__lede">At signup we'll give you a unique referral link. Every surfer you bring in unlocks the next tier — better gear, custom finishes, priority access, real coaching.</p>
+        <p class="refer__lede">At signup we'll give you a unique referral link. Every surfer that uses your referral link moves you and them up the waitlist.</p>
       </div>
 
       <ul class="tiers" aria-label="Referral tiers">
@@ -589,6 +655,75 @@
     <span>© 2026 RIPPL · built with the testers, for the testers</span>
     <a href="index.html">← back to the site</a>
   </footer>
+
+  <!-- ============ Scroll-telling ============ -->
+  <script>
+    (function () {
+      // Elements to reveal — [selector, options]
+      // options: { delay: ms, stagger: msPerItem, immediate: bool, slow: bool }
+      var groups = [
+        ['.hero__eyebrow', { delay: 120, immediate: true }],
+        ['.hero__title',   { delay: 280, immediate: true, slow: true }],
+        ['.hero__sub',     { delay: 720, immediate: true }],
+        ['.benefits__eyebrow', { delay: 0 }],
+        ['.benefits__title',   { delay: 140, slow: true }],
+        ['.benefit',           { stagger: 130 }],
+        ['.refer__eyebrow',    { delay: 0 }],
+        ['.refer__title',      { delay: 140, slow: true }],
+        ['.refer__lede',       { delay: 280 }],
+        ['.tier',              { stagger: 120 }],
+        ['.signup__eyebrow',   { delay: 0 }],
+        ['.signup__title',     { delay: 140, slow: true }],
+        ['.signup__form',      { delay: 320 }],
+      ];
+
+      groups.forEach(function (g) {
+        var sel = g[0], opts = g[1] || {};
+        document.querySelectorAll(sel).forEach(function (el, i) {
+          el.setAttribute('data-reveal', opts.slow ? 'slow' : '');
+          var d = opts.stagger != null ? (i * opts.stagger) : (opts.delay || 0);
+          el.style.setProperty('--reveal-delay', d + 'ms');
+          if (opts.immediate) {
+            requestAnimationFrame(function () {
+              requestAnimationFrame(function () { el.classList.add('is-on'); });
+            });
+          }
+        });
+      });
+
+      // Scroll-triggered reveals for everything not marked immediate
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-on');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+
+      document.querySelectorAll('[data-reveal]').forEach(function (el) {
+        if (!el.classList.contains('is-on')) io.observe(el);
+      });
+
+      // Subtle hero background parallax
+      var heroBg = document.querySelector('.hero__bg');
+      if (heroBg) {
+        var tick = false;
+        function onScroll() {
+          if (tick) return;
+          tick = true;
+          requestAnimationFrame(function () {
+            tick = false;
+            var y = window.scrollY;
+            if (y > window.innerHeight * 1.2) return;
+            heroBg.style.transform = 'translateY(' + (y * 0.22).toFixed(1) + 'px) scale(1.04)';
+          });
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      }
+    })();
+  </script>
 
   <!-- PostHog: scroll depth + Tally form submission -->
   <script>
