@@ -231,29 +231,24 @@
     font-weight: 600;
     font-size: 17px;
     text-decoration: none;
-    white-space: nowrap;
     cursor: pointer;
-    box-shadow: 0 6px 24px rgba(46,30,16,0.30);
-    transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out), background-color 220ms var(--ease-out), color 220ms var(--ease-out);
+    box-shadow: var(--shadow-card, 0 6px 24px rgba(14,14,14,0.25));
+    transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out), background-color 220ms var(--ease-out);
   }
   .hero__tester:hover {
-    background: var(--rippl-sun, #D97740);
-    color: var(--rippl-cream);
-    transform: translateY(-3px);
-    box-shadow: 0 18px 48px rgba(217,119,64,0.45), 0 4px 12px rgba(46,30,16,0.20);
+    background: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 14px 40px rgba(14,14,14,0.30);
   }
   .hero__tester:active {
-    background: #c4662e;
-    color: var(--rippl-cream);
-    transform: translateY(0) scale(0.97);
-    box-shadow: 0 4px 12px rgba(46,30,16,0.25);
-    transition-duration: 80ms;
+    transform: translateY(0);
+    box-shadow: var(--shadow-soft, 0 2px 8px rgba(14,14,14,0.15));
   }
   .hero__tester .arrow {
     display: inline-block;
     transition: transform 220ms var(--ease-out);
   }
-  .hero__tester:hover .arrow { transform: translateX(6px); }
+  .hero__tester:hover .arrow { transform: translateX(4px); }
 
   /* ============ Bottom headline block ============ */
   .hero__headline {
@@ -401,7 +396,6 @@
       margin-top: clamp(24px, 4vh, 36px);
       padding: 14px 24px;
       font-size: 15px;
-      white-space: nowrap;
     }
 
     .hero__headline { left: 20px; right: 20px; bottom: 32px; }
@@ -675,6 +669,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    transform: translateY(-150px);
   }
   .bento__cell--live .bento__h {
     font-size: clamp(38px, 4vw, 54px);
@@ -700,7 +695,6 @@
   .bento__media {
     position: relative;
     height: 100%;
-    align-self: stretch;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -720,27 +714,24 @@
     z-index: 0;
   }
   .bento__watch {
-    position: absolute;
-    top: 50%;
-    left: 50%;
+    position: relative;
     z-index: 1;
-    height: clamp(340px, 51vh, 476px);
+    height: 115%;
     width: auto;
-    max-height: none;
+    max-height: 560px;
     filter: drop-shadow(0 30px 60px rgba(0,0,0,0.65));
-    transform: translate(-50%, -50%);
+    transform: translateY(calc(-7.5% - 100px));
   }
   .bento__watch img {
     display: block;
     height: 100%;
     width: auto;
-    max-width: none;
+    max-width: 100%;
   }
   .bento__cue {
     position: absolute;
-    left: 16px;
-    top: auto;
-    bottom: 24px;
+    left: -200px;
+    top: 22%;
     z-index: 3;
     background: rgba(22, 20, 24, 0.92);
     backdrop-filter: blur(20px);
@@ -873,68 +864,20 @@
 
   /* Bento — responsive */
   @media (max-width: 980px) {
-    /* Unpin the intelligence stage so the bento sizes to its content instead of
-       being clipped inside a 100vh sticky frame. */
-    .pillar__track--intel { height: auto !important; }
-    .intel-bento-stage {
-      position: static;
-      height: auto;
-      overflow: visible;
-      padding: 24px 20px 28px;
-    }
-    /* The scroll-reveal math no longer runs once unpinned — show every cell. */
-    .bento__cell { opacity: 1 !important; transform: none !important; }
-
-    /* Hero spans both columns; the remaining four cells form a 2×2 below. */
+    .intel-bento-stage { padding: 24px 20px 28px; }
     .bento {
       grid-template-columns: repeat(2, 1fr);
-      grid-template-rows: none;
-      grid-auto-rows: minmax(150px, auto);
+      grid-template-rows: minmax(0, 1.6fr) repeat(2, minmax(0, 1fr));
       gap: 12px;
     }
     .bento__cell--live {
       grid-column: 1 / -1;
-      grid-template-columns: 1.05fr 0.95fr;
-      align-items: center;
-      padding: 28px 28px 0;
-      overflow: hidden;
+      grid-template-columns: 1fr;
+      padding: 24px;
     }
-    /* Desktop nudges the copy/watch up to sit under the oversized hero render —
-       reset them here so the text sits inside the card and the watch reflows. */
-    .bento__copy { transform: none; }
-    .bento__media {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 0;
-      align-self: stretch;
-      height: 100%;
-      overflow: visible;
-    }
-    .bento__media::before { width: 90%; }
-    .bento__watch {
-      position: relative;
-      top: auto;
-      left: auto;
-      height: auto;
-      max-height: none;
-      width: 100%;
-      transform: none;
-      filter: drop-shadow(0 18px 36px rgba(0,0,0,0.6));
-      display: flex;
-      justify-content: center;
-    }
-    .bento__watch img {
-      height: auto !important;
-      max-height: none !important;
-      width: 94%;
-      max-width: 280px;
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.85) 28%, rgba(0,0,0,1) 50%);
-      mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.85) 28%, rgba(0,0,0,1) 50%);
-    }
-    .bento__cue { display: none; }
-    .bento__cell--live .bento__h { font-size: clamp(30px, 5.5vw, 44px); }
+    .bento__media { display: none; }
+    .bento__cue { position: static; width: auto; margin-top: 16px; }
+    .bento__cell--live .bento__h { font-size: 38px; }
   }
 
   /* ============ Pillar 03 RIPPLsocial — Film Edit ============ */
@@ -1172,13 +1115,11 @@
     position: absolute;
     inset: -6%;
     background-image: url("assets/photo-sunset-lineup.jpg");
-    /* Focal point 30% up from the bottom (= 70% from the top): the crop pivots
-       around that point as the viewport changes size. */
-    background-position: center 70%;
+    background-position: center 30%;
     background-size: cover;
     background-repeat: no-repeat;
     transform: scale(var(--cta-zoom, 1)) translateY(var(--cta-parallax, 0px));
-    transform-origin: center 70%;
+    transform-origin: center 40%;
     transition: transform 600ms var(--ease-out);
     will-change: transform;
     z-index: 0;
@@ -1187,7 +1128,7 @@
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(180deg, rgba(14,14,14,0.82) 0%, rgba(14,14,14,0.45) 32%, rgba(14,14,14,0.10) 70%, rgba(14,14,14,0.04) 100%);
+      linear-gradient(180deg, rgba(14,14,14,0.20) 0%, rgba(14,14,14,0.05) 28%, rgba(14,14,14,0.45) 68%, rgba(14,14,14,0.82) 100%);
     z-index: 1;
   }
   .cta__grain {
@@ -1205,10 +1146,10 @@
     height: 100%;
     max-width: 1280px;
     margin: 0 auto;
-    padding: clamp(40px, 6vh, 64px) clamp(32px, 6vw, 96px) clamp(56px, 7vh, 80px);
+    padding: clamp(64px, 8vh, 88px) clamp(32px, 6vw, 96px) clamp(56px, 7vh, 80px);
     display: flex;
     flex-direction: column;
-    justify-content: flex-start;
+    justify-content: flex-end;
     gap: clamp(14px, 2vh, 22px);
   }
   .cta__eyebrow {
@@ -1353,7 +1294,7 @@
   }
   @media (max-width: 880px) {
     .cta__track { height: 200vh; }
-    .cta__inner { padding: 25vh 24px 56px; }
+    .cta__inner { padding: 56px 24px 56px; }
     .cta__headline { font-size: clamp(38px, 11vw, 80px); max-width: none; }
     .cta__btn { padding: 18px 26px 18px 30px; }
     .cta__btn-arrow { width: 30px; height: 30px; font-size: 15px; }
@@ -1407,29 +1348,14 @@
     .sense-media__callouts { display: none; }
     .sense-media { overflow: hidden; border-radius: 20px; }
 
-    /* Intelligence bento → hero full-width, four cells as a 2×2 (stay two-up) */
+    /* Intelligence bento → single column */
     .bento {
-      grid-template-columns: repeat(2, 1fr);
-      grid-template-rows: none;
-      grid-auto-rows: minmax(132px, auto);
-      gap: 10px;
-    }
-    .bento__cell { min-height: 0; padding: 15px 15px; }
-    /* Hero: stack copy over the watch so neither gets squeezed at phone width */
-    .bento__cell--live {
       grid-template-columns: 1fr;
-      padding: 20px 18px 0;
-      min-height: 420px;
-      align-items: start;
-      overflow: hidden;
+      grid-template-rows: auto;
+      gap: 12px;
     }
-    .bento__copy { max-width: none; }
-    .bento__cell--live .bento__p { font-size: 14px; max-width: none; }
-    .bento__media { margin-top: 0; }
-    .bento__watch img { width: 94%; max-width: 280px; max-height: none !important; }
-    .bento__cell--live .bento__h { font-size: clamp(28px, 8.5vw, 40px); }
-    /* Small-cell type: nudge headings up so they read well two-up */
-    .bento__cell:not(.bento__cell--live) .bento__h { font-size: clamp(15px, 4.6vw, 19px); }
+    .bento__cell { min-height: 0; }
+    .bento__cell--live .bento__h { font-size: clamp(30px, 9vw, 40px); }
 
     /* Social film section — keep scenes readable */
     .af__scene--2 { padding: 84px 16px 0; }
@@ -1447,7 +1373,7 @@
     .af__stat-div { display: none; }
 
     /* CTA */
-    .cta__inner { padding: 25vh 16px 40px; }
+    .cta__inner { padding: 48px 16px; }
     .cta__headline { font-size: clamp(34px, 12vw, 64px); }
     .cta__sub { font-size: 15px; }
     .cta__btn { padding: 16px 22px 16px 26px; font-size: 15px; }
@@ -1511,22 +1437,6 @@
       transition: none !important;
     }
   }
-
-  /* ============ Footer ============ */
-  .footer {
-    background: var(--rippl-ink);
-    color: rgba(255,255,255,0.55);
-    padding: 40px clamp(24px, 6vw, 96px);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 16px;
-    flex-wrap: wrap;
-    font-size: 12.5px;
-    letter-spacing: 0.04em;
-  }
-  .footer a:hover { color: #fff; }
-  .footer__brand img { height: 18px; display: block; }
 </style>
 
 <!-- PostHog Analytics -->
@@ -1555,6 +1465,7 @@
         <span class="nav__dot" aria-hidden="true"></span>
         Coming soon
       </span>
+      <a href="Tester Signup.html" class="nav__cta">Join the RIPPL waitlist</a>
     </nav>
 
     <!-- centered wordmark + tester pill row -->
@@ -1661,13 +1572,17 @@
               <span class="bento__eyebrow">01 · live in the water</span>
               <h3 class="bento__h">
                 Unlock the<br />why of surfing.
-                <em>in-the-lineup feedback with <span style="text-transform:uppercase">RIPPL</span>.</em>
+                <em>with RIPPL every session gets sharper.</em>
               </h3>
               <p class="bento__p">Real-time feedback land on your watch the moment you kick out. Adjust before the next wave, not next session.</p>
             </div>
             <div class="bento__media">
               <div class="bento__watch">
-                <img src="assets/watch-app.png" alt="Apple Watch showing a live coaching cue" style="padding: 0px; height: 495px" />
+                <img src="assets/watch-app.png" alt="Apple Watch showing a live coaching cue" style="padding: 0px; height: 619px" />
+              </div>
+              <div class="bento__cue">
+                <div class="bento__cue-label">FEEDBACK · IN-THE-LINEUP</div>
+                <div class="bento__cue-text">Shift weight forward on final paddle strokes— head over the nose before takeoff.</div>
               </div>
             </div>
           </div>
@@ -1854,7 +1769,7 @@
             </span>
           </h2>
 
-          <p class="cta__sub">We're hand-picking our first riders to shape RIPPL — real hardware on your board, the app on your phone, and a direct line to the team that's building it. For free!</p>
+          <p class="cta__sub">We're hand-picking our first riders to shape RIPPL — real hardware on your board, the app on your phone, and a direct line to the team that's building it. For free!<br><br>We want to share the love, every person that signs up with your link will boost you up the queue!</p>
 
           <a class="cta__btn" href="Tester Signup.html" aria-label="Sign up to be a RIPPL tester">
             <span>join the waitlist</span>
@@ -2271,13 +2186,13 @@
     })();
   </script>
 
-  <!-- ============ Footer ============ -->
-  <footer class="footer">
-    <a href="#" class="footer__brand" aria-label="RIPPL home">
-      <img src="assets/logo-wordmark-white.png" alt="RIPPL" />
-    </a>
-    <span>© 2026 RIPPL · intelligent motion tech for surfing</span>
-  </footer>
-
+<style id="__preview">
+  html,body{height:auto!important;background:#0E0E0E;}
+  body > *{display:none!important;}
+  body > #pillar-intel{display:block!important;}
+  .pillar__track--intel{height:auto!important;}
+  .intel-bento-stage{position:static!important;height:100vh!important;}
+  #pillar-intel .bento__cell{opacity:1!important;transform:none!important;}
+</style>
 </body>
 </html>
