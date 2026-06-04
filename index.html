@@ -1059,33 +1059,34 @@
     padding: 4px 10px;
     border: 1px solid rgba(46, 30, 16, 0.18); border-radius: 999px;
   }
-  .sense-track { position: relative; overflow-x: clip; }
+  .sense-track { position: relative; height: 380vh; }
   .sense-sticky {
-    position: static;
+    position: sticky; top: 0; height: 100vh;
     display: grid;
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
     grid-template-rows: auto 1fr;
     gap: 0 clamp(40px, 5vw, 80px);
     padding: clamp(40px, 6vh, 72px) clamp(40px, 6vw, 100px);
     align-items: start;
+    overflow: hidden;
     background: var(--rippl-cream);
   }
   .sense-copy {
     display: flex; flex-direction: column;
-    gap: clamp(16px, 3.5vh, 48px); align-self: center;
+    gap: clamp(28px, 4.5vh, 48px); align-self: center;
     grid-column: 1;
   }
   .sense-title {
     margin: 0; display: flex; flex-direction: column;
     font-weight: 900; line-height: 0.9; letter-spacing: -0.045em;
-    font-size: clamp(40px, min(7.5vw, 12vh), 88px); color: var(--rippl-cocoa);
+    font-size: clamp(56px, 8vw, 88px); color: var(--rippl-cocoa);
   }
   .sense-title__line { display: block; }
   .sense-title__period { color: var(--rippl-sun); }
   .sense-beats {
     list-style: none; margin: 0; padding: 0;
     display: flex; flex-direction: column;
-    gap: clamp(14px, 2.5vh, 28px); max-width: 44ch;
+    gap: clamp(20px, 3vh, 28px); max-width: 44ch;
   }
   .sense-beat {
     position: relative; padding-left: 24px;
@@ -1103,7 +1104,7 @@
   .sense-media {
     position: relative; align-self: center;
     grid-column: 2; grid-row: 2;
-    width: 100%; height: clamp(280px, min(65vh, 50vw), 640px);
+    width: 100%; height: min(68vh, 640px);
   }
   .sense-media__img {
     width: 100%; height: 100%; object-fit: cover;
@@ -1135,10 +1136,12 @@
   @media (max-width: 980px) {
     .sense-sticky {
       grid-template-columns: 1fr; padding: 48px 24px; gap: 32px;
+      height: auto; position: static;
     }
-    .sense-media { height: clamp(240px, 55vh, 560px); order: 2; }
+    .sense-track { height: auto; }
+    .sense-media { height: 64vh; min-height: 380px; order: 2; }
     .sense-copy { order: 1; }
-    .sense-title { font-size: clamp(36px, min(8vw, 10vh), 78px); }
+    .sense-title { font-size: clamp(40px, 9vw, 78px); }
     .sense-callout--a, .sense-callout--c { left: 4%; }
     .sense-callout--b { right: 4%; }
   }
@@ -1396,13 +1399,13 @@
     .sense-sticky { display: flex; flex-direction: column; padding: 32px 16px; gap: 20px; }
     /* Dissolve sense-copy so title + beats become direct flex children */
     .sense-copy { display: contents; }
-    .sense-title { order: 1; font-size: clamp(34px, 11vw, 56px); }
-    /* Image scales with viewport width; no hard min-height that can force overflow */
-    .sense-media { order: 2; height: clamp(160px, 48vw, 280px); width: 100%; overflow: hidden; border-radius: 20px; }
-    .sense-beats { order: 3; display: flex; flex-direction: column; gap: 20px; }
+    .sense-title { order: 1; font-size: clamp(40px, 13vw, 64px); }
+    .sense-media { order: 2; height: clamp(180px, 52vw, 240px); min-height: 180px; width: 100%; }
+    .sense-beats { order: 3; display: flex; flex-direction: column; gap: 24px; }
     .sense-beat { font-size: 15px; }
-    /* Hide overlay labels on mobile */
+    /* Hide labels on mobile; contain zoom within rounded corners */
     .sense-media__callouts { display: none; }
+    .sense-media { overflow: hidden; border-radius: 20px; }
 
     /* Intelligence bento → hero full-width, four cells as a 2×2 (stay two-up) */
     .bento {
@@ -1473,7 +1476,7 @@
   @media (max-width: 400px) {
     .headline__lead { font-size: clamp(22px, 8vw, 34px); }
     .headline__word { font-size: inherit; }
-    .sense-title { font-size: clamp(28px, 10vw, 44px); }
+    .sense-title { font-size: clamp(34px, 13vw, 52px); }
     .af__stat { flex: 0 0 50%; }
     .nav__cta { font-size: 11px; padding: 8px 13px; }
   }
@@ -1926,19 +1929,31 @@
         update();
       }
 
-      // Pillar 01: Sense — fade-in via IntersectionObserver (sticky removed)
+      // Pillar 01: Sense
       (function () {
-        var fadeEls = ['sense-b1','sense-b2','sense-b3','sense-b4',
-                       'sense-co1','sense-co2','sense-co3']
-          .map(function(id){ return document.getElementById(id); })
-          .filter(Boolean);
-        if (!fadeEls.length) return;
-        var obs = new IntersectionObserver(function(entries) {
-          entries.forEach(function(e) {
-            if (e.isIntersecting) { e.target.classList.add('is-on'); obs.unobserve(e.target); }
-          });
-        }, { threshold: 0.2 });
-        fadeEls.forEach(function(el) { obs.observe(el); });
+        var track = document.getElementById('sense-track');
+        if (!track) return;
+        var img = document.getElementById('sense-img');
+        var targets = [
+          { el: document.getElementById('sense-b1'),  threshold: 0.08 },
+          { el: document.getElementById('sense-b2'),  threshold: 0.28 },
+          { el: document.getElementById('sense-b3'),  threshold: 0.50 },
+          { el: document.getElementById('sense-b4'),  threshold: 0.72 },
+          { el: document.getElementById('sense-co1'), threshold: 0.12 },
+          { el: document.getElementById('sense-co2'), threshold: 0.32 },
+          { el: document.getElementById('sense-co3'), threshold: 0.74 },
+        ];
+        var tick = false;
+        function update() {
+          tick = false;
+          var r = track.getBoundingClientRect(), vh = window.innerHeight;
+          var p = Math.min(1, Math.max(0, -r.top) / Math.max(1, track.offsetHeight - vh));
+          targets.forEach(function(t) { if (t.el) t.el.classList.toggle('is-on', p >= t.threshold); });
+          if (img) img.style.transform = 'scale(' + (1 + Math.min(0.12, p * 0.14)).toFixed(3) + ')';
+        }
+        window.addEventListener('scroll', function(){ if (!tick){ tick = true; requestAnimationFrame(update); } }, { passive: true });
+        window.addEventListener('resize', update);
+        update();
       })();
 
       // Pillar 02: Intelligence (bento)
