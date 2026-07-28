@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>RIPPLsurf — 8-bit lineup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+  @font-face { font-family: "Inter"; font-weight: 300; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Light-BETA.otf") format("opentype"); }
+  @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Regular.otf") format("opentype"); }
+  @font-face { font-family: "Inter"; font-weight: 600; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-SemiBold.otf") format("opentype"); }
+  @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Bold.otf") format("opentype"); }
+  @font-face { font-family: "Inter"; font-weight: 900; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Black.otf") format("opentype"); }
+
+  :root {
+    --rippl-cream: #F2EBDC;
+    --rippl-cream-deep: #E6DCC4;
+    --rippl-bone: #FAF6EC;
+    --rippl-cocoa: #2E1E10;
+    --rippl-cocoa-soft: #4A3220;
+    --rippl-cocoa-mute: #7A6450;
+    --rippl-ink: #0E0E0E;
+    --rippl-sun: #D97740;
+    --rippl-wave: #4A7C8A;
+    --rippl-glow: #F4C04A;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+    --shadow-card: 0 10px 30px rgba(46, 30, 16, 0.18);
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--rippl-cream);
+    color: var(--rippl-cocoa);
+    font-family: "Inter", system-ui, sans-serif;
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(16px, 4vw, 48px);
+  }
+
+  .surfgame {
+    width: 100%;
+    max-width: 720px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .surfgame__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .surfgame__wordmark {
+    font-size: clamp(28px, 6vw, 44px);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin: 0;
+  }
+  .surfgame__wordmark b { font-weight: 900; }
+  .surfgame__wordmark span { font-weight: 300; }
+  .surfgame__tag {
+    margin: 0;
+    font-size: 15px;
+    color: var(--rippl-cocoa-mute);
+  }
+  .surfgame__tag b { font-weight: 600; color: var(--rippl-cocoa); }
+
+  /* ---- Game frame ---- */
+  .surfgame__frame {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    background: var(--rippl-ink);
+    box-shadow: var(--shadow-card);
+    line-height: 0;
+  }
+  canvas#surf {
+    width: 100%;
+    height: auto;
+    display: block;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    cursor: grab;
+  }
+  canvas#surf:active { cursor: grabbing; }
+
+  /* ---- HUD ---- */
+  .surfgame__hud {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 16px;
+    pointer-events: none;
+    font-family: var(--font-mono);
+    line-height: 1;
+  }
+  .hud__chip {
+    background: rgba(14, 14, 14, 0.55);
+    color: var(--rippl-glow);
+    font-size: clamp(14px, 3.4vw, 18px);
+    font-weight: 500;
+    padding: 7px 11px;
+    border-radius: 6px;
+    letter-spacing: 0.04em;
+  }
+  .hud__chip--pocket {
+    color: var(--rippl-bone);
+    background: rgba(217, 119, 64, 0.85);
+    opacity: 0;
+    transition: opacity 220ms var(--ease-out);
+  }
+  .hud__chip--pocket.is-on { opacity: 1; }
+
+  /* ---- Overlays ---- */
+  .surfgame__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    text-align: center;
+    padding: 24px;
+    line-height: 1.4;
+    background: rgba(14, 14, 14, 0.62);
+    color: var(--rippl-bone);
+    opacity: 1;
+    transition: opacity 220ms var(--ease-out);
+  }
+  .surfgame__overlay[hidden] { display: none; }
+  .overlay__title {
+    margin: 0;
+    font-size: clamp(30px, 7vw, 52px);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .overlay__title b { font-weight: 900; }
+  .overlay__title span { font-weight: 300; }
+  .overlay__copy {
+    margin: 0;
+    font-size: clamp(15px, 3.6vw, 17px);
+    max-width: 42ch;
+    text-wrap: pretty;
+  }
+  .overlay__copy b { font-weight: 600; }
+  .overlay__score {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: clamp(17px, 4.4vw, 24px);
+    color: var(--rippl-glow);
+  }
+  .overlay__btn {
+    appearance: none;
+    border: none;
+    font: inherit;
+    font-weight: 700;
+    font-size: 16px;
+    background: var(--rippl-sun);
+    color: var(--rippl-cream);
+    padding: 14px 28px;
+    min-height: 44px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 120ms var(--ease-out), background 120ms var(--ease-out), box-shadow 120ms var(--ease-out);
+    box-shadow: 0 4px 14px rgba(46, 30, 16, 0.35);
+  }
+  .overlay__btn:hover { background: #C96A36; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(46, 30, 16, 0.4); }
+  .overlay__btn:active { background: #BD6230; transform: translateY(0); }
+  .overlay__btn:focus-visible { outline: 2px solid var(--rippl-wave); outline-offset: 2px; }
+
+  .surfgame__foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 15px;
+    color: var(--rippl-cocoa-mute);
+  }
+  .surfgame__foot b { font-weight: 600; color: var(--rippl-cocoa); }
+  .surfgame__best { font-family: var(--font-mono); font-size: 14px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .overlay__btn, .surfgame__overlay, .hud__chip--pocket { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<main class="surfgame" data-comment-anchor="surf-game">
+  <header class="surfgame__head">
+    <h1 class="surfgame__wordmark"><b>RIPPL</b><span>surf</span></h1>
+    <p class="surfgame__tag"><b>Drag to ride.</b> Snap off the lip · don't get caught by the foam</p>
+  </header>
+
+  <div class="surfgame__frame">
+    <canvas id="surf" width="320" height="200" aria-label="RIPPLsurf — an 8-bit surfing game. Drag the surfer up, down, left and right across the wave face."></canvas>
+
+    <div class="surfgame__hud" aria-hidden="true">
+      <div class="hud__chip" id="hud-time">1:30</div>
+      <div class="hud__chip hud__chip--pocket" id="hud-pocket">POCKET ×2</div>
+      <div class="hud__chip" id="hud-score">0</div>
+    </div>
+
+    <div class="surfgame__overlay" id="overlay-start">
+      <h2 class="overlay__title"><b>RIPPL</b><span>surf</span></h2>
+      <p class="overlay__copy"><b>Drag</b> to move on the wave face. Whip the board hard for a <b>carve</b>. Climb to the lip and snap down for a <b>top turn</b> — spray means points. Stay ahead of the whitewash.</p>
+      <button class="overlay__btn" id="btn-start" type="button">Paddle out</button>
+    </div>
+
+    <div class="surfgame__overlay" id="overlay-end" hidden>
+      <h2 class="overlay__title"><b>Session</b><span> over</span></h2>
+      <p class="overlay__score" id="end-score">0 PTS</p>
+      <p class="overlay__copy" id="end-line">Clean session — the lineup noticed.</p>
+      <button class="overlay__btn" id="btn-again" type="button">Ride again</button>
+    </div>
+  </div>
+
+  <footer class="surfgame__foot">
+    <p>Arrow keys work too · <b>90 seconds</b> on the clock</p>
+    <p class="surfgame__best">BEST <span id="hud-best">0</span></p>
+  </footer>
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ================= Palette — RIPPL tokens + pixel-art ramps derived from them ================= */
+  var PAL = {
+    cream: "#F2EBDC",
+    creamDeep: "#E6DCC4",
+    bone: "#FAF6EC",
+    cocoa: "#2E1E10",
+    cocoaSoft: "#4A3220",
+    ink: "#0E0E0E",
+    sun: "#D97740",
+    sunDeep: "#C9523C",
+    glow: "#F4C04A",
+    skin: "#E0A573",          /* sun lightened toward cream */
+    tealLight: "#7FA3AC",     /* wave → cream ramp */
+    teal: "#4A7C8A",
+    tealDeep: "#3A636F",      /* wave → cocoa ramp */
+    tealDark: "#2B4A54",
+    skyWarm: "#F6E7C8"        /* cream warmed by glow, golden hour sky */
+  };
+
+  /* char → color for sprite maps */
+  var INKMAP = {
+    "K": PAL.cocoa, "k": PAL.cocoaSoft, "s": PAL.skin, "h": PAL.glow,
+    "b": PAL.sun, "r": PAL.sunDeep, "c": PAL.cream, "w": PAL.bone
+  };
+
+  /* ================= Body poses (12×12), board drawn procedurally underneath ================= */
+  var POSES = {
+    neutral: [
+      "....hhh.....",
+      "...shhh.....",
+      "...sshh.....",
+      "....ss......",
+      "...kKKk.....",
+      "..sKKKKs....",
+      "...KKKK.....",
+      "....KK......",
+      "...K..K.....",
+      "..KK..KK....",
+      "..ss..ss....",
+      "............"
+    ],
+    lean: [ /* leaning left (into a left turn); flipped for right */
+      "..s.hhh.....",
+      "...Kshhh....",
+      "...Ksshh....",
+      "....sss.....",
+      "....kKKk....",
+      "....KKKKs...",
+      "....KKKK....",
+      "....KK......",
+      "...K.KK.....",
+      "..KK..KK....",
+      "..ss..ss....",
+      "............"
+    ],
+    leanHard: [ /* laid right over, trailing hand near the face */
+      "............",
+      "s..hhh......",
+      "sKshhh......",
+      ".Ksshh......",
+      "..sss.......",
+      "..kKKKs.....",
+      "..KKKKK.....",
+      "...KKK......",
+      "...K.KK.....",
+      "..KK..KK....",
+      "..ss..ss....",
+      "............"
+    ],
+    snap: [ /* compact crouch for the top turn, arms wide */
+      "............",
+      "....hhh.....",
+      "...shhh.....",
+      "...sshs.....",
+      "..s..ss..s..",
+      "..sKKKKKs...",
+      "...KKKK.....",
+      "...KKKK.....",
+      "...K..K.....",
+      "..KK..KK....",
+      "..ss..ss....",
+      "............"
+    ],
+    tumble1: [
+      "..ss...ss...",
+      "...KK.KK....",
+      "....KKK.....",
+      "...sKKKs....",
+      "....KKK.....",
+      ".....ss.....",
+      "....sshh....",
+      "....shhh....",
+      ".....hhh....",
+      "............",
+      "............",
+      "............"
+    ],
+    tumble2: [
+      "............",
+      "...s..hh....",
+      "..KKKshhh...",
+      "..KKKKss....",
+      ".sKKKKKs....",
+      "..KKKKs.....",
+      "..ss.ss.....",
+      "............",
+      "............",
+      "............",
+      "............",
+      "............"
+    ]
+  };
+
+  function buildSprite(map, flip) {
+    var h = map.length, w = map[0].length;
+    var c = document.createElement("canvas");
+    c.width = w; c.height = h;
+    var g = c.getContext("2d");
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        var ch = map[y][flip ? (w - 1 - x) : x];
+        if (ch !== "." && INKMAP[ch]) {
+          g.fillStyle = INKMAP[ch];
+          g.fillRect(x, y, 1, 1);
+        }
+      }
+    }
+    return c;
+  }
+
+  var SPR = {
+    neutral: buildSprite(POSES.neutral, false),
+    leanL: buildSprite(POSES.lean, false),
+    leanR: buildSprite(POSES.lean, true),
+    leanHardL: buildSprite(POSES.leanHard, false),
+    leanHardR: buildSprite(POSES.leanHard, true),
+    snap: buildSprite(POSES.snap, false),
+    tumble1: buildSprite(POSES.tumble1, false),
+    tumble2: buildSprite(POSES.tumble2, false)
+  };
+
+  /* ================= Canvas & DOM ================= */
+  var cv = document.getElementById("surf");
+  var ctx = cv.getContext("2d");
+  ctx.imageSmoothingEnabled = false;
+  var W = cv.width, H = cv.height;
+
+  var hudTime = document.getElementById("hud-time");
+  var hudScore = document.getElementById("hud-score");
+  var hudPocket = document.getElementById("hud-pocket");
+  var hudBest = document.getElementById("hud-best");
+  var overlayStart = document.getElementById("overlay-start");
+  var overlayEnd = document.getElementById("overlay-end");
+  var endScore = document.getElementById("end-score");
+  var endLine = document.getElementById("end-line");
+
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ================= Foam boil texture (pre-rendered, tiled) ================= */
+  var foamTex = (function () {
+    var c = document.createElement("canvas");
+    c.width = 64; c.height = 64;
+    var g = c.getContext("2d");
+    g.fillStyle = PAL.bone;
+    g.fillRect(0, 0, 64, 64);
+    var rng = 1234;
+    function rnd() { rng = (rng * 16807) % 2147483647; return rng / 2147483647; }
+    for (var i = 0; i < 130; i++) {
+      g.fillStyle = rnd() < 0.55 ? PAL.cream : (rnd() < 0.7 ? PAL.tealLight : PAL.creamDeep);
+      g.fillRect((rnd() * 64) | 0, (rnd() * 64) | 0, 2, 2);
+    }
+    return c;
+  })();
+  var foamPattern = ctx.createPattern(foamTex, "repeat");
+
+  /* ================= Game state ================= */
+  var HORIZON = 52;
+  var SESSION = 90;            /* seconds */
+  var BOTTOM = H - 4;
+
+  var state = "idle";          /* idle | riding | wipeout | over */
+  var t = 0;                   /* world time, s */
+  var timeLeft = SESSION;
+  var score = 0;
+  var scoreF = 0;
+  var best = 0;
+  try { best = parseInt(localStorage.getItem("rippl_surf_best") || "0", 10) || 0; } catch (e) {}
+  hudBest.textContent = String(best);
+
+  var surfer = {
+    x: 200, y: 130,
+    tx: 200, ty: 130,
+    vx: 0, vy: 0,
+    boardA: 0,                 /* board angle, rad */
+    speed: 0.6,                /* pump energy 0..2 */
+    primedSnap: 0,             /* timestamp until which a snap is primed */
+    primedCarveDir: 0,         /* sign of last strong horizontal move */
+    primedCarveUntil: 0,
+    lastTrickAt: -9,
+    lipTime: 0,                /* seconds spent above the crest */
+    blinkUntil: 0              /* respawn invulnerability */
+  };
+
+  var frontier = 26;           /* whitewash front, px from left */
+  var wipeT = 0;               /* wipeout anim clock */
+  var shake = 0;
+  var pocketOn = false;
+
+  var sprays = [];             /* particle pool */
+  var MAXSPRAY = 140;
+  var popups = [];
+
+  /* ================= Wave shape ================= */
+  function crestY(x) {
+    return 86 + 8 * Math.sin(0.017 * x + t * 0.9) + 4 * Math.sin(0.045 * x - t * 1.6);
+  }
+  function foamEdge(y) {
+    return frontier + 7 * Math.sin(y * 0.22 + t * 3.1) + 3 * Math.sin(y * 0.6 - t * 5.0);
+  }
+
+  /* ================= Input ================= */
+  var dragging = false;
+
+  function toGame(e) {
+    var r = cv.getBoundingClientRect();
+    return {
+      x: (e.clientX - r.left) / r.width * W,
+      y: (e.clientY - r.top) / r.height * H
+    };
+  }
+
+  cv.addEventListener("pointerdown", function (e) {
+    if (state !== "riding") return;
+    dragging = true;
+    try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+    var p = toGame(e);
+    surfer.tx = p.x;
+    surfer.ty = p.y - (e.pointerType === "touch" ? 30 : 0);
+    e.preventDefault();
+  });
+  cv.addEventListener("pointermove", function (e) {
+    if (!dragging || state !== "riding") return;
+    var p = toGame(e);
+    surfer.tx = p.x;
+    surfer.ty = p.y - (e.pointerType === "touch" ? 30 : 0);
+    e.preventDefault();
+  });
+  function endDrag() { dragging = false; }
+  cv.addEventListener("pointerup", endDrag);
+  cv.addEventListener("pointercancel", endDrag);
+
+  /* keyboard fallback */
+  var keys = {};
+  window.addEventListener("keydown", function (e) {
+    if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(e.key) >= 0) {
+      keys[e.key] = true;
+      if (state === "riding") e.preventDefault();
+    }
+  });
+  window.addEventListener("keyup", function (e) { keys[e.key] = false; });
+
+  /* ================= Tricks & scoring ================= */
+  function addPopup(x, y, text, big) {
+    popups.push({ x: x, y: y, text: text, life: 1.1, big: !!big });
+    if (popups.length > 6) popups.shift();
+  }
+
+  function emitSpray(n, dirX, power, atLip) {
+    for (var i = 0; i < n; i++) {
+      if (sprays.length >= MAXSPRAY) sprays.shift();
+      var a = -Math.PI / 2 + (Math.random() - 0.5) * 1.3 + dirX * 0.5;
+      var sp = (0.8 + Math.random() * 1.4) * power;
+      sprays.push({
+        x: surfer.x + (Math.random() - 0.5) * 12,
+        y: surfer.y + 10,
+        vx: Math.cos(a) * sp + dirX * power * 0.8,
+        vy: Math.sin(a) * sp,
+        life: 0.5 + Math.random() * 0.5,
+        glint: atLip && Math.random() < 0.25
+      });
+    }
+  }
+
+  function pocketMult() {
+    return (surfer.x - frontier) < 64 ? 2 : 1;
+  }
+
+  function trickScore(base, label) {
+    var m = pocketMult();
+    var pts = base * m;
+    score += pts;
+    addPopup(surfer.x, surfer.y - 18, label + " +" + pts, base >= 100);
+  }
+
+  /* ================= Wipeout / respawn ================= */
+  function wipeout(reason) {
+    if (state !== "riding") return;
+    state = "wipeout";
+    wipeT = 0;
+    shake = reduceMotion ? 0 : 5;
+    surfer.speed = 0.4;
+    emitSpray(50, 0, 2.2, false);
+    addPopup(surfer.x, surfer.y - 20, reason, true);
+  }
+
+  function respawn() {
+    state = "riding";
+    surfer.x = surfer.tx = Math.max(frontier + 110, 190);
+    surfer.y = surfer.ty = 132;
+    surfer.vx = surfer.vy = 0;
+    surfer.lipTime = 0;
+    surfer.blinkUntil = t + 1.6;
+    frontier = Math.max(14, frontier - 46);
+  }
+
+  /* ================= Session flow ================= */
+  function startSession() {
+    score = 0;
+    scoreF = 0;
+    timeLeft = SESSION;
+    frontier = 26;
+    sprays.length = 0;
+    popups.length = 0;
+    surfer.x = surfer.tx = 200;
+    surfer.y = surfer.ty = 130;
+    surfer.vx = surfer.vy = 0;
+    surfer.speed = 0.6;
+    surfer.blinkUntil = 0;
+    state = "riding";
+    overlayStart.hidden = true;
+    overlayEnd.hidden = true;
+  }
+
+  function endSession() {
+    state = "over";
+    if (score > best) {
+      best = score;
+      try { localStorage.setItem("rippl_surf_best", String(best)); } catch (e) {}
+      hudBest.textContent = String(best);
+      endLine.textContent = "New best — the lineup noticed.";
+    } else {
+      endLine.textContent = best > 0 ? "Best so far · " + best + " pts. One more?" : "Clean session. One more?";
+    }
+    endScore.textContent = score + " PTS";
+    overlayEnd.hidden = false;
+  }
+
+  document.getElementById("btn-start").addEventListener("click", startSession);
+  document.getElementById("btn-again").addEventListener("click", startSession);
+
+  /* ================= Update ================= */
+  function update(dt) {
+    t += dt;
+
+    if (state === "over" || state === "idle") return;
+
+    timeLeft -= dt;
+    if (timeLeft <= 0) { timeLeft = 0; endSession(); return; }
+
+    var crest = crestY(surfer.x);
+
+    if (state === "wipeout") {
+      wipeT += dt;
+      surfer.y = Math.min(surfer.y + 30 * dt, BOTTOM - 14);
+      surfer.x -= 14 * dt;
+      if (wipeT > 1.3) respawn();
+    } else {
+      /* keyboard nudges the target */
+      var kv = 150 * dt;
+      if (keys.ArrowLeft) surfer.tx -= kv;
+      if (keys.ArrowRight) surfer.tx += kv;
+      if (keys.ArrowUp) surfer.ty -= kv;
+      if (keys.ArrowDown) surfer.ty += kv;
+
+      surfer.tx = Math.max(14, Math.min(W - 14, surfer.tx));
+      surfer.ty = Math.max(HORIZON + 10, Math.min(BOTTOM - 10, surfer.ty));
+
+      var px = surfer.x, py = surfer.y;
+      surfer.x += (surfer.tx - surfer.x) * Math.min(1, 10 * dt);
+      surfer.y += (surfer.ty - surfer.y) * Math.min(1, 10 * dt);
+
+      /* per-frame velocity normalised to ~60fps units */
+      var nvx = (surfer.x - px) / Math.max(dt, 1e-4) / 60;
+      var nvy = (surfer.y - py) / Math.max(dt, 1e-4) / 60;
+      surfer.vx += (nvx - surfer.vx) * Math.min(1, 14 * dt);
+      surfer.vy += (nvy - surfer.vy) * Math.min(1, 14 * dt);
+
+      /* board angle follows motion */
+      var targetA = Math.max(-0.85, Math.min(0.85, surfer.vx * 0.22 + surfer.vy * 0.10));
+      surfer.boardA += (targetA - surfer.boardA) * Math.min(1, 12 * dt);
+
+      /* --- carve detection: strong horizontal reversal --- */
+      var sx = Math.abs(surfer.vx) > 1.9 ? (surfer.vx > 0 ? 1 : -1) : 0;
+      if (sx !== 0) {
+        if (surfer.primedCarveDir !== 0 && sx !== surfer.primedCarveDir &&
+            t < surfer.primedCarveUntil && t - surfer.lastTrickAt > 0.5) {
+          trickScore(25, "CARVE");
+          surfer.lastTrickAt = t;
+          emitSpray(14, -sx, 1.4, false);
+        }
+        surfer.primedCarveDir = sx;
+        surfer.primedCarveUntil = t + 0.32;
+      }
+
+      /* --- top snap: climb to the lip, whip down --- */
+      var nearLip = (surfer.y - crest) < 16;
+      if (nearLip && surfer.vy < -2.0) surfer.primedSnap = t + 0.38;
+      if (t < surfer.primedSnap && surfer.vy > 2.0 && t - surfer.lastTrickAt > 0.5) {
+        trickScore(150, "TOP SNAP");
+        surfer.lastTrickAt = t;
+        surfer.primedSnap = 0;
+        surfer.speed = Math.min(2, surfer.speed + 0.7);
+        emitSpray(44, surfer.vx > 0 ? 1 : -1, 2.4, true);
+        if (!reduceMotion) shake = 3;
+      }
+
+      /* --- ambient spray while carving hard --- */
+      var mv = Math.abs(surfer.vx) + Math.abs(surfer.vy);
+      if (mv > 2.2) emitSpray(Math.min(4, mv | 0), surfer.vx > 0 ? -1 : 1, 0.9, nearLip);
+
+      /* --- pump physics: higher on the face = faster --- */
+      var depth = Math.max(0, Math.min(1, (surfer.y - crest) / (BOTTOM - crest)));
+      var speedTarget = 1.7 - depth * 1.5;            /* 1.7 at the lip → 0.2 in the flats */
+      surfer.speed += (speedTarget - surfer.speed) * Math.min(1, 0.9 * dt);
+
+      /* whitewash chases; speed pushes it back */
+      frontier += (10.5 - surfer.speed * 9.5) * dt;
+      frontier = Math.max(10, Math.min(W - 60, frontier));
+
+      /* trickle score for staying on the open face */
+      scoreF += 2 * pocketMult() * dt;
+      if (scoreF >= 1) { var whole = Math.floor(scoreF); score += whole; scoreF -= whole; }
+
+      /* --- hazards --- */
+      if (t > surfer.blinkUntil) {
+        if (surfer.x < foamEdge(surfer.y) + 9) wipeout("WIPEOUT");
+        else if (surfer.y < crest - 2) {
+          surfer.lipTime += dt;
+          if (surfer.lipTime > 0.45) wipeout("OVER THE FALLS");
+        } else {
+          surfer.lipTime = Math.max(0, surfer.lipTime - dt * 2);
+        }
+      }
+    }
+
+    /* particles */
+    for (var i = sprays.length - 1; i >= 0; i--) {
+      var p = sprays[i];
+      p.life -= dt;
+      if (p.life <= 0) { sprays.splice(i, 1); continue; }
+      p.x += p.vx * 60 * dt * 0.6;
+      p.y += p.vy * 60 * dt * 0.6;
+      p.vy += 7 * dt;
+    }
+    for (var j = popups.length - 1; j >= 0; j--) {
+      popups[j].life -= dt;
+      popups[j].y -= 14 * dt;
+      if (popups[j].life <= 0) popups.splice(j, 1);
+    }
+    shake = Math.max(0, shake - 14 * dt);
+
+    /* HUD */
+    var m = Math.floor(timeLeft / 60), s = Math.floor(timeLeft % 60);
+    hudTime.textContent = m + ":" + (s < 10 ? "0" : "") + s;
+    hudScore.textContent = String(score);
+    var inPocket = state === "riding" && pocketMult() === 2;
+    if (inPocket !== pocketOn) {
+      pocketOn = inPocket;
+      hudPocket.classList.toggle("is-on", inPocket);
+    }
+  }
+
+  /* ================= Render ================= */
+  function drawBoard(cx, cy, angle) {
+    var L = 8;
+    for (var i = -L; i <= L; i++) {
+      var bx = Math.round(cx + Math.cos(angle) * i * 2);
+      var by = Math.round(cy + Math.sin(angle) * i * 2);
+      ctx.fillStyle = i === -L ? PAL.cream : PAL.sun;
+      ctx.fillRect(bx, by, 3, 3);
+      ctx.fillStyle = PAL.sunDeep;
+      ctx.fillRect(bx, by + 3, 3, 1);
+    }
+  }
+
+  function render() {
+    ctx.save();
+    if (shake > 0.4) {
+      ctx.translate(((Math.random() * 2 - 1) * shake) | 0, ((Math.random() * 2 - 1) * shake) | 0);
+    }
+
+    /* sky */
+    ctx.fillStyle = PAL.skyWarm;
+    ctx.fillRect(-6, -6, W + 12, HORIZON + 6);
+    /* sun */
+    ctx.fillStyle = PAL.glow;
+    ctx.fillRect(244, 18, 24, 24);
+    ctx.fillRect(248, 14, 16, 32);
+    ctx.fillRect(240, 22, 32, 16);
+    ctx.fillStyle = PAL.sun;
+    ctx.fillRect(244, 38, 24, 4);
+    /* far clouds */
+    ctx.fillStyle = PAL.bone;
+    ctx.fillRect(40, 20, 30, 4);
+    ctx.fillRect(52, 16, 18, 4);
+    ctx.fillRect(150, 30, 24, 4);
+
+    /* sea: distant water + face, drawn in 2px columns */
+    for (var x = 0; x < W; x += 2) {
+      var cr = crestY(x) | 0;
+
+      /* distant water behind the wave */
+      ctx.fillStyle = PAL.tealDeep;
+      ctx.fillRect(x, HORIZON, 2, cr - HORIZON);
+      /* sun glint column */
+      if (x > 236 && x < 276 && ((x + ((t * 14) | 0)) % 8) < 2) {
+        ctx.fillStyle = PAL.glow;
+        ctx.fillRect(x, HORIZON + 2 + (x % 5), 2, 2);
+      }
+
+      /* face bands */
+      var faceH = H - cr;
+      ctx.fillStyle = PAL.tealLight;
+      ctx.fillRect(x, cr, 2, Math.max(2, (faceH * 0.16) | 0));
+      ctx.fillStyle = PAL.teal;
+      ctx.fillRect(x, cr + ((faceH * 0.16) | 0), 2, (faceH * 0.36) | 0);
+      ctx.fillStyle = PAL.tealDeep;
+      ctx.fillRect(x, cr + ((faceH * 0.52) | 0), 2, (faceH * 0.30) | 0);
+      ctx.fillStyle = PAL.tealDark;
+      ctx.fillRect(x, cr + ((faceH * 0.82) | 0), 2, H - (cr + ((faceH * 0.82) | 0)));
+
+      /* moving streaks down the face for speed — short drifting dashes */
+      var ph = (x * 7 + ((t * 80) | 0)) % 46;
+      if (ph < 2) {
+        ctx.fillStyle = PAL.tealLight;
+        ctx.fillRect(x, cr + ((faceH * (0.25 + ((x * 13) % 40) / 100)) | 0), 2, 6 + (x % 3) * 4);
+      }
+
+      /* foam cap on the crest */
+      ctx.fillStyle = PAL.bone;
+      var capH = 3 + ((x + ((t * 26) | 0)) % 7 === 0 ? 2 : 0);
+      ctx.fillRect(x, cr - 2, 2, capH);
+      if ((x + ((t * 40) | 0)) % 11 === 0) {
+        ctx.fillStyle = PAL.cream;
+        ctx.fillRect(x, cr + capH - 1, 2, 3);
+      }
+    }
+
+    /* whitewash mass chasing from the left (pattern translated for boil) */
+    var minCr = 70;
+    var ox = -((t * 16) % 64), oy = -((t * 9) % 64);
+    ctx.save();
+    ctx.translate(ox, oy);
+    ctx.fillStyle = foamPattern;
+    for (var y = minCr; y < H; y += 2) {
+      var ex = foamEdge(y);
+      if (y >= crestY(Math.min(Math.max(ex, 0), W - 1)) - 6) {
+        ctx.fillRect(-ox, y - oy, ex, 2);
+      }
+    }
+    ctx.restore();
+    /* ragged leading edge + tumbling chunks */
+    ctx.fillStyle = PAL.bone;
+    for (var y2 = minCr; y2 < H; y2 += 2) {
+      var ex2 = foamEdge(y2);
+      if (y2 >= crestY(Math.min(Math.max(ex2, 0), W - 1)) - 6) {
+        ctx.fillRect(ex2 - 2, y2, 4, 2);
+        if ((y2 + ((t * 30) | 0)) % 9 === 0) ctx.fillRect(ex2 + 3, y2, 3, 2);
+      }
+    }
+    /* peeling lip tongue running right from the frontier */
+    ctx.fillStyle = PAL.bone;
+    var lipLen = 36 + 10 * Math.sin(t * 2.2);
+    for (var lx = 0; lx < lipLen; lx += 2) {
+      var gx = frontier + lx;
+      if (gx > W) break;
+      var gy = crestY(gx) | 0;
+      ctx.fillRect(gx, gy - 4 + ((lx / 10) | 0), 2, 5 - ((lx / 14) | 0));
+    }
+
+    /* spray */
+    for (var i = 0; i < sprays.length; i++) {
+      var p = sprays[i];
+      ctx.fillStyle = p.glint ? PAL.glow : (p.life > 0.35 ? PAL.bone : PAL.cream);
+      ctx.fillRect(p.x | 0, p.y | 0, 2, 2);
+    }
+
+    /* surfer */
+    if (state === "riding" || state === "idle") {
+      var blink = t < surfer.blinkUntil && ((t * 8) | 0) % 2 === 0;
+      if (!blink) {
+        var spr = SPR.neutral;
+        var avx = surfer.vx;
+        if (t < surfer.primedSnap + 0.15 && Math.abs(surfer.vy) > 1.6 && (surfer.y - crestY(surfer.x)) < 22) {
+          spr = SPR.snap;
+        } else if (avx < -2.6) spr = SPR.leanHardL;
+        else if (avx < -1.1) spr = SPR.leanL;
+        else if (avx > 2.6) spr = SPR.leanHardR;
+        else if (avx > 1.1) spr = SPR.leanR;
+        drawBoard(surfer.x | 0, (surfer.y + 9) | 0, surfer.boardA);
+        ctx.drawImage(spr, (surfer.x - 12) | 0, (surfer.y - 14) | 0, 24, 24);
+      }
+    } else if (state === "wipeout") {
+      var tspr = ((wipeT * 6) | 0) % 2 === 0 ? SPR.tumble1 : SPR.tumble2;
+      ctx.drawImage(tspr, (surfer.x - 12) | 0, (surfer.y - 14) | 0, 24, 24);
+      /* loose board */
+      drawBoard((surfer.x + 14 + wipeT * 26) | 0, (surfer.y - 6 - Math.sin(wipeT * 6) * 6) | 0, wipeT * 5);
+    }
+
+    /* popups */
+    ctx.textAlign = "center";
+    for (var k = 0; k < popups.length; k++) {
+      var pu = popups[k];
+      ctx.font = (pu.big ? "700 9px" : "500 7px") + " 'JetBrains Mono', monospace";
+      ctx.fillStyle = PAL.ink;
+      ctx.fillText(pu.text, (pu.x | 0) + 1, (pu.y | 0) + 1);
+      ctx.fillStyle = pu.big ? PAL.glow : PAL.bone;
+      ctx.fillText(pu.text, pu.x | 0, pu.y | 0);
+    }
+
+    ctx.restore();
+  }
+
+  /* ================= Loop ================= */
+  var last = performance.now();
+  function frame(now) {
+    var dt = Math.min(0.05, (now - last) / 1000);
+    last = now;
+    update(dt);
+    render();
+    requestAnimationFrame(frame);
+  }
+  document.addEventListener("visibilitychange", function () { last = performance.now(); });
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
