@@ -27,13 +27,20 @@
 <link rel="icon" href="/assets/icons/icon-192.png" type="image/png" sizes="192x192" />
 <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
 <meta name="theme-color" content="#2E1E10" />
+
+<!-- Fonts used in the first screen -->
+<link rel="preload" as="font" type="font/woff2" href="styles/fonts/Inter-Black.woff2" crossorigin />
+<link rel="preload" as="font" type="font/woff2" href="styles/fonts/Inter-Regular.woff2" crossorigin />
+
+<!-- Hero background: fetch early so it's there when the loader lifts -->
+<link rel="preload" as="image" type="image/webp" fetchpriority="high" href="assets/img/signup-waxing-1536.webp" />
 <style>
-  @font-face { font-family: "Inter"; font-weight: 300; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Light-BETA.otf") format("opentype"); }
-  @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Regular.otf") format("opentype"); }
-  @font-face { font-family: "Inter"; font-weight: 500; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Medium.otf") format("opentype"); }
-  @font-face { font-family: "Inter"; font-weight: 600; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-SemiBold.otf") format("opentype"); }
-  @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Bold.otf") format("opentype"); }
-  @font-face { font-family: "Inter"; font-weight: 900; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Black.otf") format("opentype"); }
+  @font-face { font-family: "Inter"; font-weight: 300; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Light.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Regular.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 500; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Medium.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 600; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-SemiBold.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Bold.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 900; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Black.woff2") format("woff2"); }
 
   *, *::before, *::after { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }

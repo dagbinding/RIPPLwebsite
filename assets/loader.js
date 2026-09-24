@@ -137,15 +137,43 @@
     scheduleIdle();
   }
 
-  /* ── Dismiss on page ready (held ~2s extra so the mark is seen) ── */
+  /* ── Dismiss once the first screen is ready ──
+     Waits for fonts and any <link rel="preload" as="image"> (the hero),
+     not the whole page — below-the-fold images and embeds shouldn't hold
+     the site hostage. MIN_SHOW keeps the mark on screen long enough to
+     register; MAX_WAIT caps it on slow networks. */
+  var MIN_SHOW = 1200, MAX_WAIT = 4000;
+  var shownAt = Date.now(), dismissed = false;
   function dismissLoader() {
+    if (dismissed) return;
+    dismissed = true;
     cancelIdle();
     loader.classList.add('is-dismissed');
     setTimeout(function () { if (loader.parentNode) loader.remove(); }, 600);
   }
-  if (document.readyState === 'complete') {
-    setTimeout(dismissLoader, 2400);
+  function firstScreenReady() {
+    var waits = [];
+    if (document.fonts && document.fonts.ready) waits.push(document.fonts.ready);
+    document.querySelectorAll('link[rel="preload"][as="image"]').forEach(function (link) {
+      // onload, not decode(): decode() stalls in background tabs.
+      waits.push(new Promise(function (resolve) {
+        var img = new Image();
+        img.onload = img.onerror = resolve;
+        if (link.imageSrcset) img.srcset = link.imageSrcset;
+        img.src = link.href;
+      }));
+    });
+    return Promise.all(waits);
+  }
+  function whenReady() {
+    firstScreenReady().then(function () {
+      setTimeout(dismissLoader, Math.max(0, MIN_SHOW - (Date.now() - shownAt)));
+    });
+  }
+  setTimeout(dismissLoader, MAX_WAIT);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', whenReady);
   } else {
-    window.addEventListener('load', function () { setTimeout(dismissLoader, 2000); });
+    whenReady();
   }
 })();

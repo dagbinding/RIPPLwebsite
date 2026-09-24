@@ -52,16 +52,20 @@ Goal: fix everything that's actively hurting indexing, sharing, and speed.
   - Loader mark 1293px → 320px
   - Verified at 1920×1080 and 375×812: all rendered sizes identical to before, no 404s, no horizontal overflow
   - Not done: AVIF (would shave another ~30–40% but needs `image-set(type())` fallbacks). The original full-size files are still copied into `dist/`, which makes the deploy bigger but nothing downloads them
-- [ ] **1.4 Fonts** — convert Inter OTFs to `woff2`, only load weights actually used, preload the 2–3 above-the-fold weights. `.bento__h` asks for weight 800, which isn't loaded (renders as 900) — set it to 900 explicitly. Tidy the dead `@font-face` rules in `styles/colors_and_type.css`
+- [x] **1.4 Fonts** — 6 Inter OTFs 1.3MB → Latin-subset WOFF2 171KB (`scripts/subset_fonts.py`, needs `pip install fonttools brotli`)
+  - First-screen weights preloaded: home 900/300/600, signup 900/400
+  - `.bento__h` 800 → 900 (800 was never loaded, so it already rendered as 900 — no visual change)
+  - Left alone: `styles/colors_and_type.css` still declares 17 missing fonts. It's the design system's copy and no page loads it — fix at source in the design system project
 - [ ] **1.5 Structured data** — JSON-LD `Organization`, `WebSite`, `Product` (RIPPLsense, pre-order/waitlist availability)
+  - `sameAs`: https://www.instagram.com/ripplsurf/ · https://www.tiktok.com/@ripplsurf
 - [ ] **1.6 On-page fixes**
   - H1: keep the rotator, add a keyword-bearing line (visible or visually hidden) that says what RIPPL is
   - Descriptive `alt` on `IMG_7307.jpeg` and `P1040672_dg.jpeg` (×2)
   - Remove the Tweaks dev panel from production
   - Footer brand link `#` → `/`
 - [ ] **1.7 Signup URL** — rename `Tester Signup.html` → `/waitlist`, 301 old URL(s), update all internal links + the PostHog `waitlist_cta_clicked` href check
-- [ ] **1.8 Caching** — `netlify.toml` with long-lived `Cache-Control` on `/assets/*`, `/styles/fonts/*`
-- [ ] **1.9 Loader vs LCP** — make sure the brand loader dismisses fast (or on first paint of hero) so it doesn't delay Largest Contentful Paint
+- [x] **1.8 Caching** — `netlify.toml` headers: `/assets/img/*` + `/assets/icons/*` 7 days (+1 day stale-while-revalidate), `/styles/fonts/*` 1 year immutable. HTML left on Netlify's revalidate default. Names aren't content-hashed: rename an image if a change must show immediately
+- [x] **1.9 Loader vs LCP** — the loader used to wait for the full `load` event (every image + the Tally iframe) plus 2s. Now it lifts when fonts + preloaded hero images are ready, minimum 1.2s on screen, hard cap 4s. Uses `onload`, not `decode()` (decode stalls in background tabs). Signup hero bg is now preloaded too
 - [ ] **1.10 Verify** — Lighthouse (mobile) before/after, Rich Results Test, OG preview check, 390px overflow check
 
 **Done when:** Lighthouse SEO = 100, mobile performance meaningfully up, link previews render in iMessage/Slack/X, only intended URLs are crawlable.
@@ -122,4 +126,5 @@ Goal: give Google more real content to rank and win FAQ rich results.
 | 2026-09-24 | Plan created | 5730fa3 | Audit baseline recorded |
 | 2026-09-24 | 1.2 Crawl control & cleanup | 70fedef | Takes effect once merged to `main` (pushing `main` deploys live) |
 | 2026-09-24 | 1.1 Head metadata | 6bb7eb2 | Share image from the hero photo |
-| 2026-09-24 | 1.3 Image weight | see git log | ~10MB → ~590KB first load |
+| 2026-09-24 | 1.3 Image weight | 992db8e | ~10MB → ~590KB first load |
+| 2026-09-24 | 1.4 Fonts · 1.8 Caching · 1.9 Loader | see git log | Fonts 1.3MB → 171KB; loader lifts at ~1.2s |
