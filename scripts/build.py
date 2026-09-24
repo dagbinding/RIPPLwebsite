@@ -19,7 +19,7 @@ DIST = ROOT / "dist"
 
 # Pages and root files served at ripplsurf.com.
 PAGES = ["index.html", "Tester Signup.html"]
-ROOT_FILES = ["robots.txt", "sitemap.xml"]
+ROOT_FILES = ["robots.txt", "sitemap.xml", "favicon.ico"]
 # Folders published whole.
 DIRS = ["assets", "styles"]
 # Folders whose files are published only when a page references them.
@@ -36,6 +36,11 @@ def local_refs(text):
             continue
         if parsed.path:
             yield parsed.path
+
+
+def resolve(base, ref):
+    """Root-relative refs ("/favicon.ico") resolve from the site root."""
+    return ((DIST / ref.lstrip("/")) if ref.startswith("/") else (base / ref)).resolve()
 
 
 def main():
@@ -58,7 +63,7 @@ def main():
     # Copy referenced on-demand files.
     for f, base in scanned:
         for ref in local_refs(f.read_text(encoding="utf-8")):
-            rel = (base / ref).resolve().relative_to(DIST)
+            rel = resolve(base, ref).relative_to(DIST)
             if rel.parts and rel.parts[0] in ON_DEMAND:
                 src = ROOT / rel
                 if src.is_file():
@@ -70,7 +75,7 @@ def main():
     dropped, broken = [], []
     for f, base in scanned:
         for ref in local_refs(f.read_text(encoding="utf-8")):
-            target = (base / ref).resolve()
+            target = resolve(base, ref)
             if ref.endswith("/"):
                 target = target / "index.html"
             if not target.exists():

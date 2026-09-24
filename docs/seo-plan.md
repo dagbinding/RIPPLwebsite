@@ -31,23 +31,23 @@ Competitors benchmarked: [Gone Surfing](https://gonesurfing.app/), [Dawn Patrol]
 
 Goal: fix everything that's actively hurting indexing, sharing, and speed.
 
-- [ ] **1.1 Head metadata** on `index.html` and `Tester Signup.html`
-  - Unique `<title>` with keyword (home e.g. "RIPPL — Surf Sensor & AI Surf Coach"; signup e.g. "Join the RIPPL Surf Sensor Tester Program")
-  - `<meta name="description">` 150–160 chars
-  - `rel="canonical"` → `https://www.ripplsurf.com/…`
-  - Open Graph + Twitter `summary_large_image`, with a 1200×630 share image (film photo + wordmark, per design system)
-  - Favicon set (`favicon.ico`, 32px PNG, `apple-touch-icon`) + `theme-color`
+- [x] **1.1 Head metadata** on `index.html` and `Tester Signup.html`
+  - Titles: "RIPPL — Surfboard Sensor & AI Surf Coach" · "Join the RIPPL Tester Program — Free Surf Sensor"
+  - Descriptions (154 / 151 chars), canonical URLs (signup canonical is `/tester%20signup` until 1.7)
+  - Open Graph + Twitter `summary_large_image` → `assets/og-image.jpg` (1200×630, 135KB). Cropped from `assets/follow_hd_corrected.jpg`, white wordmark bottom-left over a cocoa scrim; wordmark contrast 4.5:1 mean, 3.0:1 on brightest spray
+  - Icons: `favicon.ico` (16/32/48), `assets/icons/icon-192.png`, `assets/icons/apple-touch-icon.png` — cream twin-loop mark on cocoa. `theme-color` #2E1E10
+  - After merge: check previews with the LinkedIn Post Inspector / an iMessage or Slack paste (caches may need a refresh)
 - [x] **1.2 Crawl control & cleanup**
   - `robots.txt` (allow all, points to sitemap). Removed pages are *not* disallowed, so Google can see they 404 and drop them
   - `sitemap.xml` (home + signup; update the signup URL in 1.7)
   - `netlify.toml` now builds with `scripts/build.py` and publishes `dist/`: only the two pages, `assets/`, `styles/`, robots, sitemap, and any `uploads/` files a page references. Test pages stay in the repo but are no longer served; `_intel_preview.html` 301s to `/`
   - Build fails if a page references a repo file the allowlist left out. When adding a new page or root file, add it to `PAGES` / `ROOT_FILES` in `scripts/build.py`
   - Local preview of exactly what ships: launch config `rippl-dist` (port 8733)
-  - Found: `styles/colors_and_type.css` declares 17 font files (Helvetica, Inter italics/Thin/ExtraLight/ExtraBold) that aren't in the repo. Pre-existing; fold into 1.4
+  - Found: `styles/colors_and_type.css` declares 17 font files that aren't in the repo. No live impact — neither page loads that stylesheet (both inline their own `@font-face`). Fold into 1.4
 - [ ] **1.3 Image weight**
   - Hero bg → AVIF/WebP ≤ ~300KB; PNG screenshots → WebP; right-size to max rendered width (2× DPR)
   - `width`/`height` on every `<img>`; `loading="lazy"` + `decoding="async"` below the fold; `fetchpriority="high"` on the LCP image
-- [ ] **1.4 Fonts** — convert Inter OTFs to `woff2`, only load weights actually used, preload the 2–3 above-the-fold weights
+- [ ] **1.4 Fonts** — convert Inter OTFs to `woff2`, only load weights actually used, preload the 2–3 above-the-fold weights. `.bento__h` asks for weight 800, which isn't loaded (renders as 900) — set it to 900 explicitly. Tidy the dead `@font-face` rules in `styles/colors_and_type.css`
 - [ ] **1.5 Structured data** — JSON-LD `Organization`, `WebSite`, `Product` (RIPPLsense, pre-order/waitlist availability)
 - [ ] **1.6 On-page fixes**
   - H1: keep the rotator, add a keyword-bearing line (visible or visually hidden) that says what RIPPL is
@@ -115,4 +115,5 @@ Goal: give Google more real content to rank and win FAQ rich results.
 | Date | Item | Commit | Notes |
 |---|---|---|---|
 | 2026-09-24 | Plan created | 5730fa3 | Audit baseline recorded |
-| 2026-09-24 | 1.2 Crawl control & cleanup | see git log | Takes effect once merged to `main` and Netlify builds |
+| 2026-09-24 | 1.2 Crawl control & cleanup | 70fedef | Takes effect once merged to `main` (pushing `main` deploys live) |
+| 2026-09-24 | 1.1 Head metadata | see git log | Share image from the hero photo |
