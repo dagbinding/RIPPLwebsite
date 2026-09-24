@@ -1,0 +1,11 @@
+# Publish only the allowlisted site built by scripts/build.py —
+# never the repo root (it holds test pages, CLAUDE.md, uploads/, docs/).
+[build]
+  command = "python3 scripts/build.py"
+  publish = "dist"
+
+# _intel_preview.html was a live duplicate of the homepage.
+[[redirects]]
+  from = "/_intel_preview.html"
+  to = "/"
+  status = 301

@@ -37,10 +37,13 @@ Goal: fix everything that's actively hurting indexing, sharing, and speed.
   - `rel="canonical"` → `https://www.ripplsurf.com/…`
   - Open Graph + Twitter `summary_large_image`, with a 1200×630 share image (film photo + wordmark, per design system)
   - Favicon set (`favicon.ico`, 32px PNG, `apple-touch-icon`) + `theme-color`
-- [ ] **1.2 Crawl control & cleanup**
-  - Add `robots.txt` (disallow test pages, `/uploads/`) pointing to the sitemap
-  - Add `sitemap.xml` (home + waitlist only)
-  - Stop publishing dev files: move test pages to `archive/`, and set a Netlify publish dir / ignore so `CLAUDE.md`, `README.md`, `docs/`, `uploads/`, `archive/`, `hero-lab/` aren't served
+- [x] **1.2 Crawl control & cleanup**
+  - `robots.txt` (allow all, points to sitemap). Removed pages are *not* disallowed, so Google can see they 404 and drop them
+  - `sitemap.xml` (home + signup; update the signup URL in 1.7)
+  - `netlify.toml` now builds with `scripts/build.py` and publishes `dist/`: only the two pages, `assets/`, `styles/`, robots, sitemap, and any `uploads/` files a page references. Test pages stay in the repo but are no longer served; `_intel_preview.html` 301s to `/`
+  - Build fails if a page references a repo file the allowlist left out. When adding a new page or root file, add it to `PAGES` / `ROOT_FILES` in `scripts/build.py`
+  - Local preview of exactly what ships: launch config `rippl-dist` (port 8733)
+  - Found: `styles/colors_and_type.css` declares 17 font files (Helvetica, Inter italics/Thin/ExtraLight/ExtraBold) that aren't in the repo. Pre-existing; fold into 1.4
 - [ ] **1.3 Image weight**
   - Hero bg → AVIF/WebP ≤ ~300KB; PNG screenshots → WebP; right-size to max rendered width (2× DPR)
   - `width`/`height` on every `<img>`; `loading="lazy"` + `decoding="async"` below the fold; `fetchpriority="high"` on the LCP image
@@ -111,4 +114,5 @@ Goal: give Google more real content to rank and win FAQ rich results.
 
 | Date | Item | Commit | Notes |
 |---|---|---|---|
-| 2026-09-24 | Plan created | — | Audit baseline recorded |
+| 2026-09-24 | Plan created | 5730fa3 | Audit baseline recorded |
+| 2026-09-24 | 1.2 Crawl control & cleanup | see git log | Takes effect once merged to `main` and Netlify builds |
