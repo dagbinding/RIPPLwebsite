@@ -2026,55 +2026,73 @@
       <p class="faq__sub">Everything surfers ask us before they join the lineup. Missing one? <a href="https://www.instagram.com/ripplsurf/">Ask us on Instagram</a>.</p>
     </header>
     <div class="faq__list">
-      <details class="faq__item">
+      <details class="faq__item" name="faq">
         <summary class="faq__q"><span>How does it work?</span><span class="faq__icon" aria-hidden="true"></span></summary>
         <div class="faq__a"><p>Snap RIPPLsense onto your tail and surf — no phone in the water. It records every movement of your board, then syncs to the RIPPL app once you're back on the sand, where every wave is broken down and scored.</p><p>Wear a paired watch and you'll get feedback live, the moment you kick out.</p></div>
       </details>
-      <details class="faq__item">
+      <details class="faq__item" name="faq">
         <summary class="faq__q"><span>How will RIPPL improve my surfing?</span><span class="faq__icon" aria-hidden="true"></span></summary>
         <div class="faq__a"><p>RIPPL gives you your own <b>personal AI coach</b> — one that learns how you surf. It uses your ride data to show exactly what to work on, wave by wave: open your shoulders earlier on the bottom turn, for example. It builds training plans that adapt to you and your break, and shows how every session compares with your last.</p><p>With a watch on, you can adjust before the next wave, not next session.</p></div>
       </details>
-      <details class="faq__item">
+      <details class="faq__item" name="faq">
         <summary class="faq__q"><span>Can I compare myself with other surfers?</span><span class="faq__icon" aria-hidden="true"></span></summary>
         <div class="faq__a"><p>Yes. Every ride on RIPPL makes the whole platform smarter, so you can see how you stack up against riders at your level, your local lineup and <b>the pros</b> — and what separates your surfing from theirs.</p></div>
       </details>
-      <details class="faq__item">
+      <details class="faq__item" name="faq">
         <summary class="faq__q"><span>Can I work with a surf coach or ride with a crew?</span><span class="faq__icon" aria-hidden="true"></span></summary>
         <div class="faq__a"><p>That's where we're heading. RIPPL will connect you with <b>surf coaches</b>, and with <b>communities</b> where you can ride together, set goals and push each other to hit them.</p></div>
       </details>
-      <details class="faq__item">
+      <details class="faq__item" name="faq">
         <summary class="faq__q"><span>I'm a beginner. Can I still use RIPPL?</span><span class="faq__icon" aria-hidden="true"></span></summary>
         <div class="faq__a"><p>Yes — RIPPL is for every level. We're building AI models that meet you where you are, whether you're just starting out or the biggest ripper at D-Bah. Wherever your surfing's at, we're building RIPPL for you.</p></div>
       </details>
-      <details class="faq__item">
+      <details class="faq__item" name="faq">
         <summary class="faq__q"><span>Will it fit my board?</span><span class="faq__icon" aria-hidden="true"></span></summary>
         <div class="faq__a"><p>RIPPLsense fits any board — shortboard, longboard or softtop. Stick a mount on each of your boards; the sensor snaps in and out in seconds, so you can change boards mid-session and get straight back in the lineup.</p></div>
       </details>
-      <details class="faq__item">
+      <details class="faq__item" name="faq">
         <summary class="faq__q"><span>How long does the battery last?</span><span class="faq__icon" aria-hidden="true"></span></summary>
         <div class="faq__a"><p><b>Multiple sessions on a single charge</b> — days of surfing between charges. Charge it, attach it before you paddle out, then forget about it.</p></div>
       </details>
-      <details class="faq__item">
+      <details class="faq__item" name="faq">
         <summary class="faq__q"><span>What does RIPPL actually measure?</span><span class="faq__icon" aria-hidden="true"></span></summary>
         <div class="faq__a"><p><b>The motion of every ride.</b> RIPPLsense sits on your board and captures how it moves through every wave, every turn and every paddle out. That motion tells us how you really surf — so RIPPL can read your technique and show you exactly what to change to get better.</p><p>You also get the numbers that matter: waves ridden, wave height, turn power and paddle efficiency. Stack them up against your last session, or against your friends.</p></div>
       </details>
-      <details class="faq__item">
+      <details class="faq__item" name="faq">
         <summary class="faq__q"><span>How is that different from a surf watch app?</span><span class="faq__icon" aria-hidden="true"></span></summary>
         <div class="faq__a"><p>A watch sits on your wrist, so it mostly knows where you went. RIPPLsense sits on the board — the thing you're actually steering — so it reads <b>how</b> you rode each wave, not just that you caught it.</p></div>
       </details>
-      <details class="faq__item">
+      <details class="faq__item" name="faq">
         <summary class="faq__q"><span>Does it work at any beach, or just wave pools?</span><span class="faq__icon" aria-hidden="true"></span></summary>
         <div class="faq__a"><p>Both. RIPPL works at any break — beach, reef or point — and in wave pools too.</p></div>
       </details>
-      <details class="faq__item">
+      <details class="faq__item" name="faq">
         <summary class="faq__q"><span>When will RIPPL be available?</span><span class="faq__icon" aria-hidden="true"></span></summary>
         <div class="faq__a"><p>We're starting our tester program soon. <a href="/waitlist">Join the waitlist</a> to find out first.</p></div>
       </details>
-      <details class="faq__item">
+      <details class="faq__item" name="faq">
         <summary class="faq__q"><span>How does the tester program work?</span><span class="faq__icon" aria-hidden="true"></span></summary>
         <div class="faq__a"><p>Join the waitlist and we hand-pick our first riders. Testers get a <b>free RIPPLsense</b>, shipped worldwide, first access to every feature, and a direct line to the founders.</p><p>Every surfer you refer moves you both up the list. Five accepted referrals guarantees your sensor in Drop 2; ten gets you and your whole crew into Drop 1.</p></div>
       </details>
     </div>
+    <script>
+      // Only one answer opens at a time (name="faq"). When the open one sits
+      // above the question you tap, it collapses and would drag that question
+      // up the screen, so hold the tapped question still until it settles.
+      (function () {
+        document.querySelectorAll('#faq .faq__q').forEach(function (q) {
+          q.addEventListener('click', function () {
+            var top = q.getBoundingClientRect().top;
+            var until = performance.now() + 500;
+            (function hold() {
+              var drift = q.getBoundingClientRect().top - top;
+              if (Math.abs(drift) > 0.5) window.scrollBy({ top: drift, behavior: 'instant' });
+              if (performance.now() < until) requestAnimationFrame(hold);
+            })();
+          });
+        });
+      })();
+    </script>
   </section>
 
   <!-- ============ Tester CTA ============ -->
