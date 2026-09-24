@@ -86,13 +86,14 @@ Goal: fix everything that's actively hurting indexing, sharing, and speed.
 
 Goal: give Google more real content to rank and win FAQ rich results.
 
-- [ ] **2.1 FAQ section on the homepage**
-  - Questions to answer (confirm facts with the team): what RIPPL is · how the sensor mounts / which boards · waterproofing & durability · battery life & charging · what it measures (and vs a watch) · does it need a phone in the water · Apple Watch / Android support · price & launch timing · how the tester program works · data & privacy
-  - Design: matches site vocabulary (cream surface, Inter, accordion with 220ms ease-out, visible focus, reduced-motion fallback, readable at 390px)
-  - Content visible in the DOM (not JS-injected) so it's indexable
-- [ ] **2.2 `FAQPage` JSON-LD** mirroring the visible Q&A exactly
+- [x] **2.1 FAQ section on the homepage** (branch `faq`) — 14 questions, between RIPPLsocial and the tester CTA. Option A (editorial two-column, sticky intro) chosen over B (numbered list); both kept in `archive/faq-options.html`
+  - Copy confirmed with Dylan 2026-09-24: fits any board (a mount per board) · records with no phone in the water, watch optional for live feedback · works at any break and in wave pools · every level · multi-session battery (charging tech not public yet) · social sharing on the roadmap · "tester program starting soon" · pricing not announced, testers free
+  - Left out on purpose: supported phones/watches (not decided), data/privacy (until there's a policy to link)
+  - Native `<details>`: indexable, keyboard-accessible, no JS. Height animates where `::details-content` + `interpolate-size` are supported, instant elsewhere; reduced-motion honoured
+  - Verified 1440 / 375 / 320px: no horizontal overflow, tap targets ≥ 78px, teal focus ring, Enter toggles
+- [x] **2.2 `FAQPage` JSON-LD** — generated at build time by `scripts/build.py` from the visible FAQ (`<!-- build:faq-jsonld -->` placeholder), so markup and copy can't drift. Note: Google only shows FAQ rich results for government/health sites since 2023 — the markup is for Bing/AI assistants; the SEO value is the indexable copy itself
 - [ ] **2.3 Signup page copy** — expand toward ~400 words: what testers get, who we're looking for, timeline
-- [ ] **2.4 Search Console** — verify domain, submit sitemap, start tracking impressions/queries (baseline for Stage 3)
+- [x] **2.4 Search Console** — Domain property `ripplsurf.com` (auto-verified via the existing Google Workspace TXT record), sitemap submitted 2026-09-24. `/` and `/waitlist` indexing requested
 
 **Done when:** FAQ live and passing the Rich Results Test, Search Console collecting data.
 
@@ -141,4 +142,7 @@ Goal: give Google more real content to rank and win FAQ rich results.
 | 2026-09-24 | 1.4 Fonts · 1.8 Caching · 1.9 Loader | 0d500f6 | Fonts 1.3MB → 171KB; loader lifts at ~1.2s |
 | 2026-09-24 | 1.5 Schema · 1.6 On-page · 1.7 /waitlist | ce8d183 | Site now edited in Claude Code only (no more Claude Design exports) |
 | 2026-09-24 | PostHog only on ripplsurf.com | 9159ee5 | Local + preview traffic no longer tracked |
-| 2026-09-24 | 1.10 Verify | see git log | LCP 5.3s → 2.2s (real throttling); SEO 100 |
+| 2026-09-24 | 1.10 Verify | ac5bfc3 | LCP 5.3s → 2.2s (real throttling); SEO 100 |
+| 2026-09-24 | Stage 1 live | c147cb2 | PR #1 merged to main |
+| 2026-09-24 | 2.4 Search Console | — | Auto-verified; sitemap submitted |
+| 2026-09-24 | 2.1 FAQ · 2.2 FAQPage | see git log | Branch `faq`; also fixes `posthog.capture` errors on non-production hosts |

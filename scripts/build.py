@@ -8,9 +8,11 @@ build if any local reference is missing.
 
 Run locally:  python3 scripts/build.py
 """
+import json
 import re
 import shutil
 import sys
+from html.parser import HTMLParser
 from pathlib import Path
 from urllib.parse import unquote, urlparse
 
@@ -38,6 +40,58 @@ def local_refs(text):
             yield parsed.path
 
 
+FAQ_MARKER = "<!-- build:faq-jsonld -->"
+
+
+class FaqParser(HTMLParser):
+    """Collects (question, answer) text from <summary class="faq__q"> / <div class="faq__a">."""
+
+    def __init__(self):
+        super().__init__()
+        self.items, self.mode, self.depth, self.buf = [], None, 0, []
+
+    def handle_starttag(self, tag, attrs):
+        cls = dict(attrs).get("class") or ""
+        if self.mode:
+            self.depth += 1
+            if tag == "p" and self.buf:
+                self.buf.append(" ")
+        elif "faq__q" in cls.split() or "faq__a" in cls.split():
+            self.mode, self.depth, self.buf = ("q" if "faq__q" in cls else "a"), 1, []
+
+    def handle_endtag(self, tag):
+        if not self.mode:
+            return
+        self.depth -= 1
+        if self.depth == 0:
+            text = " ".join("".join(self.buf).split())
+            if self.mode == "q":
+                self.items.append([text, None])
+            elif self.items:
+                self.items[-1][1] = text
+            self.mode = None
+
+    def handle_data(self, data):
+        if self.mode:
+            self.buf.append(data)
+
+
+def faq_jsonld(html):
+    """FAQPage JSON-LD built from the visible FAQ, so the two never drift."""
+    parser = FaqParser()
+    parser.feed(html)
+    items = [(q, a) for q, a in parser.items if q and a]
+    data = {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}}
+            for q, a in items
+        ],
+    }
+    return '<script type="application/ld+json">\n' + json.dumps(data, indent=2, ensure_ascii=False) + "\n</script>", len(items)
+
+
 def resolve(base, ref):
     """Root-relative refs ("/favicon.ico") resolve from the site root."""
     return ((DIST / ref.lstrip("/")) if ref.startswith("/") else (base / ref)).resolve()
@@ -51,6 +105,15 @@ def main():
     ignore = shutil.ignore_patterns(".DS_Store")
     for name in PAGES + ROOT_FILES:
         shutil.copy2(ROOT / name, DIST / name)
+    for name in PAGES:
+        page = DIST / name
+        html = page.read_text(encoding="utf-8")
+        if FAQ_MARKER in html:
+            tag, count = faq_jsonld(html)
+            if not count:
+                sys.exit(f"Build failed: {name} has a FAQ marker but no FAQ items")
+            page.write_text(html.replace(FAQ_MARKER, tag), encoding="utf-8")
+            print(f"{name}: FAQPage JSON-LD with {count} questions")
     for name in DIRS:
         shutil.copytree(ROOT / name, DIST / name, ignore=ignore)
 
@@ -78,6 +141,8 @@ def main():
             target = resolve(base, ref)
             if ref.endswith("/"):
                 target = target / "index.html"
+            elif not target.suffix and target.with_suffix(".html").exists():
+                target = target.with_suffix(".html")  # clean URL, e.g. /waitlist
             if not target.exists():
                 line = f"{f.relative_to(DIST)} -> {ref}"
                 (dropped if (ROOT / target.relative_to(DIST)).exists() else broken).append(line)

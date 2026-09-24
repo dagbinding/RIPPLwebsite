@@ -773,7 +773,7 @@
           var m = milestones[i];
           if (pct >= m && !reached[m]) {
             reached[m] = true;
-            posthog.capture('scroll_depth_reached', {
+            posthog.capture && posthog.capture('scroll_depth_reached', {
               depth_percent: m,
               page: location.pathname
             });
@@ -797,7 +797,7 @@
         if (name === 'tally-form-submit' || name === 'Tally.FormSubmit' ||
             name === 'tally-form-complete' || name === 'Tally.FormComplete') {
           formFired = true;
-          posthog.capture('waitlist_form_submitted', {
+          posthog.capture && posthog.capture('waitlist_form_submitted', {
             form_id: '7RoY4L',
             page: location.pathname
           });
