@@ -71,7 +71,8 @@
 <link rel="preload" as="font" type="font/woff2" href="styles/fonts/Inter-SemiBold.woff2" crossorigin />
 
 <!-- Hero photo is the LCP element: fetch it before the CSS asks for it -->
-<link rel="preload" as="image" type="image/webp" fetchpriority="high" href="assets/img/hero-2400.webp" imagesrcset="assets/img/hero-2400.webp 1x, assets/img/hero-3200.webp 2x" />
+<link rel="preload" as="image" type="image/webp" fetchpriority="high" href="assets/img/hero-2400.webp" media="(max-width: 1023px)" />
+<link rel="preload" as="image" type="image/webp" fetchpriority="high" href="assets/img/hero-2400.webp" imagesrcset="assets/img/hero-2400.webp 1x, assets/img/hero-3200.webp 2x" media="(min-width: 1024px)" />
 <style>
   @font-face { font-family: "Inter"; font-weight: 300; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Light.woff2") format("woff2"); }
   @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Regular.woff2") format("woff2"); }
@@ -170,13 +171,15 @@
   .hero__bg {
     position: absolute;
     inset: 0;
-    background-image: url("assets/img/hero-2400.webp");
-    background-image: image-set(url("assets/img/hero-2400.webp") 1x, url("assets/img/hero-3200.webp") 2x);
+    background-image: url("assets/img/hero-2400.webp"); /* phones & tablets: plenty for a 2-3x screen */
     background-size: cover;
     background-position: center 35%;
     z-index: -2;
     animation: drift 28s ease-in-out infinite alternate;
     transform-origin: 55% 60%;
+  }
+  @media (min-width: 1024px) {
+    .hero__bg { background-image: image-set(url("assets/img/hero-2400.webp") 1x, url("assets/img/hero-3200.webp") 2x); }
   }
   @keyframes drift {
     0%   { transform: scale(1.04) translate3d(0, 0, 0); }
@@ -1344,10 +1347,11 @@
     overflow: hidden;
     isolation: isolate;
   }
+  .cta.is-near .cta__bg { background-image: url("assets/img/cta-sunset-1536.webp"); }
   .cta__bg {
     position: absolute;
     inset: -6%;
-    background-image: url("assets/img/cta-sunset-1536.webp");
+    /* image arrives with .is-near (script after the section) so it doesn't compete with the hero */
     /* Focal point 30% up from the bottom (= 70% from the top): the crop pivots
        around that point as the viewport changes size. */
     background-position: center 70%;
@@ -1743,7 +1747,7 @@
     <!-- centered wordmark + tester pill row -->
     <div class="hero__main">
       <span class="hero__sentinel" aria-hidden="true"></span>
-      <img class="hero__wordmark" src="assets/img/logo-wordmark-white-1280.png" width="1280" height="276" alt="" aria-hidden="true" />
+      <img class="hero__wordmark" fetchpriority="high" src="assets/img/logo-wordmark-white-1280.png" width="1280" height="276" alt="" aria-hidden="true" />
       <a id="tester" href="/waitlist" class="hero__tester" style="gap: 1px">Join the waitlist →</a>
     </div>
 
@@ -1760,10 +1764,10 @@
           </span>
         </span>
       </h1>
-      <div class="headline__progress" role="tablist" aria-label="Rotating taglines">
-        <button class="is-active" type="button" aria-label="record your rides"></button>
-        <button type="button" aria-label="analyze and improve"></button>
-        <button type="button" aria-label="share your sessions"></button>
+      <div class="headline__progress" role="group" aria-label="Rotating taglines">
+        <button class="is-active" type="button" aria-label="record your rides" aria-pressed="true"></button>
+        <button type="button" aria-label="analyze and improve" aria-pressed="false"></button>
+        <button type="button" aria-label="share your sessions" aria-pressed="false"></button>
       </div>
     </div>
 
@@ -2126,6 +2130,19 @@
       </div>
     </div>
   </section>
+  <noscript><style>.cta__bg { background-image: url("assets/img/cta-sunset-1536.webp"); }</style></noscript>
+  <script>
+    // Give the CTA its photo a couple of screens before it scrolls into view.
+    (function () {
+      var cta = document.getElementById('signup');
+      if (!cta) return;
+      if (!('IntersectionObserver' in window)) { cta.classList.add('is-near'); return; }
+      var io = new IntersectionObserver(function (entries) {
+        if (entries[0].isIntersecting) { cta.classList.add('is-near'); io.disconnect(); }
+      }, { rootMargin: '200% 0px' });
+      io.observe(cta);
+    })();
+  </script>
 
   <script>
     // ============ Headline rotator ============
@@ -2145,7 +2162,9 @@
         setTimeout(() => cur.classList.remove('is-exit'), 800);
         nxt.classList.add('is-active');
         dots[idx].classList.remove('is-active');
+        dots[idx].setAttribute('aria-pressed', 'false');
         dots[next].classList.add('is-active');
+        dots[next].setAttribute('aria-pressed', 'true');
         idx = next;
       }
 

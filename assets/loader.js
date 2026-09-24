@@ -155,6 +155,7 @@
     var waits = [];
     if (document.fonts && document.fonts.ready) waits.push(document.fonts.ready);
     document.querySelectorAll('link[rel="preload"][as="image"]').forEach(function (link) {
+      if (link.media && window.matchMedia && !window.matchMedia(link.media).matches) return;
       // onload, not decode(): decode() stalls in background tabs.
       waits.push(new Promise(function (resolve) {
         var img = new Image();

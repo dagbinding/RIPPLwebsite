@@ -73,7 +73,10 @@ Goal: fix everything that's actively hurting indexing, sharing, and speed.
   - Scores, live → new: SEO 91 → 100 (both pages), best practices 96 → 100, accessibility 95 / 100 unchanged
   - Caveat: Lighthouse's *simulated* throttling (what PageSpeed Insights shows) estimates homepage LCP ~6s, charging the wordmark for every image that starts downloading early. Scratch experiments (wordmark `fetchpriority`, dropping the CTA background) only moved it to 5.9s. Google ranks on real-user CrUX data, not this lab estimate; re-check PSI on production after merge
   - Deploy previews carry `x-robots-tag: noindex` and Netlify's feedback toolbar (~1.5MB), so don't read SEO/perf scores off preview links
-- [ ] **1.11 Follow-ups** (non-blocking)
+- [ ] **1.11 Follow-ups** (branch `perf-a11y`)
+  - Done: tagline dots are a `role="group"` of `aria-pressed` buttons (was an invalid `tablist`); phones/tablets < 1024px get `hero-2400` only (preloads carry `media`, loader skips non-matching ones); wordmark (the LCP element) `fetchpriority="high"`; CTA background loads via IntersectionObserver two screens early (`<noscript>` fallback)
+  - Found: PostHog's project-side features (session recording, surveys, dead clicks, web vitals) add ~215KB of JS on production — Lighthouse (simulated) live 69 → 82 with PostHog blocked. Decision pending (see chat)
+  - Social section photos: not an issue — they only load when Lighthouse takes its full-page screenshot
   - Homepage accessibility 95: `aria-required-children` — an element with an ARIA role is missing required child roles (pre-existing)
   - Simulated LCP: lazy-load the CTA background (IntersectionObserver), keep portrait phones on `hero-2400` instead of `hero-3200`, check whether the social section's lazy images start too early on mobile
   - After merge: run PageSpeed Insights on production and compare with CrUX once it has data
