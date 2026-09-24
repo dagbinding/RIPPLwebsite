@@ -86,7 +86,7 @@ Goal: fix everything that's actively hurting indexing, sharing, and speed.
 
 Goal: give Google more real content to rank and win FAQ rich results.
 
-- [x] **2.1 FAQ section on the homepage** (branch `faq`) — 14 questions, between RIPPLsocial and the tester CTA. Option A (editorial two-column, sticky intro) chosen over B (numbered list); both kept in `archive/faq-options.html`
+- [x] **2.1 FAQ section on the homepage** (branch `faq`) — 14 questions, between RIPPLsocial and the tester CTA. Final layout: centered — oversized "FAQ." display heading (sun full stop, hidden "Frequently asked questions" for screen readers/search) over a single 860px column. Earlier rounds (two-column, numbered, grouped, cards) kept in `archive/faq-options.html` and `archive/faq-layouts.html`
   - Copy confirmed with Dylan 2026-09-24: fits any board (a mount per board) · records with no phone in the water, watch optional for live feedback · works at any break and in wave pools · every level · multi-session battery (charging tech not public yet) · social sharing on the roadmap · "tester program starting soon" · pricing not announced, testers free
   - Left out on purpose: supported phones/watches (not decided), data/privacy (until there's a policy to link)
   - Native `<details>`: indexable, keyboard-accessible, no JS. Height animates where `::details-content` + `interpolate-size` are supported, instant elsewhere; reduced-motion honoured

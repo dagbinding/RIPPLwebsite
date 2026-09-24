@@ -1235,40 +1235,20 @@
     padding: clamp(80px, 12vh, 140px) clamp(24px, 6vw, 100px);
     interpolate-size: allow-keywords; /* lets answers animate to height: auto */
   }
-  .faq__layout {
-    display: grid;
-    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.3fr);
-    gap: clamp(40px, 7vw, 140px);
-    align-items: start;
-  }
-  .faq__intro { position: sticky; top: clamp(40px, 10vh, 110px); }
-  .faq__opener { display: flex; align-items: baseline; gap: 20px; flex-wrap: wrap; }
-  .faq__num {
-    font-size: clamp(13px, 1vw, 16px); font-weight: 300;
-    letter-spacing: 0.32em; color: var(--rippl-cocoa-mute);
-  }
-  .faq__name {
-    margin: 0;
-    font-size: clamp(22px, 2.4vw, 34px); font-weight: 300;
-    letter-spacing: -0.01em; line-height: 1;
-  }
-  .faq__name b { font-weight: 900; letter-spacing: -0.02em; }
-  .faq__tag {
-    font-size: clamp(11px, 0.85vw, 13px); font-weight: 600;
-    letter-spacing: 0.18em; text-transform: lowercase; color: var(--rippl-cocoa-mute);
-    padding: 4px 10px; border: 1px solid rgba(46, 30, 16, 0.18); border-radius: 999px;
+  .faq__head {
+    display: grid; justify-items: center; gap: clamp(20px, 3vh, 32px);
+    margin-bottom: clamp(48px, 8vh, 88px);
+    text-align: center;
   }
   .faq__title {
-    margin: clamp(28px, 4vh, 48px) 0 0;
-    font-weight: 900; line-height: 0.9; letter-spacing: -0.045em;
-    /* "QUESTIONS." is ~6.3em wide: never let it outgrow a narrow phone */
-    font-size: min(clamp(52px, 7vw, 96px), calc((100vw - 48px) / 6.4));
-    text-transform: uppercase; text-wrap: balance;
+    margin: 0;
+    font-weight: 900; text-transform: uppercase;
+    line-height: 0.82; letter-spacing: -0.06em;
+    font-size: clamp(120px, 22vw, 320px);
   }
-  .faq__title > span { display: block; }
   .faq__period { color: var(--rippl-sun); }
   .faq__sub {
-    margin: clamp(20px, 3vh, 28px) 0 0; max-width: 34ch;
+    margin: 0; max-width: 34ch;
     font-size: 17px; line-height: 1.55; color: var(--rippl-cocoa-soft);
     text-wrap: pretty;
   }
@@ -1276,6 +1256,7 @@
   .faq a:hover { color: var(--rippl-cocoa-soft); }
   .faq a:focus-visible { outline: 2px solid var(--rippl-wave); outline-offset: 2px; }
 
+  .faq__list { max-width: 860px; margin: 0 auto; }
   .faq__item { border-top: 1px solid rgba(46, 30, 16, 0.14); }
   .faq__item:last-child { border-bottom: 1px solid rgba(46, 30, 16, 0.14); }
   .faq__q {
@@ -1336,8 +1317,6 @@
   .faq__item[open] .faq__a { opacity: 1; transform: none; }
 
   @media (max-width: 900px) {
-    .faq__layout { grid-template-columns: 1fr; }
-    .faq__intro { position: static; }
     .faq__a { padding-right: 0; }
   }
   @media (max-width: 560px) {
@@ -2042,74 +2021,67 @@
 
   <!-- ============ FAQ ============ -->
   <section class="faq" data-screen-label="06b FAQ" id="faq" aria-labelledby="faq-title">
-    <div class="faq__layout">
-      <div class="faq__intro">
-        <div class="faq__opener">
-          <span class="faq__num">04</span>
-          <h2 class="faq__name" id="faq-title"><b>RIPPL</b>faq</h2>
-          <span class="faq__tag">the details</span>
-        </div>
-        <p class="faq__title" aria-hidden="true"><span>Good</span><span>questions<span class="faq__period">.</span></span></p>
-        <p class="faq__sub">Everything surfers ask us before they join the lineup. Missing one? <a href="https://www.instagram.com/ripplsurf/">Ask us on Instagram</a>.</p>
-      </div>
-      <div class="faq__list">
-          <details class="faq__item">
-            <summary class="faq__q"><span>What is RIPPL?</span><span class="faq__icon" aria-hidden="true"></span></summary>
-            <div class="faq__a"><p>RIPPL is a tiny sensor for the tail of your surfboard, plus an app that turns every ride into coaching, stats and leaderboards. <b>RIPPLsense</b> records the ride, <b>RIPPLintelligence</b> explains it, and <b>RIPPLsocial</b> lets you share it with your crew.</p></div>
-          </details>
-          <details class="faq__item">
-            <summary class="faq__q"><span>How does it work?</span><span class="faq__icon" aria-hidden="true"></span></summary>
-            <div class="faq__a"><p>Snap RIPPLsense onto your tail and surf — no phone in the water. It records every movement of your board, then syncs to the RIPPL app once you're back on the sand, where every wave is broken down and scored.</p><p>Wear a paired watch and you'll get feedback live, the moment you kick out.</p></div>
-          </details>
-          <details class="faq__item">
-            <summary class="faq__q"><span>How will RIPPL improve my surfing?</span><span class="faq__icon" aria-hidden="true"></span></summary>
-            <div class="faq__a"><p>RIPPL shows you the <b>why</b> behind every wave. You get AI coaching on each ride — like opening your shoulders earlier on the bottom turn — training plans that adapt to you and your break, and a clear read on how this session compares with your last.</p><p>With a watch on, you can adjust before the next wave, not next session.</p></div>
-          </details>
-          <details class="faq__item">
-            <summary class="faq__q"><span>Is RIPPL for beginners?</span><span class="faq__icon" aria-hidden="true"></span></summary>
-            <div class="faq__a"><p>Yes — RIPPL is for every level. Coaching adapts to where you are: if you're learning, it shows you what to work on next; if you've surfed for years, it finds the details you can't feel.</p></div>
-          </details>
-          <details class="faq__item">
-            <summary class="faq__q"><span>Will it fit my board?</span><span class="faq__icon" aria-hidden="true"></span></summary>
-            <div class="faq__a"><p>RIPPLsense fits any board — shortboard, longboard or softtop. Stick a mount on each of your boards; the sensor snaps in and out in seconds, so you can change boards mid-session and get straight back in the lineup.</p></div>
-          </details>
-          <details class="faq__item">
-            <summary class="faq__q"><span>Is it waterproof?</span><span class="faq__icon" aria-hidden="true"></span></summary>
-            <div class="faq__a"><p>Yes. RIPPLsense is rated <b>IP68</b> and built from marine-grade materials, made to live in saltwater, sand and sun.</p></div>
-          </details>
-          <details class="faq__item">
-            <summary class="faq__q"><span>How long does the battery last?</span><span class="faq__icon" aria-hidden="true"></span></summary>
-            <div class="faq__a"><p><b>Multiple sessions on a single charge</b> — days of surfing between charges. Charge it, attach it before you paddle out, then forget about it.</p></div>
-          </details>
-          <details class="faq__item">
-            <summary class="faq__q"><span>What does it actually measure?</span><span class="faq__icon" aria-hidden="true"></span></summary>
-            <div class="faq__a"><p>A 9-axis IMU and centimeter-precise GNSS read every movement of your board. From that we measure each wave you ride, wave height, turn power, paddle outs and paddle efficiency — then score every wave and every session.</p></div>
-          </details>
-          <details class="faq__item">
-            <summary class="faq__q"><span>How is that different from a surf watch app?</span><span class="faq__icon" aria-hidden="true"></span></summary>
-            <div class="faq__a"><p>A watch sits on your wrist, so it mostly knows where you went. RIPPLsense sits on the board — the thing you're actually steering — so it reads <b>how</b> you rode each wave, not just that you caught it.</p></div>
-          </details>
-          <details class="faq__item">
-            <summary class="faq__q"><span>Does it work at any beach, or just wave pools?</span><span class="faq__icon" aria-hidden="true"></span></summary>
-            <div class="faq__a"><p>Both. RIPPL works at any break — beach, reef or point — and in wave pools too.</p></div>
-          </details>
-          <details class="faq__item">
-            <summary class="faq__q"><span>Can I share my sessions to social media?</span><span class="faq__icon" aria-hidden="true"></span></summary>
-            <div class="faq__a"><p>RIPPL is built around sharing with your crew and competing on the leaderboard at your local break. Posting sessions straight to Instagram and TikTok is on our roadmap.</p></div>
-          </details>
-          <details class="faq__item">
-            <summary class="faq__q"><span>When will RIPPL be available?</span><span class="faq__icon" aria-hidden="true"></span></summary>
-            <div class="faq__a"><p>We're starting our tester program soon. <a href="/waitlist">Join the waitlist</a> to find out first.</p></div>
-          </details>
-          <details class="faq__item">
-            <summary class="faq__q"><span>How much will it cost?</span><span class="faq__icon" aria-hidden="true"></span></summary>
-            <div class="faq__a"><p>We haven't announced pricing yet. If you're picked as a tester, your RIPPLsense is free.</p></div>
-          </details>
-          <details class="faq__item">
-            <summary class="faq__q"><span>How does the tester program work?</span><span class="faq__icon" aria-hidden="true"></span></summary>
-            <div class="faq__a"><p>Join the waitlist and we hand-pick our first riders. Testers get a <b>free RIPPLsense</b>, shipped worldwide, first access to every feature, and a direct line to the founders.</p><p>Every surfer you refer moves you both up the list. Five accepted referrals guarantees your sensor in Drop 2; ten gets you and your whole crew into Drop 1.</p></div>
-          </details>
-      </div>
+    <header class="faq__head">
+      <h2 class="faq__title" id="faq-title">FAQ<span class="faq__period" aria-hidden="true">.</span><span class="visually-hidden"> Frequently asked questions</span></h2>
+      <p class="faq__sub">Everything surfers ask us before they join the lineup. Missing one? <a href="https://www.instagram.com/ripplsurf/">Ask us on Instagram</a>.</p>
+    </header>
+    <div class="faq__list">
+      <details class="faq__item">
+        <summary class="faq__q"><span>What is RIPPL?</span><span class="faq__icon" aria-hidden="true"></span></summary>
+        <div class="faq__a"><p>RIPPL is a tiny sensor for the tail of your surfboard, plus an app that turns every ride into coaching, stats and leaderboards. <b>RIPPLsense</b> records the ride, <b>RIPPLintelligence</b> explains it, and <b>RIPPLsocial</b> lets you share it with your crew.</p></div>
+      </details>
+      <details class="faq__item">
+        <summary class="faq__q"><span>How does it work?</span><span class="faq__icon" aria-hidden="true"></span></summary>
+        <div class="faq__a"><p>Snap RIPPLsense onto your tail and surf — no phone in the water. It records every movement of your board, then syncs to the RIPPL app once you're back on the sand, where every wave is broken down and scored.</p><p>Wear a paired watch and you'll get feedback live, the moment you kick out.</p></div>
+      </details>
+      <details class="faq__item">
+        <summary class="faq__q"><span>How will RIPPL improve my surfing?</span><span class="faq__icon" aria-hidden="true"></span></summary>
+        <div class="faq__a"><p>RIPPL shows you the <b>why</b> behind every wave. You get AI coaching on each ride — like opening your shoulders earlier on the bottom turn — training plans that adapt to you and your break, and a clear read on how this session compares with your last.</p><p>With a watch on, you can adjust before the next wave, not next session.</p></div>
+      </details>
+      <details class="faq__item">
+        <summary class="faq__q"><span>Is RIPPL for beginners?</span><span class="faq__icon" aria-hidden="true"></span></summary>
+        <div class="faq__a"><p>Yes — RIPPL is for every level. Coaching adapts to where you are: if you're learning, it shows you what to work on next; if you've surfed for years, it finds the details you can't feel.</p></div>
+      </details>
+      <details class="faq__item">
+        <summary class="faq__q"><span>Will it fit my board?</span><span class="faq__icon" aria-hidden="true"></span></summary>
+        <div class="faq__a"><p>RIPPLsense fits any board — shortboard, longboard or softtop. Stick a mount on each of your boards; the sensor snaps in and out in seconds, so you can change boards mid-session and get straight back in the lineup.</p></div>
+      </details>
+      <details class="faq__item">
+        <summary class="faq__q"><span>Is it waterproof?</span><span class="faq__icon" aria-hidden="true"></span></summary>
+        <div class="faq__a"><p>Yes. RIPPLsense is rated <b>IP68</b> and built from marine-grade materials, made to live in saltwater, sand and sun.</p></div>
+      </details>
+      <details class="faq__item">
+        <summary class="faq__q"><span>How long does the battery last?</span><span class="faq__icon" aria-hidden="true"></span></summary>
+        <div class="faq__a"><p><b>Multiple sessions on a single charge</b> — days of surfing between charges. Charge it, attach it before you paddle out, then forget about it.</p></div>
+      </details>
+      <details class="faq__item">
+        <summary class="faq__q"><span>What does it actually measure?</span><span class="faq__icon" aria-hidden="true"></span></summary>
+        <div class="faq__a"><p>A 9-axis IMU and centimeter-precise GNSS read every movement of your board. From that we measure each wave you ride, wave height, turn power, paddle outs and paddle efficiency — then score every wave and every session.</p></div>
+      </details>
+      <details class="faq__item">
+        <summary class="faq__q"><span>How is that different from a surf watch app?</span><span class="faq__icon" aria-hidden="true"></span></summary>
+        <div class="faq__a"><p>A watch sits on your wrist, so it mostly knows where you went. RIPPLsense sits on the board — the thing you're actually steering — so it reads <b>how</b> you rode each wave, not just that you caught it.</p></div>
+      </details>
+      <details class="faq__item">
+        <summary class="faq__q"><span>Does it work at any beach, or just wave pools?</span><span class="faq__icon" aria-hidden="true"></span></summary>
+        <div class="faq__a"><p>Both. RIPPL works at any break — beach, reef or point — and in wave pools too.</p></div>
+      </details>
+      <details class="faq__item">
+        <summary class="faq__q"><span>Can I share my sessions to social media?</span><span class="faq__icon" aria-hidden="true"></span></summary>
+        <div class="faq__a"><p>RIPPL is built around sharing with your crew and competing on the leaderboard at your local break. Posting sessions straight to Instagram and TikTok is on our roadmap.</p></div>
+      </details>
+      <details class="faq__item">
+        <summary class="faq__q"><span>When will RIPPL be available?</span><span class="faq__icon" aria-hidden="true"></span></summary>
+        <div class="faq__a"><p>We're starting our tester program soon. <a href="/waitlist">Join the waitlist</a> to find out first.</p></div>
+      </details>
+      <details class="faq__item">
+        <summary class="faq__q"><span>How much will it cost?</span><span class="faq__icon" aria-hidden="true"></span></summary>
+        <div class="faq__a"><p>We haven't announced pricing yet. If you're picked as a tester, your RIPPLsense is free.</p></div>
+      </details>
+      <details class="faq__item">
+        <summary class="faq__q"><span>How does the tester program work?</span><span class="faq__icon" aria-hidden="true"></span></summary>
+        <div class="faq__a"><p>Join the waitlist and we hand-pick our first riders. Testers get a <b>free RIPPLsense</b>, shipped worldwide, first access to every feature, and a direct line to the founders.</p><p>Every surfer you refer moves you both up the list. Five accepted referrals guarantees your sensor in Drop 2; ten gets you and your whole crew into Drop 1.</p></div>
+      </details>
     </div>
   </section>
 
