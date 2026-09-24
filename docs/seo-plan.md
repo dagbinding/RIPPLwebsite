@@ -44,9 +44,14 @@ Goal: fix everything that's actively hurting indexing, sharing, and speed.
   - Build fails if a page references a repo file the allowlist left out. When adding a new page or root file, add it to `PAGES` / `ROOT_FILES` in `scripts/build.py`
   - Local preview of exactly what ships: launch config `rippl-dist` (port 8733)
   - Found: `styles/colors_and_type.css` declares 17 font files that aren't in the repo. No live impact — neither page loads that stylesheet (both inline their own `@font-face`). Fold into 1.4
-- [ ] **1.3 Image weight**
-  - Hero bg → AVIF/WebP ≤ ~300KB; PNG screenshots → WebP; right-size to max rendered width (2× DPR)
-  - `width`/`height` on every `<img>`; `loading="lazy"` + `decoding="async"` below the fold; `fetchpriority="high"` on the LCP image
+- [x] **1.3 Image weight** — homepage first load ~10MB → ~590KB (desktop, 2× screen)
+  - `scripts/optimize_images.py` generates `assets/img/` from the untouched originals (WebP for photos, resized PNG for the logo and loader mark). Swapping a photo = edit `SOURCES`, rerun, commit
+  - Hero: `image-set()` 2400w / 3200w by pixel density, preloaded with `fetchpriority="high"` (it's the LCP element)
+  - Social film-edit photos: `srcset` + `sizes="(orientation: portrait) 150vh, 100vw"` so portrait phones get enough pixels for `object-fit: cover`
+  - `width`/`height` on every `<img>`; `loading="lazy"` + `decoding="async"` below the fold. Logo rules that only set a height now also set `width: auto` (otherwise the attribute width wins)
+  - Loader mark 1293px → 320px
+  - Verified at 1920×1080 and 375×812: all rendered sizes identical to before, no 404s, no horizontal overflow
+  - Not done: AVIF (would shave another ~30–40% but needs `image-set(type())` fallbacks). The original full-size files are still copied into `dist/`, which makes the deploy bigger but nothing downloads them
 - [ ] **1.4 Fonts** — convert Inter OTFs to `woff2`, only load weights actually used, preload the 2–3 above-the-fold weights. `.bento__h` asks for weight 800, which isn't loaded (renders as 900) — set it to 900 explicitly. Tidy the dead `@font-face` rules in `styles/colors_and_type.css`
 - [ ] **1.5 Structured data** — JSON-LD `Organization`, `WebSite`, `Product` (RIPPLsense, pre-order/waitlist availability)
 - [ ] **1.6 On-page fixes**
@@ -116,4 +121,5 @@ Goal: give Google more real content to rank and win FAQ rich results.
 |---|---|---|---|
 | 2026-09-24 | Plan created | 5730fa3 | Audit baseline recorded |
 | 2026-09-24 | 1.2 Crawl control & cleanup | 70fedef | Takes effect once merged to `main` (pushing `main` deploys live) |
-| 2026-09-24 | 1.1 Head metadata | see git log | Share image from the hero photo |
+| 2026-09-24 | 1.1 Head metadata | 6bb7eb2 | Share image from the hero photo |
+| 2026-09-24 | 1.3 Image weight | see git log | ~10MB → ~590KB first load |

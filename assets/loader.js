@@ -31,11 +31,11 @@
     '<svg class="loader-mark" viewBox="-150 -150 300 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
       '<g class="loader-loop" id="loader-loop-left">' +
         '<circle r="78" fill="transparent" stroke="none"></circle>' +
-        '<image href="assets/loader-loop.png" x="-80" y="-80" width="160" height="160" preserveAspectRatio="xMidYMid meet"></image>' +
+        '<image href="assets/img/loader-loop-320.png" x="-80" y="-80" width="160" height="160" preserveAspectRatio="xMidYMid meet"></image>' +
       '</g>' +
       '<g class="loader-loop" id="loader-loop-right">' +
         '<circle r="78" fill="transparent" stroke="none"></circle>' +
-        '<image href="assets/loader-loop.png" x="-80" y="-80" width="160" height="160" preserveAspectRatio="xMidYMid meet"></image>' +
+        '<image href="assets/img/loader-loop-320.png" x="-80" y="-80" width="160" height="160" preserveAspectRatio="xMidYMid meet"></image>' +
       '</g>' +
     '</svg>';
   var body = document.body;

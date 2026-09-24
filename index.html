@@ -27,6 +27,9 @@
 <link rel="icon" href="/assets/icons/icon-192.png" type="image/png" sizes="192x192" />
 <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
 <meta name="theme-color" content="#2E1E10" />
+
+<!-- Hero photo is the LCP element: fetch it before the CSS asks for it -->
+<link rel="preload" as="image" type="image/webp" fetchpriority="high" href="assets/img/hero-2400.webp" imagesrcset="assets/img/hero-2400.webp 1x, assets/img/hero-3200.webp 2x" />
 <style>
   @font-face { font-family: "Inter"; font-weight: 300; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Light-BETA.otf") format("opentype"); }
   @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Regular.otf") format("opentype"); }
@@ -125,7 +128,8 @@
   .hero__bg {
     position: absolute;
     inset: 0;
-    background-image: url("assets/follow_hd_corrected.jpg");
+    background-image: url("assets/img/hero-2400.webp");
+    background-image: image-set(url("assets/img/hero-2400.webp") 1x, url("assets/img/hero-3200.webp") 2x);
     background-size: cover;
     background-position: center 35%;
     z-index: -2;
@@ -1194,7 +1198,7 @@
   .cta__bg {
     position: absolute;
     inset: -6%;
-    background-image: url("assets/photo-sunset-lineup.jpg");
+    background-image: url("assets/img/cta-sunset-1536.webp");
     /* Focal point 30% up from the bottom (= 70% from the top): the crop pivots
        around that point as the viewport changes size. */
     background-position: center 70%;
@@ -1549,7 +1553,7 @@
     letter-spacing: 0.04em;
   }
   .footer a:hover { color: #fff; }
-  .footer__brand img { height: 18px; display: block; }
+  .footer__brand img { height: 18px; width: auto; display: block; }
 </style>
 
 <!-- PostHog Analytics -->
@@ -1575,7 +1579,7 @@
     <!-- top bar -->
     <nav class="nav" aria-label="Primary">
       <a href="#" class="nav__brand" aria-label="RIPPL home">
-        <img src="assets/logo-wordmark-white.png" alt="RIPPL" />
+        <img src="assets/img/logo-wordmark-white-1280.png" width="1280" height="276" alt="RIPPL" />
       </a>
       <span class="nav__status" aria-live="polite">
         <span class="nav__dot" aria-hidden="true"></span>
@@ -1586,7 +1590,7 @@
     <!-- centered wordmark + tester pill row -->
     <div class="hero__main">
       <span class="hero__sentinel" aria-hidden="true"></span>
-      <img class="hero__wordmark" src="assets/logo-wordmark-white.png" alt="" aria-hidden="true" />
+      <img class="hero__wordmark" src="assets/img/logo-wordmark-white-1280.png" width="1280" height="276" alt="" aria-hidden="true" />
       <a id="tester" href="Tester Signup.html" class="hero__tester" style="gap: 1px">Join the waitlist →</a>
     </div>
 
@@ -1644,7 +1648,7 @@
           </ul>
         </div>
         <div class="sense-media">
-          <img class="sense-media__img" id="sense-img" src="assets/sensor-board-tail.png" alt="The RIPPL sensor mounted on the tail of a surfboard, golden hour" />
+          <img class="sense-media__img" id="sense-img" src="assets/img/sensor-board-tail-768.webp" width="768" height="1365" loading="lazy" decoding="async" alt="The RIPPL sensor mounted on the tail of a surfboard, golden hour" />
           <div class="sense-media__callouts" aria-hidden="true">
             <div class="sense-callout sense-callout--a" id="sense-co1">
               <span class="sense-callout__dot"></span>
@@ -1693,7 +1697,7 @@
             </div>
             <div class="bento__media">
               <div class="bento__watch">
-                <img src="assets/watch-app.png" alt="Apple Watch showing a live coaching cue" style="padding: 0px; height: 470px" />
+                <img src="assets/img/watch-app-600.webp" width="600" height="997" loading="lazy" decoding="async" alt="Apple Watch showing a live coaching cue" style="padding: 0px; height: 470px" />
               </div>
             </div>
           </div>
@@ -1778,13 +1782,13 @@
     <div class="af__track" id="af-track">
       <div class="af__sticky">
         <div class="af__photo af__photo--1 is-on" id="afph1">
-          <img src="uploads/IMG_7307.jpeg" alt="" /><div class="af__scrim af__scrim--1"></div>
+          <img src="assets/img/social-1-1600.webp" srcset="assets/img/social-1-1600.webp 1600w, assets/img/social-1-2400.webp 2400w" sizes="(orientation: portrait) 150vh, 100vw" width="2400" height="1591" loading="lazy" decoding="async" alt="" /><div class="af__scrim af__scrim--1"></div>
         </div>
         <div class="af__photo af__photo--2" id="afph2">
-          <img src="uploads/P1040672_dg.jpeg" alt="" /><div class="af__scrim af__scrim--2"></div>
+          <img src="assets/img/social-2-1600.webp" srcset="assets/img/social-2-1600.webp 1600w, assets/img/social-2-2400.webp 2400w, assets/img/social-2-3200.webp 3200w" sizes="(orientation: portrait) 150vh, 100vw" width="3200" height="2135" loading="lazy" decoding="async" alt="" /><div class="af__scrim af__scrim--2"></div>
         </div>
         <div class="af__photo af__photo--3" id="afph3">
-          <img src="uploads/P1040672_dg.jpeg" alt="" /><div class="af__scrim af__scrim--deep"></div>
+          <img src="assets/img/social-2-1600.webp" srcset="assets/img/social-2-1600.webp 1600w, assets/img/social-2-2400.webp 2400w, assets/img/social-2-3200.webp 3200w" sizes="(orientation: portrait) 150vh, 100vw" width="3200" height="2135" loading="lazy" decoding="async" alt="" /><div class="af__scrim af__scrim--deep"></div>
         </div>
         <div class="af__grain" aria-hidden="true"></div>
         <!-- Persistent section header — always visible across all scenes -->
@@ -2300,7 +2304,7 @@
   <!-- ============ Footer ============ -->
   <footer class="footer">
     <a href="#" class="footer__brand" aria-label="RIPPL home">
-      <img src="assets/logo-wordmark-white.png" alt="RIPPL" />
+      <img src="assets/img/logo-wordmark-white-1280.png" width="1280" height="276" alt="RIPPL" />
     </a>
     <span>© 2026 RIPPL · intelligent motion tech for surfing</span>
   </footer>
