@@ -28,6 +28,42 @@
 <link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
 <meta name="theme-color" content="#2E1E10" />
 
+<!-- Structured data: who RIPPL is (Product + offer come when there's a price) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.ripplsurf.com/#organization",
+      "name": "RIPPL",
+      "url": "https://www.ripplsurf.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.ripplsurf.com/assets/icons/icon-192.png",
+        "width": 192,
+        "height": 192
+      },
+      "description": "RIPPL makes RIPPLsense, a surfboard-mounted sensor that records every ride at centimeter precision and turns it into AI coaching, session stats and leaderboards.",
+      "sameAs": [
+        "https://www.instagram.com/ripplsurf/",
+        "https://www.tiktok.com/@ripplsurf"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.ripplsurf.com/#website",
+      "name": "RIPPL",
+      "url": "https://www.ripplsurf.com/",
+      "publisher": {
+        "@id": "https://www.ripplsurf.com/#organization"
+      },
+      "inLanguage": "en"
+    }
+  ]
+}
+</script>
+
 <!-- Fonts used in the first screen -->
 <link rel="preload" as="font" type="font/woff2" href="styles/fonts/Inter-Black.woff2" crossorigin />
 <link rel="preload" as="font" type="font/woff2" href="styles/fonts/Inter-Light.woff2" crossorigin />
@@ -240,6 +276,14 @@
     padding: clamp(48px, 9vh, 110px) 40px 0;
   }
   .hero__sentinel { }
+  /* Readable by screen readers and search engines, not drawn on screen. */
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0);
+    white-space: nowrap; border: 0;
+  }
   .hero__wordmark {
     justify-self: center;
     display: block;
@@ -1596,12 +1640,13 @@
     <div class="hero__main">
       <span class="hero__sentinel" aria-hidden="true"></span>
       <img class="hero__wordmark" src="assets/img/logo-wordmark-white-1280.png" width="1280" height="276" alt="" aria-hidden="true" />
-      <a id="tester" href="Tester Signup.html" class="hero__tester" style="gap: 1px">Join the waitlist →</a>
+      <a id="tester" href="/waitlist" class="hero__tester" style="gap: 1px">Join the waitlist →</a>
     </div>
 
     <!-- rotating headline anchored bottom-left -->
     <div class="hero__headline">
       <h1 class="headline">
+        <span class="visually-hidden">RIPPL, the surfboard sensor and AI surf coach: </span>
         <span class="headline__lead">a new way to</span>
         <span class="headline__rotator" aria-live="polite">
           <span class="headline__rotator-inner" id="rotator">
@@ -1787,10 +1832,10 @@
     <div class="af__track" id="af-track">
       <div class="af__sticky">
         <div class="af__photo af__photo--1 is-on" id="afph1">
-          <img src="assets/img/social-1-1600.webp" srcset="assets/img/social-1-1600.webp 1600w, assets/img/social-1-2400.webp 2400w" sizes="(orientation: portrait) 150vh, 100vw" width="2400" height="1591" loading="lazy" decoding="async" alt="" /><div class="af__scrim af__scrim--1"></div>
+          <img src="assets/img/social-1-1600.webp" srcset="assets/img/social-1-1600.webp 1600w, assets/img/social-1-2400.webp 2400w" sizes="(orientation: portrait) 150vh, 100vw" width="2400" height="1591" loading="lazy" decoding="async" alt="A surfer carries their board past a truck to the beach, wetsuit drying on the tailgate" /><div class="af__scrim af__scrim--1"></div>
         </div>
         <div class="af__photo af__photo--2" id="afph2">
-          <img src="assets/img/social-2-1600.webp" srcset="assets/img/social-2-1600.webp 1600w, assets/img/social-2-2400.webp 2400w, assets/img/social-2-3200.webp 3200w" sizes="(orientation: portrait) 150vh, 100vw" width="3200" height="2135" loading="lazy" decoding="async" alt="" /><div class="af__scrim af__scrim--2"></div>
+          <img src="assets/img/social-2-1600.webp" srcset="assets/img/social-2-1600.webp 1600w, assets/img/social-2-2400.webp 2400w, assets/img/social-2-3200.webp 3200w" sizes="(orientation: portrait) 150vh, 100vw" width="3200" height="2135" loading="lazy" decoding="async" alt="A surfer rides a wave at dusk, blurred with speed" /><div class="af__scrim af__scrim--2"></div>
         </div>
         <div class="af__photo af__photo--3" id="afph3">
           <img src="assets/img/social-2-1600.webp" srcset="assets/img/social-2-1600.webp 1600w, assets/img/social-2-2400.webp 2400w, assets/img/social-2-3200.webp 3200w" sizes="(orientation: portrait) 150vh, 100vw" width="3200" height="2135" loading="lazy" decoding="async" alt="" /><div class="af__scrim af__scrim--deep"></div>
@@ -1891,7 +1936,7 @@
 
           <p class="cta__sub">We're hand-picking our first riders to shape RIPPL — real hardware on your board, the app on your phone, and a direct line to the team that's building it. For free!</p>
 
-          <a class="cta__btn" href="Tester Signup.html" aria-label="Sign up to be a RIPPL tester">
+          <a class="cta__btn" href="/waitlist" aria-label="Sign up to be a RIPPL tester">
             <span>join the waitlist</span>
             <span class="cta__btn-arrow" aria-hidden="true">→</span>
           </a>
@@ -2109,161 +2154,6 @@
     })();
   </script>
 
-  <!-- ============ Tweaks panel ============ -->
-  <style>
-    .tweaks {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      width: 280px;
-      background: rgba(22, 20, 24, 0.88);
-      backdrop-filter: blur(20px) saturate(140%);
-      -webkit-backdrop-filter: blur(20px) saturate(140%);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 18px;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.45);
-      padding: 14px 16px 16px;
-      font-family: var(--font-body);
-      z-index: 9999;
-      display: none;
-    }
-    .tweaks.is-open { display: block; }
-    .tweaks__head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-    }
-    .tweaks__title {
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.7);
-      margin: 0;
-    }
-    .tweaks__close {
-      background: transparent;
-      border: 0;
-      color: rgba(255,255,255,0.6);
-      font-size: 20px;
-      line-height: 1;
-      cursor: pointer;
-      padding: 2px 6px;
-      border-radius: 6px;
-      transition: background 160ms ease, color 160ms ease;
-    }
-    .tweaks__close:hover { background: rgba(255,255,255,0.08); color: #fff; }
-    .tweaks__section { margin-top: 10px; }
-    .tweaks__label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.55);
-      margin: 0 0 8px;
-    }
-    .tweaks__swatches {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-    .tweaks__swatch {
-      position: relative;
-      height: 44px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.10);
-      cursor: pointer;
-      padding: 0;
-      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
-    }
-    .tweaks__swatch:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.32); }
-    .tweaks__swatch.is-active {
-      border-color: var(--rippl-sun);
-      box-shadow: 0 0 0 2px rgba(217,119,64,0.32);
-    }
-    .tweaks__swatch--black { background: #0a0a0a; }
-    .tweaks__swatch--cream { background: #f6f2ea; }
-    .tweaks__swatch--ink   { background: #2e1e10; }
-    .tweaks__swatch-name {
-      position: absolute;
-      bottom: -16px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 10px;
-      letter-spacing: 0.1em;
-      color: rgba(255,255,255,0.5);
-      text-transform: lowercase;
-    }
-    .tweaks__section + .tweaks__section { margin-top: 26px; }
-  </style>
-
-  <div class="tweaks" id="tweaks-panel" aria-label="Design tweaks" role="dialog">
-    <div class="tweaks__head">
-      <h3 class="tweaks__title">Tweaks</h3>
-      <button class="tweaks__close" aria-label="Close tweaks">×</button>
-    </div>
-
-    <div class="tweaks__section">
-      <p class="tweaks__label">Film grain</p>
-      <div class="tweaks__swatches" data-tweak="grainIntensity">
-        <button class="tweaks__swatch" data-value="off" aria-label="Off" style="background:#181410">
-          <span class="tweaks__swatch-name">off</span>
-        </button>
-        <button class="tweaks__swatch" data-value="medium" aria-label="Medium" style="background:#2a2018">
-          <span class="tweaks__swatch-name">medium</span>
-        </button>
-        <button class="tweaks__swatch" data-value="strong" aria-label="Strong" style="background:#40302a">
-          <span class="tweaks__swatch-name">strong</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    (function () {
-      const panel = document.getElementById('tweaks-panel');
-      const closeBtn = panel.querySelector('.tweaks__close');
-      const state = { grainIntensity: 'medium' };
-
-      const grainOpacity = { off: 0, medium: 0.28, strong: 0.48 };
-
-      function apply() {
-        var grainEl = document.querySelector('#pillar-social .af__grain');
-        if (grainEl) {
-          grainEl.style.opacity = (grainOpacity[state.grainIntensity] !== undefined
-            ? grainOpacity[state.grainIntensity] : 0.28);
-        }
-        panel.querySelectorAll('[data-tweak="grainIntensity"] .tweaks__swatch').forEach(function (btn) {
-          btn.classList.toggle('is-active', btn.dataset.value === state.grainIntensity);
-        });
-      }
-      apply();
-
-      panel.querySelectorAll('[data-tweak="grainIntensity"] .tweaks__swatch').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          state.grainIntensity = btn.dataset.value;
-          apply();
-        });
-      });
-
-      function open()  { panel.classList.add('is-open'); }
-      function close() { panel.classList.remove('is-open'); }
-      closeBtn.addEventListener('click', close);
-
-      window.addEventListener('message', function (e) {
-        const d = e.data || {};
-        if (d.type === '__activate_edit_mode')   open();
-        if (d.type === '__deactivate_edit_mode') panel.classList.remove('is-open');
-      });
-
-      window.parent.postMessage({ type: '__edit_mode_available' }, '*');
-    })();
-  </script>
-
   <!-- PostHog: scroll depth + named CTA events -->
   <script>
     (function () {
@@ -2295,7 +2185,7 @@
         if (!el) return;
         var href = el.getAttribute('href') || '';
         var text = (el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 80);
-        if (href.indexOf('Tester Signup') !== -1) {
+        if (href.indexOf('/waitlist') !== -1) {
           posthog.capture('waitlist_cta_clicked', {
             cta_text: text,
             cta_location: el.className || el.id || 'unknown',
@@ -2308,7 +2198,7 @@
 
   <!-- ============ Footer ============ -->
   <footer class="footer">
-    <a href="#" class="footer__brand" aria-label="RIPPL home">
+    <a href="/" class="footer__brand" aria-label="RIPPL home">
       <img src="assets/img/logo-wordmark-white-1280.png" width="1280" height="276" alt="RIPPL" />
     </a>
     <span>© 2026 RIPPL · intelligent motion tech for surfing</span>

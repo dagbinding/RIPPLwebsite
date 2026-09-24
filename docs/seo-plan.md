@@ -56,14 +56,15 @@ Goal: fix everything that's actively hurting indexing, sharing, and speed.
   - First-screen weights preloaded: home 900/300/600, signup 900/400
   - `.bento__h` 800 → 900 (800 was never loaded, so it already rendered as 900 — no visual change)
   - Left alone: `styles/colors_and_type.css` still declares 17 missing fonts. It's the design system's copy and no page loads it — fix at source in the design system project
-- [ ] **1.5 Structured data** — JSON-LD `Organization`, `WebSite`, `Product` (RIPPLsense, pre-order/waitlist availability)
-  - `sameAs`: https://www.instagram.com/ripplsurf/ · https://www.tiktok.com/@ripplsurf
-- [ ] **1.6 On-page fixes**
-  - H1: keep the rotator, add a keyword-bearing line (visible or visually hidden) that says what RIPPL is
-  - Descriptive `alt` on `IMG_7307.jpeg` and `P1040672_dg.jpeg` (×2)
-  - Remove the Tweaks dev panel from production
-  - Footer brand link `#` → `/`
-- [ ] **1.7 Signup URL** — rename `Tester Signup.html` → `/waitlist`, 301 old URL(s), update all internal links + the PostHog `waitlist_cta_clicked` href check
+- [x] **1.5 Structured data** — JSON-LD `Organization` (logo, description, `sameAs` Instagram + TikTok) and `WebSite` on the homepage
+  - `Product` deliberately left out: without a price, reviews or ratings Google reports it as an error in Search Console. Added to Stage 3 (3.6)
+- [x] **1.6 On-page fixes**
+  - H1 now starts with visually hidden text "RIPPL, the surfboard sensor and AI surf coach:" — design unchanged, read by screen readers and search engines
+  - Alt text on the two distinct social photos; the repeated third photo stays `alt=""`
+  - Tweaks panel (Claude Design editing leftover) removed — grain default was already 0.28 in CSS, so no visual change
+  - Footer logo `#` → `/`; waitlist page home links `index.html` → `/` (avoids a duplicate `/index.html` URL)
+- [x] **1.7 Signup URL** — `Tester Signup.html` → `waitlist.html`, served at `/waitlist` (canonical, OG URL, sitemap, internal links updated). 301s from `/Tester%20Signup.html`, `/Tester%20Signup`, `/tester%20signup(.html)`. PostHog `waitlist_cta_clicked` now matches `/waitlist` (verified firing). Page paths in PostHog change from `/Tester%20Signup.html` to `/waitlist` from deploy day
+  - Local preview now uses `scripts/serve.py` (clean URLs like Netlify)
 - [x] **1.8 Caching** — `netlify.toml` headers: `/assets/img/*` + `/assets/icons/*` 7 days (+1 day stale-while-revalidate), `/styles/fonts/*` 1 year immutable. HTML left on Netlify's revalidate default. Names aren't content-hashed: rename an image if a change must show immediately
 - [x] **1.9 Loader vs LCP** — the loader used to wait for the full `load` event (every image + the Tally iframe) plus 2s. Now it lifts when fonts + preloaded hero images are ready, minimum 1.2s on screen, hard cap 4s. Uses `onload`, not `decode()` (decode stalls in background tabs). Signup hero bg is now preloaded too
 - [ ] **1.10 Verify** — Lighthouse (mobile) before/after, Rich Results Test, OG preview check, 390px overflow check
@@ -95,6 +96,7 @@ Goal: give Google more real content to rank and win FAQ rich results.
 - [ ] **3.3 Guides hub** — maneuver guides powered by RIPPL ride data (bottom turn, cutback, pop-up). Informational top-of-funnel; unique visuals via ride trails.
 - [ ] **3.4 Digital PR / backlinks** — pitch surf media (American Surf Magazine, The Inertia, etc.), founder story, tester stories. Builds authority and fixes brand-SERP ambiguity (RIPPL vs "ripple"/"rip").
 - [ ] **3.5 Real data** — connect Ahrefs or Similarweb (auth needed) + Search Console; replace the estimated keyword table below with real volume/difficulty and track rankings monthly.
+- [ ] **3.6 Product markup** — when RIPPLsense has a price and orders open: add `Product` JSON-LD with an `Offer` (`price`, `priceCurrency`, `availability: PreOrder`). Unlocks price/availability in results and Merchant listings.
 
 ---
 
@@ -127,4 +129,5 @@ Goal: give Google more real content to rank and win FAQ rich results.
 | 2026-09-24 | 1.2 Crawl control & cleanup | 70fedef | Takes effect once merged to `main` (pushing `main` deploys live) |
 | 2026-09-24 | 1.1 Head metadata | 6bb7eb2 | Share image from the hero photo |
 | 2026-09-24 | 1.3 Image weight | 992db8e | ~10MB → ~590KB first load |
-| 2026-09-24 | 1.4 Fonts · 1.8 Caching · 1.9 Loader | see git log | Fonts 1.3MB → 171KB; loader lifts at ~1.2s |
+| 2026-09-24 | 1.4 Fonts · 1.8 Caching · 1.9 Loader | 0d500f6 | Fonts 1.3MB → 171KB; loader lifts at ~1.2s |
+| 2026-09-24 | 1.5 Schema · 1.6 On-page · 1.7 /waitlist | see git log | Site now edited in Claude Code only (no more Claude Design exports) |
