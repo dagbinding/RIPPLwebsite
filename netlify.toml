@@ -1,0 +1,52 @@
+# Publish only the allowlisted site built by scripts/build.py —
+# never the repo root (it holds test pages, CLAUDE.md, uploads/, docs/).
+[build]
+  command = "python3 scripts/build.py"
+  publish = "dist"
+
+# _intel_preview.html was a live duplicate of the homepage.
+[[redirects]]
+  from = "/_intel_preview.html"
+  to = "/"
+  status = 301
+
+# Caching. HTML keeps Netlify's default (always revalidate) so edits show
+# up immediately. File names below aren't content-hashed, so a replaced
+# image can be stale for up to a week — rename the file if it must update
+# at once. Fonts rarely change: a year.
+[[headers]]
+  for = "/assets/img/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+[[headers]]
+  for = "/assets/icons/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+[[headers]]
+  for = "/styles/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# The tester signup page moved from "Tester Signup.html" to /waitlist.
+# Netlify's pretty URLs had also been serving it lowercased.
+[[redirects]]
+  from = "/Tester%20Signup.html"
+  to = "/waitlist"
+  status = 301
+
+[[redirects]]
+  from = "/Tester%20Signup"
+  to = "/waitlist"
+  status = 301
+
+[[redirects]]
+  from = "/tester%20signup"
+  to = "/waitlist"
+  status = 301
+
+[[redirects]]
+  from = "/tester%20signup.html"
+  to = "/waitlist"
+  status = 301

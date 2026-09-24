@@ -3,14 +3,81 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>RIPPL — a new way to surf</title>
+<title>RIPPL — Surfboard Sensor &amp; AI Surf Coach</title>
+<meta name="description" content="RIPPL is a tiny sensor for your surfboard that records every ride at centimeter precision, then turns it into AI coaching, session stats and leaderboards." />
+<link rel="canonical" href="https://www.ripplsurf.com/" />
+
+<!-- Link previews -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="RIPPL" />
+<meta property="og:title" content="RIPPL — Surfboard Sensor &amp; AI Surf Coach" />
+<meta property="og:description" content="RIPPL is a tiny sensor for your surfboard that records every ride at centimeter precision, then turns it into AI coaching, session stats and leaderboards." />
+<meta property="og:url" content="https://www.ripplsurf.com/" />
+<meta property="og:image" content="https://www.ripplsurf.com/assets/og-image.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="A surfer's feet on a white board at golden hour, the RIPPL sensor mounted on the tail" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="RIPPL — Surfboard Sensor &amp; AI Surf Coach" />
+<meta name="twitter:description" content="RIPPL is a tiny sensor for your surfboard that records every ride at centimeter precision, then turns it into AI coaching, session stats and leaderboards." />
+<meta name="twitter:image" content="https://www.ripplsurf.com/assets/og-image.jpg" />
+
+<!-- Icons -->
+<link rel="icon" href="/favicon.ico" sizes="48x48" />
+<link rel="icon" href="/assets/icons/icon-192.png" type="image/png" sizes="192x192" />
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
+<meta name="theme-color" content="#2E1E10" />
+
+<!-- Structured data: who RIPPL is (Product + offer come when there's a price) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.ripplsurf.com/#organization",
+      "name": "RIPPL",
+      "url": "https://www.ripplsurf.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.ripplsurf.com/assets/icons/icon-192.png",
+        "width": 192,
+        "height": 192
+      },
+      "description": "RIPPL makes RIPPLsense, a surfboard-mounted sensor that records every ride at centimeter precision and turns it into AI coaching, session stats and leaderboards.",
+      "sameAs": [
+        "https://www.instagram.com/ripplsurf/",
+        "https://www.tiktok.com/@ripplsurf"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.ripplsurf.com/#website",
+      "name": "RIPPL",
+      "url": "https://www.ripplsurf.com/",
+      "publisher": {
+        "@id": "https://www.ripplsurf.com/#organization"
+      },
+      "inLanguage": "en"
+    }
+  ]
+}
+</script>
+
+<!-- Fonts used in the first screen -->
+<link rel="preload" as="font" type="font/woff2" href="styles/fonts/Inter-Black.woff2" crossorigin />
+<link rel="preload" as="font" type="font/woff2" href="styles/fonts/Inter-Light.woff2" crossorigin />
+<link rel="preload" as="font" type="font/woff2" href="styles/fonts/Inter-SemiBold.woff2" crossorigin />
+
+<!-- Hero photo is the LCP element: fetch it before the CSS asks for it -->
+<link rel="preload" as="image" type="image/webp" fetchpriority="high" href="assets/img/hero-2400.webp" imagesrcset="assets/img/hero-2400.webp 1x, assets/img/hero-3200.webp 2x" />
 <style>
-  @font-face { font-family: "Inter"; font-weight: 300; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Light-BETA.otf") format("opentype"); }
-  @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Regular.otf") format("opentype"); }
-  @font-face { font-family: "Inter"; font-weight: 500; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Medium.otf") format("opentype"); }
-  @font-face { font-family: "Inter"; font-weight: 600; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-SemiBold.otf") format("opentype"); }
-  @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Bold.otf") format("opentype"); }
-  @font-face { font-family: "Inter"; font-weight: 900; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Black.otf") format("opentype"); }
+  @font-face { font-family: "Inter"; font-weight: 300; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Light.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Regular.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 500; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Medium.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 600; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-SemiBold.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Bold.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 900; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Black.woff2") format("woff2"); }
 
   /* Section corner wordmarks */
   .sect-wm {
@@ -102,7 +169,8 @@
   .hero__bg {
     position: absolute;
     inset: 0;
-    background-image: url("assets/follow_hd_corrected.jpg");
+    background-image: url("assets/img/hero-2400.webp");
+    background-image: image-set(url("assets/img/hero-2400.webp") 1x, url("assets/img/hero-3200.webp") 2x);
     background-size: cover;
     background-position: center 35%;
     z-index: -2;
@@ -208,6 +276,14 @@
     padding: clamp(48px, 9vh, 110px) 40px 0;
   }
   .hero__sentinel { }
+  /* Readable by screen readers and search engines, not drawn on screen. */
+  .visually-hidden {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0);
+    white-space: nowrap; border: 0;
+  }
   .hero__wordmark {
     justify-self: center;
     display: block;
@@ -640,7 +716,7 @@
   }
   .bento__h {
     font-size: clamp(16px, 1.9vw, 22px);
-    font-weight: 800;
+    font-weight: 900;
     line-height: 1.05;
     letter-spacing: -0.015em;
     margin: 8px 0 6px;
@@ -1171,7 +1247,7 @@
   .cta__bg {
     position: absolute;
     inset: -6%;
-    background-image: url("assets/photo-sunset-lineup.jpg");
+    background-image: url("assets/img/cta-sunset-1536.webp");
     /* Focal point 30% up from the bottom (= 70% from the top): the crop pivots
        around that point as the viewport changes size. */
     background-position: center 70%;
@@ -1526,19 +1602,23 @@
     letter-spacing: 0.04em;
   }
   .footer a:hover { color: #fff; }
-  .footer__brand img { height: 18px; display: block; }
+  .footer__brand img { height: 18px; width: auto; display: block; }
 </style>
 
 <!-- PostHog Analytics -->
 <script>
   !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-  posthog.init('phc_onPTvoga4RPG4wu6cH9zQeLxMGikXapR8HZj7EtZV6a4', {
-    api_host: 'https://eu.i.posthog.com',
-    defaults: '2026-01-30',
-    autocapture: true,
-    capture_pageview: true,
-    capture_pageleave: true,
-  });
+  // Only track the live site — local previews and Netlify deploy previews
+  // stay out of the analytics. Captures before init just queue harmlessly.
+  if (/(^|\.)ripplsurf\.com$/.test(location.hostname)) {
+    posthog.init('phc_onPTvoga4RPG4wu6cH9zQeLxMGikXapR8HZj7EtZV6a4', {
+      api_host: 'https://eu.i.posthog.com',
+      defaults: '2026-01-30',
+      autocapture: true,
+      capture_pageview: true,
+      capture_pageleave: true,
+    });
+  }
 </script>
 
 </head>
@@ -1552,7 +1632,7 @@
     <!-- top bar -->
     <nav class="nav" aria-label="Primary">
       <a href="#" class="nav__brand" aria-label="RIPPL home">
-        <img src="assets/logo-wordmark-white.png" alt="RIPPL" />
+        <img src="assets/img/logo-wordmark-white-1280.png" width="1280" height="276" alt="RIPPL" />
       </a>
       <span class="nav__status" aria-live="polite">
         <span class="nav__dot" aria-hidden="true"></span>
@@ -1563,13 +1643,14 @@
     <!-- centered wordmark + tester pill row -->
     <div class="hero__main">
       <span class="hero__sentinel" aria-hidden="true"></span>
-      <img class="hero__wordmark" src="assets/logo-wordmark-white.png" alt="" aria-hidden="true" />
-      <a id="tester" href="Tester Signup.html" class="hero__tester" style="gap: 1px">Join the waitlist →</a>
+      <img class="hero__wordmark" src="assets/img/logo-wordmark-white-1280.png" width="1280" height="276" alt="" aria-hidden="true" />
+      <a id="tester" href="/waitlist" class="hero__tester" style="gap: 1px">Join the waitlist →</a>
     </div>
 
     <!-- rotating headline anchored bottom-left -->
     <div class="hero__headline">
       <h1 class="headline">
+        <span class="visually-hidden">RIPPL, the surfboard sensor and AI surf coach: </span>
         <span class="headline__lead">a new way to</span>
         <span class="headline__rotator" aria-live="polite">
           <span class="headline__rotator-inner" id="rotator">
@@ -1621,7 +1702,7 @@
           </ul>
         </div>
         <div class="sense-media">
-          <img class="sense-media__img" id="sense-img" src="assets/sensor-board-tail.png" alt="The RIPPL sensor mounted on the tail of a surfboard, golden hour" />
+          <img class="sense-media__img" id="sense-img" src="assets/img/sensor-board-tail-768.webp" width="768" height="1365" loading="lazy" decoding="async" alt="The RIPPL sensor mounted on the tail of a surfboard, golden hour" />
           <div class="sense-media__callouts" aria-hidden="true">
             <div class="sense-callout sense-callout--a" id="sense-co1">
               <span class="sense-callout__dot"></span>
@@ -1670,7 +1751,7 @@
             </div>
             <div class="bento__media">
               <div class="bento__watch">
-                <img src="assets/watch-app.png" alt="Apple Watch showing a live coaching cue" style="padding: 0px; height: 470px" />
+                <img src="assets/img/watch-app-600.webp" width="600" height="997" loading="lazy" decoding="async" alt="Apple Watch showing a live coaching cue" style="padding: 0px; height: 470px" />
               </div>
             </div>
           </div>
@@ -1755,13 +1836,13 @@
     <div class="af__track" id="af-track">
       <div class="af__sticky">
         <div class="af__photo af__photo--1 is-on" id="afph1">
-          <img src="uploads/IMG_7307.jpeg" alt="" /><div class="af__scrim af__scrim--1"></div>
+          <img src="assets/img/social-1-1600.webp" srcset="assets/img/social-1-1600.webp 1600w, assets/img/social-1-2400.webp 2400w" sizes="(orientation: portrait) 150vh, 100vw" width="2400" height="1591" loading="lazy" decoding="async" alt="A surfer carries their board past a truck to the beach, wetsuit drying on the tailgate" /><div class="af__scrim af__scrim--1"></div>
         </div>
         <div class="af__photo af__photo--2" id="afph2">
-          <img src="uploads/P1040672_dg.jpeg" alt="" /><div class="af__scrim af__scrim--2"></div>
+          <img src="assets/img/social-2-1600.webp" srcset="assets/img/social-2-1600.webp 1600w, assets/img/social-2-2400.webp 2400w, assets/img/social-2-3200.webp 3200w" sizes="(orientation: portrait) 150vh, 100vw" width="3200" height="2135" loading="lazy" decoding="async" alt="A surfer rides a wave at dusk, blurred with speed" /><div class="af__scrim af__scrim--2"></div>
         </div>
         <div class="af__photo af__photo--3" id="afph3">
-          <img src="uploads/P1040672_dg.jpeg" alt="" /><div class="af__scrim af__scrim--deep"></div>
+          <img src="assets/img/social-2-1600.webp" srcset="assets/img/social-2-1600.webp 1600w, assets/img/social-2-2400.webp 2400w, assets/img/social-2-3200.webp 3200w" sizes="(orientation: portrait) 150vh, 100vw" width="3200" height="2135" loading="lazy" decoding="async" alt="" /><div class="af__scrim af__scrim--deep"></div>
         </div>
         <div class="af__grain" aria-hidden="true"></div>
         <!-- Persistent section header — always visible across all scenes -->
@@ -1859,7 +1940,7 @@
 
           <p class="cta__sub">We're hand-picking our first riders to shape RIPPL — real hardware on your board, the app on your phone, and a direct line to the team that's building it. For free!</p>
 
-          <a class="cta__btn" href="Tester Signup.html" aria-label="Sign up to be a RIPPL tester">
+          <a class="cta__btn" href="/waitlist" aria-label="Sign up to be a RIPPL tester">
             <span>join the waitlist</span>
             <span class="cta__btn-arrow" aria-hidden="true">→</span>
           </a>
@@ -2077,161 +2158,6 @@
     })();
   </script>
 
-  <!-- ============ Tweaks panel ============ -->
-  <style>
-    .tweaks {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      width: 280px;
-      background: rgba(22, 20, 24, 0.88);
-      backdrop-filter: blur(20px) saturate(140%);
-      -webkit-backdrop-filter: blur(20px) saturate(140%);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 18px;
-      box-shadow: 0 24px 60px rgba(0,0,0,0.45);
-      padding: 14px 16px 16px;
-      font-family: var(--font-body);
-      z-index: 9999;
-      display: none;
-    }
-    .tweaks.is-open { display: block; }
-    .tweaks__head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid rgba(255,255,255,0.10);
-    }
-    .tweaks__title {
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.7);
-      margin: 0;
-    }
-    .tweaks__close {
-      background: transparent;
-      border: 0;
-      color: rgba(255,255,255,0.6);
-      font-size: 20px;
-      line-height: 1;
-      cursor: pointer;
-      padding: 2px 6px;
-      border-radius: 6px;
-      transition: background 160ms ease, color 160ms ease;
-    }
-    .tweaks__close:hover { background: rgba(255,255,255,0.08); color: #fff; }
-    .tweaks__section { margin-top: 10px; }
-    .tweaks__label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.55);
-      margin: 0 0 8px;
-    }
-    .tweaks__swatches {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-    .tweaks__swatch {
-      position: relative;
-      height: 44px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.10);
-      cursor: pointer;
-      padding: 0;
-      transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
-    }
-    .tweaks__swatch:hover { transform: translateY(-1px); border-color: rgba(255,255,255,0.32); }
-    .tweaks__swatch.is-active {
-      border-color: var(--rippl-sun);
-      box-shadow: 0 0 0 2px rgba(217,119,64,0.32);
-    }
-    .tweaks__swatch--black { background: #0a0a0a; }
-    .tweaks__swatch--cream { background: #f6f2ea; }
-    .tweaks__swatch--ink   { background: #2e1e10; }
-    .tweaks__swatch-name {
-      position: absolute;
-      bottom: -16px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 10px;
-      letter-spacing: 0.1em;
-      color: rgba(255,255,255,0.5);
-      text-transform: lowercase;
-    }
-    .tweaks__section + .tweaks__section { margin-top: 26px; }
-  </style>
-
-  <div class="tweaks" id="tweaks-panel" aria-label="Design tweaks" role="dialog">
-    <div class="tweaks__head">
-      <h3 class="tweaks__title">Tweaks</h3>
-      <button class="tweaks__close" aria-label="Close tweaks">×</button>
-    </div>
-
-    <div class="tweaks__section">
-      <p class="tweaks__label">Film grain</p>
-      <div class="tweaks__swatches" data-tweak="grainIntensity">
-        <button class="tweaks__swatch" data-value="off" aria-label="Off" style="background:#181410">
-          <span class="tweaks__swatch-name">off</span>
-        </button>
-        <button class="tweaks__swatch" data-value="medium" aria-label="Medium" style="background:#2a2018">
-          <span class="tweaks__swatch-name">medium</span>
-        </button>
-        <button class="tweaks__swatch" data-value="strong" aria-label="Strong" style="background:#40302a">
-          <span class="tweaks__swatch-name">strong</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    (function () {
-      const panel = document.getElementById('tweaks-panel');
-      const closeBtn = panel.querySelector('.tweaks__close');
-      const state = { grainIntensity: 'medium' };
-
-      const grainOpacity = { off: 0, medium: 0.28, strong: 0.48 };
-
-      function apply() {
-        var grainEl = document.querySelector('#pillar-social .af__grain');
-        if (grainEl) {
-          grainEl.style.opacity = (grainOpacity[state.grainIntensity] !== undefined
-            ? grainOpacity[state.grainIntensity] : 0.28);
-        }
-        panel.querySelectorAll('[data-tweak="grainIntensity"] .tweaks__swatch').forEach(function (btn) {
-          btn.classList.toggle('is-active', btn.dataset.value === state.grainIntensity);
-        });
-      }
-      apply();
-
-      panel.querySelectorAll('[data-tweak="grainIntensity"] .tweaks__swatch').forEach(function (btn) {
-        btn.addEventListener('click', function () {
-          state.grainIntensity = btn.dataset.value;
-          apply();
-        });
-      });
-
-      function open()  { panel.classList.add('is-open'); }
-      function close() { panel.classList.remove('is-open'); }
-      closeBtn.addEventListener('click', close);
-
-      window.addEventListener('message', function (e) {
-        const d = e.data || {};
-        if (d.type === '__activate_edit_mode')   open();
-        if (d.type === '__deactivate_edit_mode') panel.classList.remove('is-open');
-      });
-
-      window.parent.postMessage({ type: '__edit_mode_available' }, '*');
-    })();
-  </script>
-
   <!-- PostHog: scroll depth + named CTA events -->
   <script>
     (function () {
@@ -2263,7 +2189,7 @@
         if (!el) return;
         var href = el.getAttribute('href') || '';
         var text = (el.innerText || el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 80);
-        if (href.indexOf('Tester Signup') !== -1) {
+        if (href.indexOf('/waitlist') !== -1) {
           posthog.capture('waitlist_cta_clicked', {
             cta_text: text,
             cta_location: el.className || el.id || 'unknown',
@@ -2276,8 +2202,8 @@
 
   <!-- ============ Footer ============ -->
   <footer class="footer">
-    <a href="#" class="footer__brand" aria-label="RIPPL home">
-      <img src="assets/logo-wordmark-white.png" alt="RIPPL" />
+    <a href="/" class="footer__brand" aria-label="RIPPL home">
+      <img src="assets/img/logo-wordmark-white-1280.png" width="1280" height="276" alt="RIPPL" />
     </a>
     <span>© 2026 RIPPL · intelligent motion tech for surfing</span>
   </footer>
