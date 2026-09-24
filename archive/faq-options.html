@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>FAQ options</title>
+<style>
+  @font-face { font-family: "Inter"; font-weight: 300; font-display: swap; src: url("styles/fonts/Inter-Light.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url("styles/fonts/Inter-Regular.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 600; font-display: swap; src: url("styles/fonts/Inter-SemiBold.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 700; font-display: swap; src: url("styles/fonts/Inter-Bold.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 900; font-display: swap; src: url("styles/fonts/Inter-Black.woff2") format("woff2"); }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; }
+  :root {
+    --rippl-cream: #F2EBDC;
+    --rippl-cream-deep: #E6DCC4;
+    --rippl-bone: #FAF6EC;
+    --rippl-cocoa: #2E1E10;
+    --rippl-cocoa-soft: #4A3220;
+    --rippl-cocoa-mute: #7A6450;
+    --rippl-ink: #0E0E0E;
+    --rippl-sun: #D97740;
+    --rippl-wave: #4A7C8A;
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --dur-fast: 120ms;
+    --dur-base: 220ms;
+    --dur-sheet: 420ms;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    interpolate-size: allow-keywords;
+  }
+  body {
+    font-family: var(--font-body);
+    color: var(--rippl-cocoa);
+    background: var(--rippl-ink);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Stand-ins for the dark sections either side, so the rhythm reads true */
+  .ctx {
+    background: var(--rippl-ink); color: rgba(242, 235, 220, 0.55);
+    padding: 56px 24px; text-align: center;
+    font-size: 13px; font-weight: 600; letter-spacing: 0.18em; text-transform: lowercase;
+  }
+
+  /* ============ FAQ — shared ============ */
+  .faq {
+    background: var(--rippl-cream);
+    color: var(--rippl-cocoa);
+    padding: clamp(80px, 12vh, 140px) clamp(24px, 6vw, 100px);
+  }
+  .faq__opener { display: flex; align-items: baseline; gap: 20px; flex-wrap: wrap; }
+  .faq__num {
+    font-size: clamp(13px, 1vw, 16px); font-weight: 300;
+    letter-spacing: 0.32em; color: var(--rippl-cocoa-mute);
+  }
+  .faq__name {
+    margin: 0;
+    font-size: clamp(22px, 2.4vw, 34px); font-weight: 300;
+    letter-spacing: -0.01em; line-height: 1;
+  }
+  .faq__name b { font-weight: 900; letter-spacing: -0.02em; }
+  .faq__tag {
+    font-size: clamp(11px, 0.85vw, 13px); font-weight: 600;
+    letter-spacing: 0.18em; text-transform: lowercase; color: var(--rippl-cocoa-mute);
+    padding: 4px 10px; border: 1px solid rgba(46, 30, 16, 0.18); border-radius: 999px;
+  }
+  .faq__title {
+    margin: clamp(28px, 4vh, 48px) 0 0;
+    font-weight: 900; line-height: 0.9; letter-spacing: -0.045em;
+    font-size: clamp(52px, 7vw, 96px);
+    text-transform: uppercase; text-wrap: balance;
+  }
+  .faq__title > span { display: block; }
+  .faq__period { color: var(--rippl-sun); }
+  .faq__sub {
+    margin: clamp(20px, 3vh, 28px) 0 0; max-width: 34ch;
+    font-size: 17px; line-height: 1.55; color: var(--rippl-cocoa-soft);
+    text-wrap: pretty;
+  }
+  .faq__sub a { color: var(--rippl-cocoa); font-weight: 600; text-underline-offset: 3px; }
+
+  .faq__list { margin: 0; padding: 0; }
+  .faq__item { border-top: 1px solid rgba(46, 30, 16, 0.14); }
+  .faq__item:last-child { border-bottom: 1px solid rgba(46, 30, 16, 0.14); }
+
+  .faq__q {
+    list-style: none; cursor: pointer;
+    display: grid; align-items: center; gap: clamp(16px, 2vw, 28px);
+    padding: clamp(20px, 2.6vh, 28px) 0;
+    min-height: 44px;
+    font-weight: 700; letter-spacing: -0.012em; line-height: 1.25;
+    color: var(--rippl-cocoa);
+    border-radius: 10px;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .faq__q::-webkit-details-marker { display: none; }
+  .faq__q:focus-visible { outline: 2px solid var(--rippl-wave); outline-offset: 2px; }
+
+  /* plus → cross */
+  .faq__icon {
+    position: relative; flex: none;
+    width: 40px; height: 40px; border-radius: 999px;
+    border: 1px solid rgba(46, 30, 16, 0.2);
+    transition: background-color var(--dur-fast) var(--ease-out),
+                box-shadow var(--dur-fast) var(--ease-out),
+                transform var(--dur-base) var(--ease-out);
+  }
+  .faq__icon::before, .faq__icon::after {
+    content: ""; position: absolute; left: 50%; top: 50%;
+    width: 14px; height: 1.5px; background: currentColor; border-radius: 2px;
+    transform: translate(-50%, -50%);
+  }
+  .faq__icon::after { transform: translate(-50%, -50%) rotate(90deg); }
+  .faq__q:hover .faq__icon { background: rgba(46, 30, 16, 0.05); box-shadow: 0 2px 8px rgba(46, 30, 16, 0.12); }
+  .faq__q:active .faq__icon { background: rgba(46, 30, 16, 0.10); }
+  .faq__item[open] .faq__icon { transform: rotate(45deg); background: var(--rippl-cocoa); color: var(--rippl-cream); border-color: var(--rippl-cocoa); }
+
+  .faq__a {
+    margin: 0; max-width: 62ch;
+    padding: 0 0 clamp(24px, 3vh, 32px);
+    font-size: 17px; line-height: 1.6; color: var(--rippl-cocoa-soft);
+    text-wrap: pretty;
+  }
+  .faq__a b { font-weight: 600; color: var(--rippl-cocoa); }
+  .faq__a p { margin: 0; }
+  .faq__a p + p { margin-top: 0.8em; }
+
+  /* Open/close: height where the browser can animate to auto, instant elsewhere */
+  .faq__item::details-content {
+    block-size: 0; overflow: hidden;
+    transition: block-size var(--dur-sheet) var(--ease-out),
+                content-visibility var(--dur-sheet) allow-discrete;
+  }
+  .faq__item[open]::details-content { block-size: auto; }
+  .faq__item .faq__a { opacity: 0; transform: translateY(-8px); transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-sheet) var(--ease-out); }
+  .faq__item[open] .faq__a { opacity: 1; transform: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq__item::details-content, .faq__icon, .faq__item .faq__a { transition: none; }
+    .faq__item .faq__a { transform: none; }
+  }
+
+  /* ============ Option A — editorial two-column ============ */
+  .faq--a .faq__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.3fr);
+    gap: clamp(40px, 7vw, 140px);
+    align-items: start;
+  }
+  .faq--a .faq__intro { position: sticky; top: clamp(40px, 10vh, 110px); }
+  .faq--a .faq__q { grid-template-columns: 1fr auto; font-size: clamp(18px, 1.45vw, 22px); }
+  .faq--a .faq__a { padding-right: 64px; }
+
+  /* ============ Option B — numbered full-width list ============ */
+  .faq--b .faq__intro {
+    display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: clamp(24px, 5vw, 96px); align-items: end;
+    margin-bottom: clamp(48px, 8vh, 96px);
+  }
+  .faq--b .faq__intro .faq__opener { grid-column: 1 / -1; }
+  .faq--b .faq__sub { margin: 0; justify-self: end; }
+  .faq--b .faq__q {
+    grid-template-columns: clamp(48px, 7vw, 120px) 1fr auto;
+    font-size: clamp(20px, 2.1vw, 30px); letter-spacing: -0.02em;
+  }
+  .faq--b .faq__n {
+    font-size: clamp(13px, 1vw, 16px); font-weight: 300;
+    letter-spacing: 0.32em; color: var(--rippl-cocoa-mute);
+    font-variant-numeric: tabular-nums;
+  }
+  .faq--b .faq__a { margin-left: calc(clamp(48px, 7vw, 120px) + clamp(16px, 2vw, 28px)); }
+
+  /* ============ Responsive ============ */
+  @media (max-width: 900px) {
+    .faq--a .faq__layout { grid-template-columns: 1fr; }
+    .faq--a .faq__intro { position: static; }
+    .faq--a .faq__a { padding-right: 0; }
+    .faq--b .faq__intro { grid-template-columns: 1fr; }
+    .faq--b .faq__sub { justify-self: start; }
+  }
+  @media (max-width: 560px) {
+    .faq--b .faq__q { grid-template-columns: 1fr auto; }
+    .faq--b .faq__n { grid-column: 1 / -1; margin-bottom: -8px; }
+    .faq--b .faq__a { margin-left: 0; }
+    .faq__icon { width: 36px; height: 36px; }
+  }
+
+  /* ============ Review aids (options file only) ============ */
+  .tbc {
+    background: none; color: inherit;
+    text-decoration: underline dashed var(--rippl-sun) 1.5px; text-underline-offset: 4px;
+  }
+  .tbc::after {
+    content: "confirm"; margin-left: 6px; padding: 1px 6px; border-radius: 6px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em; vertical-align: 2px;
+    color: var(--rippl-cream); background: var(--rippl-sun);
+  }
+  .switcher {
+    position: fixed; z-index: 10; left: 50%; bottom: 20px; transform: translateX(-50%);
+    display: flex; gap: 4px; padding: 4px;
+    background: var(--rippl-ink); border-radius: 999px;
+    box-shadow: 0 18px 50px rgba(14, 14, 14, 0.32);
+  }
+  .switcher button {
+    min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; cursor: pointer;
+    font: 600 14px/1 var(--font-body); color: rgba(242, 235, 220, 0.7); background: transparent;
+    transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  }
+  .switcher button:hover { color: var(--rippl-cream); }
+  .switcher button[aria-pressed="true"] { background: var(--rippl-cream); color: var(--rippl-cocoa); }
+  .switcher button:focus-visible { outline: 2px solid var(--rippl-wave); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="ctx">↑ 03 · RIPPLsocial (dark)</div>
+
+<section class="faq faq--a" id="opt-a" data-screen-label="FAQ option A"></section>
+<section class="faq faq--b" id="opt-b" data-screen-label="FAQ option B" hidden></section>
+
+<div class="ctx">↓ you in? · ride with us (dark photo CTA)</div>
+
+<nav class="switcher" aria-label="FAQ design options">
+  <button type="button" data-opt="a" aria-pressed="true">A · Two-column</button>
+  <button type="button" data-opt="b" aria-pressed="false">B · Numbered list</button>
+</nav>
+
+<script>
+  // Draft copy. <mark class="tbc"> = not stated anywhere on the site yet; needs a yes/fix.
+  var FAQ = [
+    { q: "What is RIPPL?",
+      a: "<p>RIPPL is a tiny sensor for the tail of your surfboard, plus an app that turns every ride into coaching, stats and leaderboards. <b>RIPPLsense</b> records the ride, <b>RIPPLintelligence</b> explains it, and <b>RIPPLsocial</b> lets you share it with your crew.</p>" },
+    { q: "How does it mount — will it fit my board?",
+      a: "<p>RIPPLsense sits on the tail and mounts in seconds. The mounting system is built for swapping: change boards mid-session, snap the sensor in, get back in the lineup. <mark class=\"tbc\">Works on shortboards, longboards and softtops, with one mount per board.</mark></p>" },
+    { q: "Is it waterproof?",
+      a: "<p>Yes. RIPPLsense is rated <b>IP68</b> and built from marine-grade materials, made to live in saltwater, sand and sun.</p>" },
+    { q: "How long does the battery last?",
+      a: "<p><b>Days per charge.</b> Charge it, attach it before your session, then forget about it. <mark class=\"tbc\">It charges on its own dock in about two hours.</mark></p>" },
+    { q: "What does it actually measure?",
+      a: "<p>A 9-axis IMU and centimeter-precise GNSS read every movement of your board. From that we measure each wave you ride, wave height, turn power, paddle outs and paddle efficiency — then score every wave and every session.</p>" },
+    { q: "How is that different from a surf watch app?",
+      a: "<p>A watch sits on your wrist, so it mostly knows where you went. RIPPLsense sits on the board — the thing you're actually steering — so it reads <b>how</b> you rode each wave, not just that you caught it.</p>" },
+    { q: "Do I need my phone in the water?",
+      a: "<p><mark class=\"tbc\">No. The sensor records on its own and syncs to the app when you're back on the sand.</mark> Wear a paired watch and coaching lands on your wrist the moment you kick out.</p>" },
+    { q: "Which phones and watches does it work with?",
+      a: "<p><mark class=\"tbc\">RIPPL launches on iPhone and Apple Watch, with Android to follow.</mark></p>" },
+    { q: "How much will it cost, and when can I get one?",
+      a: "<p>We haven't announced pricing or a launch date yet. Join the waitlist and you'll hear first — and if you're picked as a tester, your RIPPLsense is free.</p>" },
+    { q: "How does the tester program work?",
+      a: "<p>Join the waitlist and we hand-pick our first riders. Testers get a <b>free RIPPLsense</b>, shipped worldwide, first access to every feature, and a direct line to the founders.</p><p>Every surfer you refer moves you both up the list. Five accepted referrals guarantees your sensor in Drop 2; ten gets you and your whole crew into Drop 1.</p>" },
+    { q: "What happens to my data?",
+      a: "<p><mark class=\"tbc\">Your sessions are yours. You choose what's shared to leaderboards and your crew, and you can delete your data at any time.</mark></p>" }
+  ];
+
+  function intro() {
+    return '<div class="faq__intro">' +
+      '<div class="faq__opener"><span class="faq__num">04</span><h2 class="faq__name"><b>RIPPL</b>faq</h2><span class="faq__tag">the details</span></div>' +
+      '<p class="faq__title"><span>Good</span><span>questions<span class="faq__period">.</span></span></p>' +
+      '<p class="faq__sub">Everything surfers ask us before they join the lineup. Missing one? <a href="https://www.instagram.com/ripplsurf/">Ask us on Instagram</a>.</p>' +
+    '</div>';
+  }
+  function list(numbered) {
+    return '<div class="faq__list">' + FAQ.map(function (item, i) {
+      var n = numbered ? '<span class="faq__n">' + String(i + 1).padStart(2, '0') + '</span>' : '';
+      return '<details class="faq__item"><summary class="faq__q">' + n + '<span>' + item.q + '</span><span class="faq__icon" aria-hidden="true"></span></summary><div class="faq__a">' + item.a + '</div></details>';
+    }).join('') + '</div>';
+  }
+  document.getElementById('opt-a').innerHTML = '<div class="faq__layout">' + intro() + list(false) + '</div>';
+  document.getElementById('opt-b').innerHTML = intro() + list(true);
+
+  var KEY = 'rippl-faq-option';
+  function show(opt) {
+    document.getElementById('opt-a').hidden = opt !== 'a';
+    document.getElementById('opt-b').hidden = opt !== 'b';
+    document.querySelectorAll('.switcher button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.opt === opt)); });
+    try { localStorage.setItem(KEY, opt); } catch (e) {}
+  }
+  document.querySelectorAll('.switcher button').forEach(function (b) { b.addEventListener('click', function () { show(b.dataset.opt); }); });
+  var saved = null; try { saved = localStorage.getItem(KEY); } catch (e) {}
+  show(saved === 'b' ? 'b' : 'a');
+  // Open the first answer so the open state is visible at a glance.
+  document.querySelectorAll('.faq__list').forEach(function (l) { l.querySelector('details').open = true; });
+</script>
+</body>
+</html>
