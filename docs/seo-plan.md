@@ -67,7 +67,16 @@ Goal: fix everything that's actively hurting indexing, sharing, and speed.
   - Local preview now uses `scripts/serve.py` (clean URLs like Netlify)
 - [x] **1.8 Caching** — `netlify.toml` headers: `/assets/img/*` + `/assets/icons/*` 7 days (+1 day stale-while-revalidate), `/styles/fonts/*` 1 year immutable. HTML left on Netlify's revalidate default. Names aren't content-hashed: rename an image if a change must show immediately
 - [x] **1.9 Loader vs LCP** — the loader used to wait for the full `load` event (every image + the Tally iframe) plus 2s. Now it lifts when fonts + preloaded hero images are ready, minimum 1.2s on screen, hard cap 4s. Uses `onload`, not `decode()` (decode stalls in background tabs). Signup hero bg is now preloaded too
-- [ ] **1.10 Verify** — Lighthouse (mobile) before/after, Rich Results Test, OG preview check, 390px overflow check
+- [x] **1.10 Verify** (2026-09-24, Lighthouse 12, mobile)
+  - Deploy preview (`deploy-preview-1--idyllic-pixie-34b71f.netlify.app`): build publishes only `dist/`; test pages, `CLAUDE.md`, `docs/`, `uploads/`, `scripts/`, `.claude/` all 404; old signup URLs + `_intel_preview.html` 301 correctly; cache headers applied; brotli on
+  - Real throttling (devtools, median of 3), live vs new build — homepage: **LCP 5.3s → 2.2s**, perf 80 → 92, page weight 12.5MB → 1.4MB. On a throttled phone the live site is still showing the loader at ~9s; the new build shows the page
+  - Scores, live → new: SEO 91 → 100 (both pages), best practices 96 → 100, accessibility 95 / 100 unchanged
+  - Caveat: Lighthouse's *simulated* throttling (what PageSpeed Insights shows) estimates homepage LCP ~6s, charging the wordmark for every image that starts downloading early. Scratch experiments (wordmark `fetchpriority`, dropping the CTA background) only moved it to 5.9s. Google ranks on real-user CrUX data, not this lab estimate; re-check PSI on production after merge
+  - Deploy previews carry `x-robots-tag: noindex` and Netlify's feedback toolbar (~1.5MB), so don't read SEO/perf scores off preview links
+- [ ] **1.11 Follow-ups** (non-blocking)
+  - Homepage accessibility 95: `aria-required-children` — an element with an ARIA role is missing required child roles (pre-existing)
+  - Simulated LCP: lazy-load the CTA background (IntersectionObserver), keep portrait phones on `hero-2400` instead of `hero-3200`, check whether the social section's lazy images start too early on mobile
+  - After merge: run PageSpeed Insights on production and compare with CrUX once it has data
 
 **Done when:** Lighthouse SEO = 100, mobile performance meaningfully up, link previews render in iMessage/Slack/X, only intended URLs are crawlable.
 
@@ -130,4 +139,6 @@ Goal: give Google more real content to rank and win FAQ rich results.
 | 2026-09-24 | 1.1 Head metadata | 6bb7eb2 | Share image from the hero photo |
 | 2026-09-24 | 1.3 Image weight | 992db8e | ~10MB → ~590KB first load |
 | 2026-09-24 | 1.4 Fonts · 1.8 Caching · 1.9 Loader | 0d500f6 | Fonts 1.3MB → 171KB; loader lifts at ~1.2s |
-| 2026-09-24 | 1.5 Schema · 1.6 On-page · 1.7 /waitlist | see git log | Site now edited in Claude Code only (no more Claude Design exports) |
+| 2026-09-24 | 1.5 Schema · 1.6 On-page · 1.7 /waitlist | ce8d183 | Site now edited in Claude Code only (no more Claude Design exports) |
+| 2026-09-24 | PostHog only on ripplsurf.com | 9159ee5 | Local + preview traffic no longer tracked |
+| 2026-09-24 | 1.10 Verify | see git log | LCP 5.3s → 2.2s (real throttling); SEO 100 |
