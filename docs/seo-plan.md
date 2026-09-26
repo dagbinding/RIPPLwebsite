@@ -75,7 +75,7 @@ Goal: fix everything that's actively hurting indexing, sharing, and speed.
   - Deploy previews carry `x-robots-tag: noindex` and Netlify's feedback toolbar (~1.5MB), so don't read SEO/perf scores off preview links
 - [ ] **1.11 Follow-ups** (branch `perf-a11y`)
   - Done: tagline dots are a `role="group"` of `aria-pressed` buttons (was an invalid `tablist`); phones/tablets < 1024px get `hero-2400` only (preloads carry `media`, loader skips non-matching ones); wordmark (the LCP element) `fetchpriority="high"`; CTA background loads via IntersectionObserver two screens early (`<noscript>` fallback)
-  - Found: PostHog's project-side features (session recording, surveys, dead clicks, web vitals) add ~215KB of JS on production — Lighthouse (simulated) live 69 → 82 with PostHog blocked. Decision pending (see chat)
+  - PostHog: its project-side features (session recording, surveys, dead clicks, web vitals) add ~215KB of JS on production — Lighthouse (simulated) live 69 → 82 with PostHog blocked. Decision 2026-09-26: keep every feature, start PostHog after `load` + idle (both pages). Verified it inits after load and still sends pageviews; the gain can only be measured on production (local loads too fast to show it) — re-run PSI after merge
   - Social section photos: not an issue — they only load when Lighthouse takes its full-page screenshot
   - Homepage accessibility 95: `aria-required-children` — an element with an ARIA role is missing required child roles (pre-existing)
   - Simulated LCP: lazy-load the CTA background (IntersectionObserver), keep portrait phones on `hero-2400` instead of `hero-3200`, check whether the social section's lazy images start too early on mobile
