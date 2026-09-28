@@ -36,18 +36,10 @@
 
   /* ============ RIPPLsense reveal ============
      One screen, not pinned. The film plays through once as the section comes
-     up the screen, and the three beats land on its cues. */
+     up the screen: the section label, then the closing line as the mark lights up. */
   .reveal { position: relative; background: var(--rippl-ink); }
   .reveal__stage { position: relative; height: 100vh; min-height: 560px; max-height: 1000px; overflow: hidden; }
   .reveal__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-
-  /* Scrim for the middle beat: its text sits over the white sensor */
-  .reveal__scrim {
-    position: absolute; left: 0; right: 0; bottom: 0; height: 60%;
-    background: linear-gradient(to top, rgba(14,14,14,0.9) 0%, rgba(14,14,14,0.75) 45%, rgba(14,14,14,0) 100%);
-    opacity: 0; transition: opacity 420ms var(--ease-out); pointer-events: none;
-  }
-  .reveal[data-beat="1"] .reveal__scrim { opacity: 1; }
 
   .reveal__beat {
     position: absolute; left: var(--gutter); right: var(--gutter);
@@ -57,9 +49,8 @@
   }
   .reveal__beat.is-on { opacity: 1; transform: none; pointer-events: auto; }
   .reveal__beat--1 { top: clamp(32px, 8vh, 96px); }
-  .reveal__beat--2 { bottom: clamp(40px, 10vh, 110px); max-width: 560px; }
   /* headline above the sensor, button below it, so the product stays clear */
-  .reveal__beat--3 {
+  .reveal__beat--2 {
     top: clamp(32px, 8vh, 96px); bottom: clamp(40px, 9vh, 100px);
     display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center;
   }
@@ -68,11 +59,8 @@
   .eyebrow__num { font-size: clamp(13px, 1vw, 16px); font-weight: 300; letter-spacing: 0.32em; opacity: 0.7; }
   .eyebrow__name { margin: 0; font-size: clamp(22px, 2.4vw, 34px); font-weight: 300; letter-spacing: -0.01em; line-height: 1; }
   .eyebrow__name b { font-weight: 900; letter-spacing: -0.02em; }
-  .display { margin: 0; font-weight: 900; text-transform: uppercase; line-height: 0.9; letter-spacing: -0.045em; font-size: clamp(44px, 7vw, 104px); }
-  .display--line { font-size: clamp(34px, 5vw, 76px); }
+  .display { margin: 0; font-weight: 900; text-transform: uppercase; line-height: 0.9; letter-spacing: -0.045em; font-size: clamp(34px, 5vw, 76px); }
   .dot { color: var(--rippl-sun); }
-  .lede { margin: 20px 0 0; font-size: clamp(17px, 1.3vw, 20px); line-height: 1.55; max-width: 36ch; color: rgba(242, 235, 220, 0.86); text-wrap: pretty; }
-  .lede b { font-weight: 600; color: var(--rippl-cream); }
   .pill {
     display: inline-flex; align-items: center; min-height: 44px; padding: 0 22px; border-radius: 999px;
     background: var(--rippl-cream); color: var(--rippl-cocoa); font: 600 15px/1 var(--font-body); text-decoration: none;
@@ -82,10 +70,10 @@
   .pill:focus-visible { outline: 2px solid var(--rippl-wave); outline-offset: 2px; }
 
   @media (min-width: 901px) {
-    .display--line { white-space: nowrap; }
+    .display { white-space: nowrap; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .reveal__beat, .reveal__scrim { transition: none; }
+    .reveal__beat { transition: none; }
   }
 </style>
 </head>
@@ -99,17 +87,12 @@
 <section class="reveal" id="reveal" aria-labelledby="reveal-title">
   <div class="reveal__stage">
     <video class="reveal__video" id="reveal-video" muted playsinline preload="auto" aria-hidden="true"></video>
-    <div class="reveal__scrim" aria-hidden="true"></div>
 
     <div class="reveal__beat reveal__beat--1 is-on">
       <div class="eyebrow"><span class="eyebrow__num">01</span><h2 class="eyebrow__name" id="reveal-title"><b>RIPPL</b>sense</h2></div>
     </div>
     <div class="reveal__beat reveal__beat--2">
-      <p class="display">Meet<br />RIPPLsense<span class="dot">.</span></p>
-      <p class="lede">A tiny sensor that sits on your tail. <b>Mounts in seconds.</b> Then it disappears.</p>
-    </div>
-    <div class="reveal__beat reveal__beat--3">
-      <p class="display display--line">Every ride, measured<span class="dot">.</span></p>
+      <p class="display">Every ride, measured<span class="dot">.</span></p>
       <a class="pill" href="/waitlist">Join the waitlist →</a>
     </div>
   </div>
@@ -126,12 +109,11 @@
 
   // Two renders, each web-encoded (scripts/encode_video.swift: H.264, no audio,
   // index up front), each with its own cues measured from the frames:
-  //   meet — the sensor is fully revealed; glow — first frame of the RIPPL mark
-  //   lighting up. The closing line starts its 420ms fade on the glow so both
-  //   peak together.
+  //   glow — first frame of the RIPPL mark lighting up. The closing line starts
+  //   its 420ms fade on the glow so both peak together.
   var FILMS = {
-    landscape: { src: 'media/flyby-1600.mp4',         meet: 1.6, glow: 4.2 },   // 7.05s, opens on a macro close-up
-    portrait:  { src: 'media/flyby-vertical-720.mp4', meet: 0.8, glow: 2.62 },  // 5.32s, whole sensor from frame one
+    landscape: { src: 'media/flyby-1600.mp4',         glow: 4.2 },   // 7.05s, opens on a macro close-up
+    portrait:  { src: 'media/flyby-vertical-720.mp4', glow: 2.62 },  // 5.32s, whole sensor from frame one
   };
   var film = matchMedia('(orientation: portrait)').matches ? FILMS.portrait : FILMS.landscape;
   video.src = film.src;
@@ -144,13 +126,14 @@
     beats.forEach(function (b, i) { b.classList.toggle('is-on', i === n); });
   }
 
-  function beatAt(t) { return t < film.meet ? 0 : t < film.glow ? 1 : 2; }
+  // Two beats: the section label, then the closing line on the glow.
+  function beatAt(t) { return t < film.glow ? 0 : 1; }
 
   // Reduced motion: no playback — rest on the lit-up final frame with the closing line.
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
     var rest = function () { video.currentTime = Math.max(0, video.duration - 0.05); };
     if (video.readyState >= 1) rest(); else video.addEventListener('loadedmetadata', rest, { once: true });
-    showBeat(2);
+    showBeat(1);
     return;
   }
 
@@ -161,7 +144,7 @@
   } else {
     video.addEventListener('timeupdate', function () { showBeat(beatAt(video.currentTime)); });
   }
-  video.addEventListener('ended', function () { showBeat(2); });
+  video.addEventListener('ended', function () { showBeat(1); });
 
   // Starts while the section is still coming up the screen, so it's already
   // moving on arrival. Pauses if scrolled away early, resumes on return.
