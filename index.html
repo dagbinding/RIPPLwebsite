@@ -1115,6 +1115,42 @@
     .af__scrollcue-line::after { animation: none; opacity: 0; }
   }
 
+  /* ============ RIPPLsense intro — flyby reveal ============
+     One screen, not pinned, straight after the hero. The flyby autoplays as the
+     section comes up the screen; "Every ride, measured." fades in on the frame
+     the RIPPL mark starts to glow. Landscape screens get the wide render,
+     portrait screens the vertical one (cues differ, see the script). */
+  .sense-intro { position: relative; background: var(--rippl-ink); color: var(--rippl-cream); }
+  .sense-intro__stage { position: relative; height: 100vh; min-height: 560px; max-height: 1000px; overflow: hidden; }
+  .sense-intro__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .sense-intro__close {
+    position: absolute; left: clamp(24px, 6vw, 100px); right: clamp(24px, 6vw, 100px);
+    top: clamp(32px, 8vh, 96px); bottom: clamp(40px, 9vh, 100px);
+    display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center;
+    opacity: 0; transform: translateY(16px); pointer-events: none;
+    transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out);
+  }
+  .sense-intro.is-lit .sense-intro__close { opacity: 1; transform: none; pointer-events: auto; }
+  .sense-intro__line {
+    margin: 0; font-weight: 900; text-transform: uppercase;
+    line-height: 0.9; letter-spacing: -0.045em; font-size: clamp(34px, 5vw, 76px);
+  }
+  .sense-intro__dot { color: var(--rippl-sun); }
+  .sense-intro__cta {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 22px; border-radius: var(--radius-pill);
+    background: var(--rippl-cream); color: var(--rippl-cocoa); font: 600 15px/1 var(--font-body); text-decoration: none;
+    box-shadow: var(--shadow-soft);
+    transition: box-shadow var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+  }
+  .sense-intro__cta:hover { background: #EDE5D4; box-shadow: var(--shadow-card); }
+  .sense-intro__cta:focus-visible { outline: 2px solid var(--rippl-wave); outline-offset: 2px; }
+  @media (min-width: 901px) {
+    .sense-intro__line { white-space: nowrap; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sense-intro__close { transition: none; }
+  }
+
   /* ============ Pillar 01 — RIPPLsense (Editorial) ============ */
   .sense-opener {
     padding: clamp(40px, 6vh, 72px) clamp(40px, 6vw, 100px) clamp(20px, 3vh, 36px);
@@ -1789,6 +1825,69 @@
     </div>
   </section>
 
+
+  <!-- ============ RIPPLsense intro — flyby reveal ============ -->
+  <section class="sense-intro" data-screen-label="02 RIPPLsense Reveal" id="sense-intro" aria-label="Meet RIPPLsense">
+    <div class="sense-intro__stage">
+      <video class="sense-intro__video" id="sense-intro-video" muted playsinline preload="none" aria-hidden="true"></video>
+      <div class="sense-intro__close">
+        <p class="sense-intro__line">Every ride, measured<span class="sense-intro__dot">.</span></p>
+        <a class="sense-intro__cta" href="/waitlist">Join the waitlist →</a>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var section = document.getElementById('sense-intro');
+        var stage = section.querySelector('.sense-intro__stage');
+        var video = document.getElementById('sense-intro-video');
+
+        // Two web encodes (scripts/encode_video.swift), each with its glow cue:
+        // the first frame where the RIPPL mark starts to brighten, measured from
+        // the mark's own brightness. The line's 420ms fade starts there, so text
+        // and light rise and peak together.
+        var FILMS = {
+          landscape: { src: 'assets/video/sense-flyby-1600.mp4',         glow: 4.13 },  // 7.05s
+          portrait:  { src: 'assets/video/sense-flyby-vertical-720.mp4', glow: 2.38 },  // 5.32s
+        };
+        var film = matchMedia('(orientation: portrait)').matches ? FILMS.portrait : FILMS.landscape;
+
+        var lit = false;
+        function light(on) { if (on !== lit) { lit = on; section.classList.toggle('is-lit', on); } }
+
+        // Don't compete with the hero: fetch the film once the page has loaded,
+        // or sooner if the reader gets here first.
+        var loaded = false;
+        function load() { if (!loaded) { loaded = true; video.preload = 'auto'; video.src = film.src; } }
+        if (document.readyState === 'complete') load(); else window.addEventListener('load', load);
+
+        // Reduced motion: no playback — rest on the lit final frame with the line.
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          load();
+          video.addEventListener('loadedmetadata', function () { video.currentTime = Math.max(0, video.duration - 0.05); }, { once: true });
+          light(true);
+          return;
+        }
+
+        // Follow the film frame by frame (timeupdate only fires ~4x a second).
+        if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
+          var onFrame = function (now, meta) { light(meta.mediaTime >= film.glow); video.requestVideoFrameCallback(onFrame); };
+          video.requestVideoFrameCallback(onFrame);
+        } else {
+          video.addEventListener('timeupdate', function () { light(video.currentTime >= film.glow); });
+        }
+        video.addEventListener('ended', function () { light(true); });
+
+        // Starts while the section is still coming up the screen, so it's already
+        // moving on arrival. Pauses if scrolled away early, resumes on return.
+        new IntersectionObserver(function (e) {
+          if (e[0].isIntersecting) load();
+          var seen = e[0].intersectionRatio >= 0.3;
+          if (seen && !video.ended) video.play().catch(function () {});
+          else if (!seen) video.pause();
+        }, { threshold: [0, 0.3] }).observe(stage);
+      })();
+    </script>
+  </section>
 
   <!-- ============ Pillar 01 — RIPPLsense (Editorial) ============ -->
   <section class="pillar" data-screen-label="04 Pillar 01 Sense" id="pillar-sense" style="background:var(--rippl-cream)">

@@ -114,8 +114,8 @@
   //   once the glow is well under way). The closing line's 420ms fade starts
   //   there, so text and light rise together and peak together.
   var FILMS = {
-    landscape: { src: 'media/flyby-1600.mp4',         glow: 4.13 },   // 7.05s, opens on a macro close-up
-    portrait:  { src: 'media/flyby-vertical-720.mp4', glow: 2.38 },  // 5.32s, whole sensor from frame one
+    landscape: { src: '../../assets/video/sense-flyby-1600.mp4',         glow: 4.13 },   // 7.05s, opens on a macro close-up
+    portrait:  { src: '../../assets/video/sense-flyby-vertical-720.mp4', glow: 2.38 },  // 5.32s, whole sensor from frame one
   };
   var film = matchMedia('(orientation: portrait)').matches ? FILMS.portrait : FILMS.landscape;
   video.src = film.src;
