@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>B · Three steps — One sensor. Every board.</title>
+<link rel="stylesheet" href="shared.css" />
+<style>
+  /* B · Three steps — cream editorial, like the current section. The film's
+     close-up loops in a card; the step that matches what's on screen lights up. */
+  .steps { background: var(--rippl-cream); color: var(--rippl-cocoa); padding: clamp(80px, 12vh, 140px) var(--gutter); }
+  .steps__grid { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.2fr); gap: clamp(40px, 6vw, 110px); align-items: center; }
+  .steps__copy { display: grid; gap: clamp(24px, 4vh, 40px); }
+  .steps__copy .eyebrow { color: var(--rippl-cocoa-mute); }
+  .steps__copy .eyebrow__name { color: var(--rippl-cocoa); }
+  .steps__lede { color: var(--rippl-cocoa-soft); }
+  /* two lines beside the card, like the current section */
+  .steps .display { font-size: clamp(40px, 4.6vw, 72px); }
+
+  .steps__list { margin: 0; padding: 0; list-style: none; display: grid; }
+  .step {
+    display: grid; grid-template-columns: 40px 1fr; gap: 0 16px; padding: 18px 0;
+    border-top: 1px solid rgba(46, 30, 16, 0.14);
+    color: var(--rippl-cocoa-mute);
+    transition: color var(--dur-base) var(--ease-out);
+  }
+  .step:last-child { border-bottom: 1px solid rgba(46, 30, 16, 0.14); }
+  .step__n { font-size: 14px; font-weight: 300; letter-spacing: 0.2em; padding-top: 5px; font-variant-numeric: tabular-nums; }
+  .step__t { margin: 0; font-size: clamp(19px, 1.6vw, 24px); font-weight: 700; letter-spacing: -0.015em; line-height: 1.2; }
+  .step__d { grid-column: 2; margin: 6px 0 0; font-size: 16px; line-height: 1.5; }
+  .step.is-on { color: var(--rippl-cocoa); }
+  .step.is-on .step__n { color: var(--rippl-sun); font-weight: 600; }
+  /* a thin line fills as the step plays */
+  .step__bar { grid-column: 2; height: 2px; margin-top: 12px; background: rgba(46, 30, 16, 0.1); overflow: hidden; }
+  .step__bar span { display: block; height: 100%; width: 0; background: var(--rippl-cocoa); }
+
+  .steps__card { position: relative; aspect-ratio: 16 / 10; border-radius: 16px; overflow: hidden; background: var(--rippl-ink); box-shadow: var(--shadow-card); }
+  .steps__card video { width: 100%; height: 100%; object-fit: cover; object-position: 78% 50%; }
+
+  @media (max-width: 900px) {
+    .steps__grid { grid-template-columns: 1fr; }
+    .steps__card { order: -1; aspect-ratio: 16 / 9; }
+  }
+  @media (prefers-reduced-motion: reduce) { .step { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="ctx ctx--dark">↑ the RIPPLsense reveal · every ride, measured.</div>
+
+<section class="steps" id="steps" aria-labelledby="steps-title">
+  <div class="steps__grid">
+    <div class="steps__copy">
+      <div class="eyebrow">
+        <span class="eyebrow__num">01</span>
+        <h2 class="eyebrow__name" id="steps-title"><b>RIPPL</b>sense</h2>
+        <span class="eyebrow__tag">the hardware</span>
+      </div>
+      <p class="display">One sensor.<br />Every board<span class="dot">.</span></p>
+      <p class="body steps__lede">One RIPPLsense for your whole quiver. Here's all it takes.</p>
+      <ol class="steps__list">
+        <li class="step is-on">
+          <span class="step__n">01</span>
+          <p class="step__t">Stick a mount on each board</p>
+          <p class="step__d">Shortboard, longboard, softtop — one small mount on every tail.</p>
+          <div class="step__bar" aria-hidden="true"><span></span></div>
+        </li>
+        <li class="step">
+          <span class="step__n">02</span>
+          <p class="step__t">Snap RIPPLsense in</p>
+          <p class="step__d">It clicks into place in seconds. Swap boards mid-session.</p>
+          <div class="step__bar" aria-hidden="true"><span></span></div>
+        </li>
+        <li class="step">
+          <span class="step__n">03</span>
+          <p class="step__t">Paddle out</p>
+          <p class="step__d">Precise motion capture reads every wave, every turn, every paddle.</p>
+          <div class="step__bar" aria-hidden="true"><span></span></div>
+        </li>
+      </ol>
+    </div>
+    <div class="steps__card">
+      <video id="steps-video" muted playsinline preload="auto" aria-hidden="true"></video>
+    </div>
+  </div>
+</section>
+
+<div class="ctx ctx--cream">↓ 02 · RIPPLintelligence</div>
+
+<nav class="concept-nav" aria-label="Concepts">
+  <a href="a.html">A · The shaping bay</a>
+  <a href="b.html" aria-current="page">B · Three steps</a>
+  <a href="c.html">C · Quiver, then snap</a>
+</nav>
+
+<script src="shared.js"></script>
+<script>
+(function () {
+  var video = document.getElementById('steps-video');
+  var steps = document.querySelectorAll('.step');
+  var bars = document.querySelectorAll('.step__bar span');
+  // Loop the close-up from just before the mount drops. Each step spans the
+  // part of the film it describes: the mount dropping and landing, the sensor
+  // clicking in, then the settled hold.
+  var LOOP_START = 4.0, LOOP_END = 10.5;   // the film holds on to 14.4s; loop sooner
+  var STEPS = [[4.0, 5.7], [5.7, 8.3], [8.3, LOOP_END]];   // mount drops · sensor drops & clicks in · settled
+
+  function stepAt(t) { return t < STEPS[1][0] ? 0 : t < STEPS[2][0] ? 1 : 2; }
+  var shown = 0;
+  function update(t) {
+    var n = stepAt(t);
+    if (n !== shown) { shown = n; steps.forEach(function (s, i) { s.classList.toggle('is-on', i === n); }); }
+    bars.forEach(function (b, i) {
+      var r = STEPS[i], p = i < n ? 1 : i > n ? 0 : (t - r[0]) / (r[1] - r[0]);
+      b.style.width = (Math.max(0, Math.min(1, p)) * 100) + '%';
+    });
+  }
+
+  video.src = SB.src;
+  if (SB.reduce) { SB.seek(video, 15); update(15); return; }
+
+  SB.seek(video, LOOP_START);
+  SB.everyFrame(video, function (t) {
+    update(t);
+    if (t >= LOOP_END && !video.seeking) SB.seek(video, LOOP_START, function () { video.play(); });
+  });
+  video.addEventListener('ended', function () { SB.seek(video, LOOP_START, function () { video.play(); }); });
+  SB.whenSeen(document.querySelector('.steps__card'), 0.4,
+    function () { video.play().catch(function () {}); },
+    function () { video.pause(); });
+})();
+</script>
+</body>
+</html>

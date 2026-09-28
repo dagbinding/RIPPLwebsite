@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>A · The shaping bay — One sensor. Every board.</title>
+<link rel="stylesheet" href="shared.css" />
+<style>
+  /* A · The shaping bay — the whole film, full-bleed; the copy moves through
+     three chapters on the film's own cues: meet → snap in and go → every board. */
+  .bay { position: relative; background: var(--rippl-ink); color: var(--rippl-cream); }
+  .bay__stage { position: relative; height: 100vh; min-height: 600px; max-height: 1000px; overflow: hidden; }
+  /* bias right: the sensor lands ~88% across the frame */
+  .bay__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 72% 50%; }
+  /* scrim: the copy sits over the left of the frame */
+  .bay__stage::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(to right, rgba(14,14,14,0.78) 0%, rgba(14,14,14,0.45) 38%, rgba(14,14,14,0) 62%);
+  }
+  .bay__head { position: absolute; z-index: 1; top: clamp(32px, 8vh, 96px); left: var(--gutter); }
+  .bay__copy { position: absolute; z-index: 1; left: var(--gutter); bottom: clamp(88px, 14vh, 150px); width: min(720px, 62vw); display: grid; }
+  .bay .display { font-size: clamp(40px, 5.2vw, 80px); }
+  .bay__ch {
+    grid-area: 1 / 1; display: grid; gap: 20px; align-content: end;
+    opacity: 0; transform: translateY(16px);
+    transition: opacity var(--dur-sheet) var(--ease-out), transform var(--dur-sheet) var(--ease-out);
+  }
+  .bay__ch.is-on { opacity: 1; transform: none; }
+  .bay__ch .body { color: rgba(242, 235, 220, 0.86); }
+  .bay__foot { position: absolute; z-index: 1; left: var(--gutter); right: var(--gutter); bottom: clamp(32px, 6vh, 64px); display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+  .bay__ticks { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 120px)); gap: 10px; }
+  .bay__ticks li { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: lowercase; color: rgba(242,235,220,0.45); }
+  .bay__ticks li::before { content: ""; display: block; height: 2px; margin-bottom: 8px; background: rgba(242,235,220,0.18); }
+  .bay__ticks li.is-on { color: var(--rippl-cream); }
+  .bay__ticks li.is-on::before { background: var(--rippl-cream); }
+  .bay .replay { color: var(--rippl-cream); }
+
+  /* Portrait screens (phones, tablets upright): the vertical film, full screen.
+     The sensor seats just below the middle; the copy sits under it on a scrim. */
+  .bay.is-portrait .bay__stage { height: 100svh; min-height: 600px; max-height: 1180px; }
+  .bay.is-portrait .bay__video { object-position: 50% 50%; }
+  .bay.is-portrait .bay__stage::after {
+    background:
+      linear-gradient(to top, rgba(14,14,14,0.88) 0%, rgba(14,14,14,0.6) 28%, rgba(14,14,14,0) 52%),
+      linear-gradient(to bottom, rgba(14,14,14,0.55) 0%, rgba(14,14,14,0) 22%);
+  }
+  .bay.is-portrait .bay__copy { width: auto; right: var(--gutter); bottom: clamp(110px, 15vh, 150px); }
+  .bay.is-portrait .display { font-size: clamp(38px, 10.5vw, 72px); }
+  .bay.is-portrait .bay__ticks { grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+  /* markers and an icon-only replay share one row under the copy */
+  .bay.is-portrait .bay__foot { flex-wrap: nowrap; gap: 16px; bottom: clamp(28px, 5vh, 48px); }
+  .bay.is-portrait .replay { flex: none; width: 44px; padding: 0; font-size: 18px; }
+  .bay.is-portrait .replay__label {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
+  }
+  @media (prefers-reduced-motion: reduce) { .bay__ch { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="ctx ctx--dark">↑ the RIPPLsense reveal · every ride, measured.</div>
+
+<section class="bay" id="bay" aria-labelledby="bay-title">
+  <div class="bay__stage">
+    <video class="bay__video" id="bay-video" muted playsinline preload="auto" aria-hidden="true"></video>
+    <div class="bay__head eyebrow">
+      <span class="eyebrow__num">01</span>
+      <h2 class="eyebrow__name" id="bay-title"><b>RIPPL</b>sense</h2>
+      <span class="eyebrow__tag">the hardware</span>
+    </div>
+    <div class="bay__copy" aria-live="polite">
+      <div class="bay__ch is-on">
+        <p class="display">Meet<br />RIPPLsense<span class="dot">.</span></p>
+        <p class="body">The tiny motion capture sensor for surfing.</p>
+      </div>
+      <div class="bay__ch">
+        <p class="display">Snap in<br />and go<span class="dot">.</span></p>
+        <p class="body">Attach a RIPPL mount to your tail, then RIPPLsense just snaps in, ready for your next paddle out.</p>
+      </div>
+      <div class="bay__ch">
+        <p class="display">One sensor.<br />Every board<span class="dot">.</span></p>
+        <p class="body"><b>Precise motion capture</b> on every wave, every turn, every paddle, on every board in your quiver.</p>
+      </div>
+    </div>
+    <div class="bay__foot">
+      <ol class="bay__ticks" aria-hidden="true">
+        <li class="is-on">meet</li><li>snap</li><li>ride</li>
+      </ol>
+      <button class="replay" id="bay-replay" type="button"><span aria-hidden="true">↺</span> <span class="replay__label">Replay</span></button>
+    </div>
+  </div>
+</section>
+
+<div class="ctx ctx--cream">↓ 02 · RIPPLintelligence</div>
+
+<nav class="concept-nav" aria-label="Concepts">
+  <a href="a.html" aria-current="page">A · The shaping bay</a>
+  <a href="b.html">B · Three steps</a>
+  <a href="c.html">C · Quiver, then snap</a>
+</nav>
+
+<script src="shared.js"></script>
+<script>
+(function () {
+  var video = document.getElementById('bay-video');
+  var chapters = document.querySelectorAll('.bay__ch');
+  var ticks = document.querySelectorAll('.bay__ticks li');
+  var replay = document.getElementById('bay-replay');
+  // Each film has its own cues: [start time, chapter].
+  // Chapters: 0 meet RIPPLsense · 1 snap in and go · 2 every board.
+  var FILMS = {
+    landscape: { src: SB.src, end: 14.35,
+                 cues: [[0, 0], [3.08, 1], [8.3, 2]] },   // wide shot · cut to the tail, mount then sensor drop · sensor clicks in
+    portrait:  { src: SB.vertical, end: 10.7,
+                 cues: [[0, 0], [2.1, 1], [4.75, 2]] },   // mount drops in · sensor drops · sensor seated
+  };
+  var film = SB.portrait ? FILMS.portrait : FILMS.landscape;
+  if (SB.portrait) document.getElementById('bay').classList.add('is-portrait');
+
+  var shown = 0;
+  function show(n) {
+    if (n === shown) return; shown = n;
+    chapters.forEach(function (c, i) { c.classList.toggle('is-on', i === n); });
+    ticks.forEach(function (t, i) { t.classList.toggle('is-on', i === n); });
+  }
+  function chapterAt(t) { var n = 0; film.cues.forEach(function (c) { if (t >= c[0]) n = c[1]; }); return n; }
+
+  video.src = film.src;
+  if (SB.reduce) { SB.seek(video, film.end); show(2); return; }
+
+  SB.everyFrame(video, function (t) { show(chapterAt(t)); });
+  video.addEventListener('ended', function () { show(2); replay.classList.add('is-on'); });
+  replay.addEventListener('click', function () { replay.classList.remove('is-on'); video.currentTime = 0; video.play(); });
+  SB.whenSeen(document.querySelector('.bay__stage'), 0.3,
+    function () { if (!video.ended) video.play().catch(function () {}); },
+    function () { video.pause(); });
+})();
+</script>
+</body>
+</html>
