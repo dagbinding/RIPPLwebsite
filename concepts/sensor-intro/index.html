@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>RIPPLsense intro concepts</title>
+<style>
+  @font-face { font-family: "Inter"; font-weight: 300; font-display: swap; src: url("../../styles/fonts/Inter-Light.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url("../../styles/fonts/Inter-Regular.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 600; font-display: swap; src: url("../../styles/fonts/Inter-SemiBold.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 700; font-display: swap; src: url("../../styles/fonts/Inter-Bold.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 900; font-display: swap; src: url("../../styles/fonts/Inter-Black.woff2") format("woff2"); }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; }
+  :root {
+    --rippl-cream: #F2EBDC; --rippl-bone: #FAF6EC;
+    --rippl-cocoa: #2E1E10; --rippl-cocoa-soft: #4A3220; --rippl-cocoa-mute: #7A6450;
+    --rippl-ink: #0E0E0E; --rippl-sun: #D97740; --rippl-glow: #F4C04A; --rippl-wave: #4A7C8A;
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --dur-fast: 120ms; --dur-base: 220ms; --dur-sheet: 420ms;
+    --gutter: clamp(24px, 6vw, 100px);
+  }
+  body { font-family: var(--font-body); background: var(--rippl-ink); color: var(--rippl-cocoa); -webkit-font-smoothing: antialiased; }
+
+  /* Shared type */
+  .eyebrow { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .eyebrow__num { font-size: clamp(13px, 1vw, 16px); font-weight: 300; letter-spacing: 0.32em; opacity: 0.7; }
+  .eyebrow__name { margin: 0; font-size: clamp(22px, 2.4vw, 34px); font-weight: 300; letter-spacing: -0.01em; line-height: 1; }
+  .eyebrow__name b { font-weight: 900; letter-spacing: -0.02em; }
+  .display { margin: 0; font-weight: 900; text-transform: uppercase; line-height: 0.9; letter-spacing: -0.045em; font-size: clamp(48px, 7vw, 104px); text-wrap: balance; }
+  .display > span { display: block; }
+  .dot { color: var(--rippl-sun); }
+  .lede { margin: 0; font-size: clamp(17px, 1.3vw, 20px); line-height: 1.55; max-width: 36ch; text-wrap: pretty; }
+  .lede b { font-weight: 600; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 20px;
+    border-radius: 999px; font: 600 15px/1 var(--font-body); text-decoration: none;
+    background: var(--rippl-cream); color: var(--rippl-cocoa);
+    box-shadow: 0 2px 8px rgba(46, 30, 16, 0.12);
+    transition: box-shadow var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+  }
+  .pill:hover { box-shadow: 0 10px 30px rgba(14, 14, 14, 0.22); background: #EDE5D4; }
+  .pill:focus-visible, button:focus-visible { outline: 2px solid var(--rippl-wave); outline-offset: 2px; }
+  video { display: block; }
+
+  /* ===== Context: hero stand-in and what follows ===== */
+  .hero {
+    position: relative; min-height: 100vh; display: grid; align-content: end;
+    padding: 0 var(--gutter) clamp(48px, 10vh, 96px); color: #fff; overflow: hidden;
+    background: #111 url("../../assets/img/hero-2400.webp") center 35% / cover;
+  }
+  .hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(14,14,14,0.65), rgba(14,14,14,0) 55%); }
+  .hero > * { position: relative; }
+  .hero__lead { font-size: clamp(32px, 4.4vw, 64px); font-weight: 300; letter-spacing: -0.02em; line-height: 1; }
+  .hero__word { font-size: clamp(40px, 6vw, 88px); font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+  .hero__tag { margin-bottom: 18px; font-size: 12px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; opacity: 0.7; }
+  .after {
+    background: var(--rippl-cream); color: var(--rippl-cocoa-mute); text-align: center;
+    padding: 64px 24px; font-size: 13px; font-weight: 600; letter-spacing: 0.18em; text-transform: lowercase;
+    border-top: 1px solid rgba(46, 30, 16, 0.1);
+  }
+
+  /* ===== A · The Reveal — scroll-scrubbed flyby ===== */
+  .a { background: var(--rippl-ink); color: var(--rippl-cream); }
+  .a__track { position: relative; height: 320vh; }
+  .a__stage { position: sticky; top: 0; height: 100vh; overflow: hidden; display: grid; }
+  .a__video { grid-area: 1 / 1; width: 100%; height: 100%; object-fit: cover; }
+  .a__beats { grid-area: 1 / 1; position: relative; padding: clamp(40px, 8vh, 88px) var(--gutter); }
+  .a__beat {
+    position: absolute; left: var(--gutter); right: var(--gutter);
+    opacity: 0; transform: translateY(16px);
+    transition: opacity var(--dur-sheet) var(--ease-out), transform var(--dur-sheet) var(--ease-out);
+  }
+  .a__beat.is-on { opacity: 1; transform: none; }
+  .a__beat--1 { top: clamp(40px, 10vh, 110px); }
+  .a__beat--2 { bottom: clamp(40px, 10vh, 110px); max-width: 520px; }
+  /* headline above the sensor, button below it: the final frame keeps the product clear */
+  .a__beat--3 { top: clamp(40px, 9vh, 100px); bottom: clamp(48px, 9vh, 100px); display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center; }
+  .a__beat--2 .lede { color: rgba(242, 235, 220, 0.85); }
+  .a__oneline { font-size: clamp(36px, 5vw, 76px); white-space: nowrap; }
+  .a__oneline > span { display: inline; }
+  @media (max-width: 900px) { .a__oneline { white-space: normal; } }
+  .a__progress { position: absolute; left: var(--gutter); right: var(--gutter); bottom: 20px; height: 2px; background: rgba(242,235,220,0.12); }
+  .a__progress span { display: block; height: 100%; width: 0; background: var(--rippl-cream); }
+
+  /* ===== B · Meet it. Mount it. — two acts ===== */
+  .b { background: var(--rippl-cream); }
+  .b__grid {
+    display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.2fr);
+    gap: clamp(40px, 6vw, 110px); padding: 0 var(--gutter);
+  }
+  .b__acts { padding: 20vh 0; }
+  .b__act { min-height: 80vh; display: grid; align-content: center; gap: clamp(20px, 3vh, 32px); }
+  .b__act .lede { color: var(--rippl-cocoa-soft); }
+  .b__facts { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+  .b__facts li { font-size: 16px; color: var(--rippl-cocoa-soft); padding-left: 22px; position: relative; }
+  .b__facts li::before { content: ""; position: absolute; left: 0; top: 0.6em; width: 10px; height: 1.5px; background: var(--rippl-sun); }
+  .b__media { position: sticky; top: 0; height: 100vh; display: grid; align-items: center; }
+  .b__frame {
+    position: relative; aspect-ratio: 16 / 10; border-radius: 24px; overflow: hidden;
+    background: var(--rippl-ink); box-shadow: 0 18px 50px rgba(46, 30, 16, 0.22);
+  }
+  .b__frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 600ms var(--ease-out); }
+  .b__frame video.is-on { opacity: 1; }
+  .b__label {
+    position: absolute; left: 16px; bottom: 16px; z-index: 1;
+    padding: 6px 12px; border-radius: 999px; background: rgba(14,14,14,0.55); color: var(--rippl-cream);
+    font-size: 12px; font-weight: 600; letter-spacing: 0.16em; text-transform: lowercase;
+  }
+  .b__inline { display: none; }
+
+  /* ===== C · Snap in — cinematic Hover Down ===== */
+  .c { background: var(--rippl-ink); color: #fff; }
+  .c__film { position: relative; height: 100vh; min-height: 560px; overflow: hidden; }
+  .c__film video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 70% 50%; }
+  .c__film::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to right, rgba(14,14,14,0.72), rgba(14,14,14,0) 60%); pointer-events: none; }
+  .c__copy { position: absolute; z-index: 1; left: var(--gutter); bottom: clamp(48px, 10vh, 110px); display: grid; gap: 24px; max-width: 560px; }
+  .c__copy .lede { color: rgba(255, 255, 255, 0.88); }
+  .c__replay {
+    position: absolute; z-index: 1; right: var(--gutter); bottom: clamp(48px, 10vh, 110px);
+    min-height: 44px; padding: 0 18px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(14,14,14,0.3); color: #fff; font: 600 14px/1 var(--font-body); cursor: pointer;
+    opacity: 0; pointer-events: none; transition: opacity var(--dur-base) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+  }
+  .c__replay.is-on { opacity: 1; pointer-events: auto; }
+  .c__replay:hover { background: rgba(14,14,14,0.5); }
+  .c__facts {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(24px, 4vw, 64px);
+    padding: clamp(48px, 8vh, 88px) var(--gutter); background: var(--rippl-cream); color: var(--rippl-cocoa);
+  }
+  .c__fact b { display: block; font-size: clamp(22px, 2vw, 30px); font-weight: 900; letter-spacing: -0.02em; text-transform: uppercase; margin-bottom: 8px; }
+  .c__fact span { font-size: 16px; line-height: 1.5; color: var(--rippl-cocoa-soft); }
+
+  /* ===== D · Product sheet — flyby, then annotations ===== */
+  .d { position: relative; background: var(--rippl-ink); color: var(--rippl-cream); padding: clamp(64px, 10vh, 120px) var(--gutter); overflow: hidden; }
+  .d__word {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); margin: 0; white-space: nowrap;
+    font-size: clamp(90px, 19vw, 300px); line-height: 1; letter-spacing: -0.05em; color: #1C1814; pointer-events: none;
+  }
+  .d__word b { font-weight: 900; }
+  .d__word span { font-weight: 300; }
+  .d__stage { position: relative; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr minmax(0, 1.6fr) 1fr; align-items: center; gap: clamp(16px, 3vw, 40px); }
+  /* screen blend drops the render's own black, so it sits straight on the page */
+  .d__video { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; mix-blend-mode: screen; -webkit-mask-image: radial-gradient(ellipse 60% 70% at 50% 50%, #000 60%, transparent 100%); mask-image: radial-gradient(ellipse 60% 70% at 50% 50%, #000 60%, transparent 100%); }
+  .d__col { display: grid; gap: clamp(32px, 6vh, 64px); }
+  .d__col--l { text-align: right; }
+  .d__note {
+    opacity: 0; transform: translateY(12px);
+    transition: opacity var(--dur-sheet) var(--ease-out), transform var(--dur-sheet) var(--ease-out);
+  }
+  .d.is-done .d__note { opacity: 1; transform: none; }
+  .d.is-done .d__note:nth-child(2) { transition-delay: 120ms; }
+  .d__note b { display: block; font-size: 13px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--rippl-glow); margin-bottom: 8px; }
+  .d__note span { font-size: 16px; line-height: 1.5; color: rgba(242,235,220,0.82); }
+  .d__line { display: block; width: 48px; height: 1px; background: rgba(242,235,220,0.35); margin: 12px 0 0 auto; }
+  .d__col--r .d__line { margin: 12px auto 0 0; }
+  .d__foot { position: relative; margin-top: clamp(32px, 6vh, 64px); display: grid; justify-items: center; gap: 20px; text-align: center; }
+  .d__foot .lede { color: rgba(242,235,220,0.85); max-width: 44ch; }
+
+  /* ===== Responsive: pinned layouts unpin, content stacks ===== */
+  @media (max-width: 900px) {
+    .a__track { height: auto; }
+    .a__stage { position: relative; height: auto; }
+    .a__video { grid-area: auto; height: 56vw; }
+    .a__beats { grid-area: auto; }
+    .a__beats { position: static; display: grid; gap: 28px; }
+    .a__beat { position: static; opacity: 1 !important; transform: none !important; }
+    .a__beat--3 { align-items: flex-start; text-align: left; gap: 24px; }
+    .a__progress { display: none; }
+
+    .b__grid { grid-template-columns: 1fr; }
+    .b__acts { padding: 64px 0; }
+    .b__act { min-height: 0; padding-bottom: 56px; }
+    .b__media { display: none; }
+    .b__inline { display: block; position: relative; aspect-ratio: 16 / 10; border-radius: 16px; overflow: hidden; background: var(--rippl-ink); }
+    .b__inline video { width: 100%; height: 100%; object-fit: cover; }
+
+    .c__film { height: 80vh; }
+    .c__film::after { background: linear-gradient(to top, rgba(14,14,14,0.78), rgba(14,14,14,0) 65%); }
+    .c__replay { top: 20px; bottom: auto; }
+    .c__facts { grid-template-columns: 1fr; }
+
+    .d__stage { grid-template-columns: 1fr; }
+    .d__video { order: -1; }
+    .d__col, .d__col--l { text-align: left; }
+    .d__line, .d__col--r .d__line { margin: 12px 0 0; }
+    .d__note { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .a__beat, .d__note, .b__frame video { transition: none; }
+    .a__beat, .d__note { opacity: 1 !important; transform: none !important; }
+  }
+
+  /* ===== Review switcher (concepts file only) ===== */
+  .switcher { position: fixed; z-index: 20; left: 50%; bottom: 20px; transform: translateX(-50%); display: flex; gap: 4px; padding: 4px; background: rgba(14,14,14,0.92); border-radius: 999px; box-shadow: 0 18px 50px rgba(14,14,14,0.32); max-width: calc(100vw - 24px); overflow-x: auto; }
+  .switcher button { min-height: 44px; padding: 0 14px; border: 0; border-radius: 999px; cursor: pointer; white-space: nowrap; font: 600 14px/1 var(--font-body); color: rgba(242,235,220,0.7); background: transparent; transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out); }
+  .switcher button:hover { color: var(--rippl-cream); }
+  .switcher button[aria-pressed="true"] { background: var(--rippl-cream); color: var(--rippl-cocoa); }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- Hero stand-in, so the transition reads true -->
+<header class="hero">
+  <div class="hero__tag">hero (existing)</div>
+  <div class="hero__lead">a new way to</div>
+  <div class="hero__word">record your rides</div>
+</header>
+
+<!-- ============ A · The Reveal ============ -->
+<section class="concept a" id="c-a" aria-label="Concept A: The Reveal">
+  <div class="a__track" id="a-track">
+    <div class="a__stage">
+      <video class="a__video" id="a-video" src="media/flyby-1600.mp4" muted playsinline preload="auto"></video>
+      <div class="a__beats">
+        <div class="a__beat a__beat--1">
+          <div class="eyebrow"><span class="eyebrow__num">01</span><h2 class="eyebrow__name"><b>RIPPL</b>sense</h2></div>
+        </div>
+        <div class="a__beat a__beat--2">
+          <p class="display"><span>Meet</span><span>RIPPLsense<span class="dot">.</span></span></p>
+          <p class="lede" style="margin-top:20px">A tiny sensor that sits on your tail. <b>Mounts in seconds.</b> Then it disappears.</p>
+        </div>
+        <div class="a__beat a__beat--3">
+          <p class="display a__oneline">Every ride, measured<span class="dot">.</span></p>
+          <a class="pill" href="#">Join the waitlist →</a>
+        </div>
+      </div>
+      <div class="a__progress" aria-hidden="true"><span id="a-bar"></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ B · Meet it. Mount it. ============ -->
+<section class="concept b" id="c-b" aria-label="Concept B: Meet it, mount it" hidden>
+  <div class="b__grid">
+    <div class="b__acts">
+      <div class="b__act" data-act="flyby">
+        <div class="eyebrow" style="color:var(--rippl-cocoa-mute)"><span class="eyebrow__num">01</span><h2 class="eyebrow__name" style="color:var(--rippl-cocoa)"><b>RIPPL</b>sense</h2></div>
+        <p class="display"><span>Meet it<span class="dot">.</span></span></p>
+        <p class="lede">A tiny sensor that reads <b>every movement of your board</b> — every wave, every turn, every paddle out.</p>
+        <div class="b__inline"><video src="media/flyby-1600.mp4" muted playsinline preload="metadata" data-autoplay></video></div>
+      </div>
+      <div class="b__act" data-act="hover">
+        <p class="display"><span>Mount it<span class="dot">.</span></span></p>
+        <p class="lede">Stick a mount on each of your boards. RIPPLsense <b>snaps in and out in seconds</b>, so you can swap boards mid-session.</p>
+        <ul class="b__facts">
+          <li>Fits shortboards, longboards and softtops</li>
+          <li>IP68, marine-grade</li>
+          <li>Multiple sessions per charge</li>
+        </ul>
+        <div class="b__inline"><video src="media/hover-down.mp4" muted playsinline preload="metadata" data-autoplay></video></div>
+        <div><a class="pill" href="#" style="background:var(--rippl-cocoa);color:var(--rippl-cream)">Join the waitlist →</a></div>
+      </div>
+    </div>
+    <div class="b__media" aria-hidden="true">
+      <div class="b__frame">
+        <video id="b-flyby" class="is-on" src="media/flyby-1600.mp4" muted playsinline preload="auto"></video>
+        <video id="b-hover" src="media/hover-down.mp4" muted playsinline preload="auto"></video>
+        <span class="b__label" id="b-label">meet it</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ C · Snap in ============ -->
+<section class="concept c" id="c-c" aria-label="Concept C: Snap in" hidden>
+  <div class="c__film">
+    <video id="c-video" src="media/hover-down.mp4" muted playsinline preload="auto"></video>
+    <div class="c__copy">
+      <div class="eyebrow"><span class="eyebrow__num">01</span><h2 class="eyebrow__name"><b>RIPPL</b>sense</h2></div>
+      <p class="display"><span>One sensor<span class="dot">.</span></span><span>Every board<span class="dot">.</span></span></p>
+      <p class="lede">Snaps onto your tail in seconds. Then it disappears — and <b>reads every ride</b>.</p>
+    </div>
+    <button class="c__replay" id="c-replay" type="button">↺ Replay</button>
+  </div>
+  <div class="c__facts">
+    <div class="c__fact"><b>Every movement</b><span>The motion of every wave, turn and paddle out.</span></div>
+    <div class="c__fact"><b>Built for the ocean</b><span>IP68 and marine-grade. Saltwater, sand and sun.</span></div>
+    <div class="c__fact"><b>Days per charge</b><span>Multiple sessions between charges. Attach and forget.</span></div>
+  </div>
+</section>
+
+<!-- ============ D · Product sheet ============ -->
+<section class="concept d" id="c-d" aria-label="Concept D: Product sheet" hidden>
+  <p class="d__word" aria-hidden="true"><b>RIPPL</b><span>sense</span></p>
+  <div class="d__stage">
+    <div class="d__col d__col--l">
+      <div class="d__note"><b>On your tail</b><span>Mounts in seconds. Then it disappears.</span><i class="d__line"></i></div>
+      <div class="d__note"><b>Snaps in</b><span>One mount per board. Swap mid-session.</span><i class="d__line"></i></div>
+    </div>
+    <video class="d__video" id="d-video" src="media/flyby-1600.mp4" muted playsinline preload="auto"></video>
+    <div class="d__col d__col--r">
+      <div class="d__note"><b>IP68</b><span>Marine-grade. Made to live in the ocean.</span><i class="d__line"></i></div>
+      <div class="d__note"><b>Days per charge</b><span>Multiple sessions between charges.</span><i class="d__line"></i></div>
+    </div>
+  </div>
+  <div class="d__foot">
+    <h2 class="eyebrow__name" style="font-size:clamp(28px,3vw,44px)"><b>RIPPL</b>sense</h2>
+    <p class="lede">The motion of every ride, captured on your board — so RIPPL can show you exactly what to change.</p>
+    <a class="pill" href="#">Join the waitlist →</a>
+  </div>
+</section>
+
+<div class="after">↓ existing 01 · RIPPLsense section (one sensor. every board.)</div>
+
+<nav class="switcher" aria-label="Concepts">
+  <button type="button" data-c="a" aria-pressed="true">A · Reveal</button>
+  <button type="button" data-c="b" aria-pressed="false">B · Meet it / Mount it</button>
+  <button type="button" data-c="c" aria-pressed="false">C · Snap in</button>
+  <button type="button" data-c="d" aria-pressed="false">D · Product sheet</button>
+</nav>
+
+<script>
+(function () {
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var narrow = function () { return window.matchMedia('(max-width: 900px)').matches; };
+
+  // Reduced motion: never play, just rest on the final frame.
+  function restOnLastFrame(v) {
+    var go = function () { v.currentTime = Math.max(0, v.duration - 0.05); };
+    if (v.readyState >= 1) go(); else v.addEventListener('loadedmetadata', go, { once: true });
+  }
+  // Play once when mostly on screen.
+  function playWhenSeen(v, onEnd) {
+    if (reduce) { restOnLastFrame(v); if (onEnd) onEnd(); return; }
+    var io = new IntersectionObserver(function (e) {
+      if (e[0].isIntersecting && v.paused && !v.ended) v.play().catch(function () {});
+    }, { threshold: 0.5 });
+    io.observe(v);
+    if (onEnd) v.addEventListener('ended', onEnd);
+  }
+
+  // A — scroll scrubs the flyby; beats are keyed to progress.
+  var aTrack = document.getElementById('a-track'), aVideo = document.getElementById('a-video'), aBar = document.getElementById('a-bar');
+  var beats = document.querySelectorAll('.a__beat');
+  var ranges = [[0, 0.3], [0.28, 0.62], [0.66, 1.01]];
+  var aTick = false;
+  function aUpdate() {
+    aTick = false;
+    if (document.getElementById('c-a').hidden) return;
+    if (narrow()) return;
+    var r = aTrack.getBoundingClientRect();
+    var p = Math.min(1, Math.max(0, -r.top / (aTrack.offsetHeight - innerHeight)));
+    aBar.style.width = (p * 100) + '%';
+    beats.forEach(function (b, i) { b.classList.toggle('is-on', p >= ranges[i][0] && p < ranges[i][1]); });
+    if (!reduce && aVideo.duration) aVideo.currentTime = p * (aVideo.duration - 0.05);
+  }
+  window.addEventListener('scroll', function () { if (!aTick) { aTick = true; requestAnimationFrame(aUpdate); } }, { passive: true });
+  window.addEventListener('resize', aUpdate);
+  aVideo.addEventListener('loadedmetadata', aUpdate);
+  if (reduce) restOnLastFrame(aVideo);
+  // On phones A isn't scroll-driven: it plays once in view.
+  if (narrow()) playWhenSeen(aVideo);
+
+  // B — the sticky frame follows whichever act is centred.
+  var bFly = document.getElementById('b-flyby'), bHov = document.getElementById('b-hover'), bLabel = document.getElementById('b-label');
+  var current = null;
+  function show(which) {
+    if (which === current) return; current = which;
+    var on = which === 'hover' ? bHov : bFly, off = which === 'hover' ? bFly : bHov;
+    off.classList.remove('is-on'); on.classList.add('is-on');
+    bLabel.textContent = which === 'hover' ? 'mount it' : 'meet it';
+    if (reduce) { restOnLastFrame(on); return; }
+    off.pause(); on.currentTime = 0; on.play().catch(function () {});
+  }
+  var bio = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting && !narrow()) show(e.target.dataset.act); });
+  }, { rootMargin: '-45% 0px -45% 0px' });
+  document.querySelectorAll('.b__act').forEach(function (a) { bio.observe(a); });
+  document.querySelectorAll('.b__inline video').forEach(function (v) { playWhenSeen(v); });
+
+  // C — plays once, rests on the mounted frame, offers a replay.
+  var cVideo = document.getElementById('c-video'), cReplay = document.getElementById('c-replay');
+  playWhenSeen(cVideo, function () { cReplay.classList.add('is-on'); });
+  cReplay.addEventListener('click', function () { cReplay.classList.remove('is-on'); cVideo.currentTime = 0; cVideo.play(); });
+
+  // D — flyby plays, then the notes arrive as the mark lights up.
+  var d = document.getElementById('c-d'), dVideo = document.getElementById('d-video');
+  dVideo.addEventListener('timeupdate', function () { if (dVideo.currentTime > dVideo.duration * 0.7) d.classList.add('is-done'); });
+  playWhenSeen(dVideo, function () { d.classList.add('is-done'); });
+
+  // Switcher
+  var KEY = 'rippl-sensor-intro';
+  function pick(c) {
+    document.querySelectorAll('.concept').forEach(function (s) {
+      var on = s.id === 'c-' + c; s.hidden = !on;
+      if (!on) s.querySelectorAll('video').forEach(function (v) { v.pause(); });
+    });
+    document.querySelectorAll('.switcher button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.c === c)); });
+    try { localStorage.setItem(KEY, c); } catch (e) {}
+    current = null; aUpdate();
+  }
+  document.querySelectorAll('.switcher button').forEach(function (b) { b.addEventListener('click', function () { pick(b.dataset.c); }); });
+  var saved = null; try { saved = localStorage.getItem(KEY); } catch (e) {}
+  pick(/^[abcd]$/.test(saved) ? saved : 'a');
+})();
+</script>
+</body>
+</html>
