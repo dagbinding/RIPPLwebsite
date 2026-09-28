@@ -6,7 +6,7 @@
       "runtimeExecutable": "bash",
       "runtimeArgs": [
         "-c",
-        "cd /Users/dylanbinding/Projects/RIPPLwebsite && python3 -m http.server 8732"
+        "cd /Users/dylanbinding/Projects/RIPPLwebsite && python3 scripts/serve.py 8732 --source"
       ],
       "port": 8732
     },

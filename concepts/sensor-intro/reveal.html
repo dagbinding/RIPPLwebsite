@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>RIPPLsense reveal</title>
+<style>
+  @font-face { font-family: "Inter"; font-weight: 300; font-display: swap; src: url("../../styles/fonts/Inter-Light.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url("../../styles/fonts/Inter-Regular.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 600; font-display: swap; src: url("../../styles/fonts/Inter-SemiBold.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 900; font-display: swap; src: url("../../styles/fonts/Inter-Black.woff2") format("woff2"); }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; }
+  :root {
+    --rippl-cream: #F2EBDC; --rippl-cocoa: #2E1E10; --rippl-cocoa-mute: #7A6450;
+    --rippl-ink: #0E0E0E; --rippl-sun: #D97740; --rippl-wave: #4A7C8A;
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --gutter: clamp(24px, 6vw, 100px);
+  }
+  body { font-family: var(--font-body); background: var(--rippl-ink); color: var(--rippl-cream); -webkit-font-smoothing: antialiased; }
+
+  /* Hero stand-in */
+  .hero {
+    position: relative; min-height: 100vh; display: grid; align-content: end; overflow: hidden;
+    padding: 0 var(--gutter) clamp(48px, 10vh, 96px); color: #fff;
+    background: #111 url("../../assets/img/hero-2400.webp") center 35% / cover;
+  }
+  .hero::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(14,14,14,0.65), rgba(14,14,14,0) 55%); }
+  .hero > * { position: relative; }
+  .hero__lead { font-size: clamp(32px, 4.4vw, 64px); font-weight: 300; letter-spacing: -0.02em; line-height: 1; }
+  .hero__word { font-size: clamp(40px, 6vw, 88px); font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+  .after { background: var(--rippl-cream); color: var(--rippl-cocoa-mute); text-align: center; padding: 64px 24px; font-size: 13px; font-weight: 600; letter-spacing: 0.18em; text-transform: lowercase; }
+
+  /* ============ RIPPLsense reveal ============
+     One screen, not pinned. The film plays through once as the section comes
+     up the screen: the section label, then the closing line as the mark lights up. */
+  .reveal { position: relative; background: var(--rippl-ink); }
+  .reveal__stage { position: relative; height: 100vh; min-height: 560px; max-height: 1000px; overflow: hidden; }
+  .reveal__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .reveal__beat {
+    position: absolute; left: var(--gutter); right: var(--gutter);
+    opacity: 0; transform: translateY(16px);
+    transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out);
+    pointer-events: none;
+  }
+  .reveal__beat.is-on { opacity: 1; transform: none; pointer-events: auto; }
+  .reveal__beat--1 { top: clamp(32px, 8vh, 96px); }
+  /* headline above the sensor, button below it, so the product stays clear */
+  .reveal__beat--2 {
+    top: clamp(32px, 8vh, 96px); bottom: clamp(40px, 9vh, 100px);
+    display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center;
+  }
+
+  .eyebrow { display: flex; align-items: baseline; gap: 16px; }
+  .eyebrow__num { font-size: clamp(13px, 1vw, 16px); font-weight: 300; letter-spacing: 0.32em; opacity: 0.7; }
+  .eyebrow__name { margin: 0; font-size: clamp(22px, 2.4vw, 34px); font-weight: 300; letter-spacing: -0.01em; line-height: 1; }
+  .eyebrow__name b { font-weight: 900; letter-spacing: -0.02em; }
+  .display { margin: 0; font-weight: 900; text-transform: uppercase; line-height: 0.9; letter-spacing: -0.045em; font-size: clamp(34px, 5vw, 76px); }
+  .dot { color: var(--rippl-sun); }
+  .pill {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 22px; border-radius: 999px;
+    background: var(--rippl-cream); color: var(--rippl-cocoa); font: 600 15px/1 var(--font-body); text-decoration: none;
+    box-shadow: 0 2px 8px rgba(46, 30, 16, 0.12); transition: box-shadow 120ms var(--ease-out), background-color 120ms var(--ease-out);
+  }
+  .pill:hover { background: #EDE5D4; box-shadow: 0 10px 30px rgba(14, 14, 14, 0.22); }
+  .pill:focus-visible { outline: 2px solid var(--rippl-wave); outline-offset: 2px; }
+
+  @media (min-width: 901px) {
+    .display { white-space: nowrap; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal__beat { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero__lead">a new way to</div>
+  <div class="hero__word">record your rides</div>
+</header>
+
+<section class="reveal" id="reveal" aria-labelledby="reveal-title">
+  <div class="reveal__stage">
+    <video class="reveal__video" id="reveal-video" muted playsinline preload="auto" aria-hidden="true"></video>
+
+    <div class="reveal__beat reveal__beat--1 is-on">
+      <div class="eyebrow"><span class="eyebrow__num">01</span><h2 class="eyebrow__name" id="reveal-title"><b>RIPPL</b>sense</h2></div>
+    </div>
+    <div class="reveal__beat reveal__beat--2">
+      <p class="display">Every ride, measured<span class="dot">.</span></p>
+      <a class="pill" href="/waitlist">Join the waitlist →</a>
+    </div>
+  </div>
+</section>
+
+<div class="after">↓ existing 01 · RIPPLsense section</div>
+
+<script>
+(function () {
+  var section = document.getElementById('reveal');
+  var stage = section.querySelector('.reveal__stage');
+  var video = document.getElementById('reveal-video');
+  var beats = section.querySelectorAll('.reveal__beat');
+
+  // Two renders, each web-encoded (scripts/encode_video.swift: H.264, no audio,
+  // index up front), each with its own cues measured from the frames:
+  //   glow — the first frame where the RIPPL mark starts to brighten (measured
+  //   from the mark's own brightness, not full-white pixels, which only show
+  //   once the glow is well under way). The closing line's 420ms fade starts
+  //   there, so text and light rise together and peak together.
+  var FILMS = {
+    landscape: { src: '../../assets/video/sense-flyby-1600.mp4',         glow: 4.13 },   // 7.05s, opens on a macro close-up
+    portrait:  { src: '../../assets/video/sense-flyby-vertical-720.mp4', glow: 2.38 },  // 5.32s, whole sensor from frame one
+  };
+  var film = matchMedia('(orientation: portrait)').matches ? FILMS.portrait : FILMS.landscape;
+  video.src = film.src;
+
+  var shown = -1;
+  function showBeat(n) {
+    if (n === shown) return;
+    shown = n;
+    section.dataset.beat = n;
+    beats.forEach(function (b, i) { b.classList.toggle('is-on', i === n); });
+  }
+
+  // Two beats: the section label, then the closing line on the glow.
+  function beatAt(t) { return t < film.glow ? 0 : 1; }
+
+  // Reduced motion: no playback — rest on the lit-up final frame with the closing line.
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var rest = function () { video.currentTime = Math.max(0, video.duration - 0.05); };
+    if (video.readyState >= 1) rest(); else video.addEventListener('loadedmetadata', rest, { once: true });
+    showBeat(1);
+    return;
+  }
+
+  // Beats follow the film frame by frame (timeupdate only fires ~4x a second).
+  if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
+    var onFrame = function (now, meta) { showBeat(beatAt(meta.mediaTime)); video.requestVideoFrameCallback(onFrame); };
+    video.requestVideoFrameCallback(onFrame);
+  } else {
+    video.addEventListener('timeupdate', function () { showBeat(beatAt(video.currentTime)); });
+  }
+  video.addEventListener('ended', function () { showBeat(1); });
+
+  // Starts while the section is still coming up the screen, so it's already
+  // moving on arrival. Pauses if scrolled away early, resumes on return.
+  new IntersectionObserver(function (e) {
+    var seen = e[0].intersectionRatio >= 0.3;
+    if (seen && !video.ended) video.play().catch(function () {});
+    else if (!seen) video.pause();
+  }, { threshold: [0, 0.3] }).observe(stage);
+})();
+</script>
+</body>
+</html>
