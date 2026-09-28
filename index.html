@@ -1175,96 +1175,75 @@
     padding: 4px 10px;
     border: 1px solid rgba(46, 30, 16, 0.18); border-radius: 999px;
   }
-  .sense-track { position: relative; height: 380vh; }
-  .sense-sticky {
-    position: sticky; top: 0; height: 100vh;
-    display: grid;
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
-    grid-template-rows: auto 1fr;
-    gap: 0 clamp(40px, 5vw, 80px);
-    padding: clamp(40px, 6vh, 72px) clamp(40px, 6vw, 100px);
-    align-items: start;
-    overflow: hidden;
-    background: var(--rippl-cream);
+
+  /* Pillar 01 body — the shaping-bay film. Full-bleed; the copy moves through
+     three chapters on the film's own cues: meet → snap in and go → every board.
+     Landscape screens get the surf-shop sequence (wide shot, cut to the tail,
+     mount + sensor drop); portrait screens a vertical cut that opens on the tail.
+     Not pinned: one screen, the film autoplays as it comes up the screen. */
+  .sense-bay { position: relative; background: var(--rippl-ink); color: var(--rippl-cream); }
+  .sense-bay__stage { position: relative; height: 100vh; min-height: 600px; max-height: 1000px; overflow: hidden; }
+  /* bias right: the sensor lands ~88% across the landscape frame */
+  .sense-bay__video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 72% 50%; display: block; }
+  .sense-bay__stage::after {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(to right, rgba(14,14,14,0.78) 0%, rgba(14,14,14,0.45) 38%, rgba(14,14,14,0) 62%);
   }
-  .sense-copy {
-    display: flex; flex-direction: column;
-    gap: clamp(28px, 4.5vh, 48px); align-self: center;
-    grid-column: 1;
+  .sense-bay .sense-opener__row { position: absolute; z-index: 1; top: clamp(32px, 8vh, 96px); left: clamp(24px, 6vw, 100px); }
+  .sense-bay .sense-opener__num { color: rgba(242, 235, 220, 0.6); }
+  .sense-bay .sense-opener__name { color: var(--rippl-cream); }
+  .sense-bay .sense-opener__tag { color: rgba(242, 235, 220, 0.7); border-color: rgba(242, 235, 220, 0.35); }
+  .sense-bay__copy {
+    position: absolute; z-index: 1; left: clamp(24px, 6vw, 100px); bottom: clamp(100px, 16vh, 170px);
+    width: min(720px, 62vw); display: grid;
   }
-  .sense-title {
-    margin: 0; display: flex; flex-direction: column;
-    font-weight: 900; line-height: 0.9; letter-spacing: -0.045em;
-    font-size: clamp(56px, 8vw, 88px); color: var(--rippl-cocoa);
+  .sense-bay__ch {
+    grid-area: 1 / 1; display: grid; gap: 20px; align-content: end;
+    opacity: 0; transform: translateY(16px);
+    transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out);
   }
-  .sense-title__line { display: block; }
-  .sense-title__period { color: var(--rippl-sun); }
-  .sense-beats {
-    list-style: none; margin: 0; padding: 0;
-    display: flex; flex-direction: column;
-    gap: clamp(20px, 3vh, 28px); max-width: 44ch;
+  .sense-bay__ch.is-on { opacity: 1; transform: none; }
+  .sense-bay__line { margin: 0; font-weight: 900; text-transform: uppercase; line-height: 0.9; letter-spacing: -0.045em; font-size: clamp(40px, 5.2vw, 80px); text-wrap: balance; }
+  .sense-bay__dot { color: var(--rippl-sun); }
+  .sense-bay__body { margin: 0; max-width: 38ch; font-size: clamp(17px, 1.3vw, 20px); line-height: 1.55; color: rgba(242, 235, 220, 0.86); text-wrap: pretty; }
+  .sense-bay__body b { font-weight: 600; color: var(--rippl-cream); }
+  .sense-bay__foot {
+    position: absolute; z-index: 1; left: clamp(24px, 6vw, 100px); right: clamp(24px, 6vw, 100px); bottom: clamp(32px, 6vh, 64px);
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
   }
-  .sense-beat {
-    position: relative; padding-left: 24px;
-    font-size: clamp(16px, 1.35vw, 20px); font-weight: 400;
-    line-height: 1.5; color: var(--rippl-cocoa-soft);
-    opacity: 0; transform: translateY(14px);
-    transition: opacity 700ms var(--ease-out), transform 800ms var(--ease-out);
+  .sense-bay__ticks { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 120px)); gap: 10px; }
+  .sense-bay__ticks li { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: lowercase; color: rgba(242, 235, 220, 0.45); }
+  .sense-bay__ticks li::before { content: ""; display: block; height: 2px; margin-bottom: 8px; background: rgba(242, 235, 220, 0.18); }
+  .sense-bay__ticks li.is-on { color: var(--rippl-cream); }
+  .sense-bay__ticks li.is-on::before { background: var(--rippl-cream); }
+  .sense-bay__replay {
+    min-height: 44px; padding: 0 18px; border-radius: var(--radius-pill); cursor: pointer;
+    font: 600 14px/1 var(--font-body); color: var(--rippl-cream); background: transparent; border: 1px solid currentColor;
+    opacity: 0; pointer-events: none; transition: opacity var(--dur-base) var(--ease-out);
   }
-  .sense-beat.is-on { opacity: 1; transform: translateY(0); }
-  .sense-beat::before {
-    content: ""; position: absolute; left: 0; top: 0.7em;
-    width: 12px; height: 1px; background: var(--rippl-sun);
+  .sense-bay__replay.is-on { opacity: 0.85; pointer-events: auto; }
+  .sense-bay__replay:hover { opacity: 1; }
+  .sense-bay__replay:focus-visible { outline: 2px solid var(--rippl-wave); outline-offset: 2px; }
+
+  /* Portrait screens: the vertical film, full screen; copy under the sensor on a scrim */
+  .sense-bay.is-portrait .sense-bay__stage { height: 100svh; min-height: 600px; max-height: 1180px; }
+  .sense-bay.is-portrait .sense-bay__video { object-position: 50% 50%; }
+  .sense-bay.is-portrait .sense-bay__stage::after {
+    background:
+      linear-gradient(to top, rgba(14,14,14,0.88) 0%, rgba(14,14,14,0.6) 28%, rgba(14,14,14,0) 52%),
+      linear-gradient(to bottom, rgba(14,14,14,0.55) 0%, rgba(14,14,14,0) 22%);
   }
-  .sense-beat b { font-weight: 900; color: var(--rippl-cocoa); letter-spacing: -0.01em; }
-  .sense-media {
-    position: relative; align-self: center;
-    grid-column: 2; grid-row: 2;
-    width: 100%; height: min(68vh, 640px);
-  }
-  .sense-media__img {
-    width: 100%; height: 100%; object-fit: cover;
-    object-position: left 50%; border-radius: 24px; display: block;
-    box-shadow: 0 36px 80px rgba(46, 30, 16, 0.22);
-    transition: transform 200ms linear;
-  }
-  .sense-media__callouts { position: absolute; inset: 0; pointer-events: none; }
-  .sense-callout {
-    position: absolute;
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 8px 14px 8px 10px;
-    background: var(--rippl-bone);
-    border: 1px solid rgba(46,30,16,0.10); border-radius: 999px;
-    box-shadow: 0 6px 20px rgba(46,30,16,0.10);
-    font-weight: 600; font-size: 13px; color: var(--rippl-cocoa);
-    opacity: 0; transform: translateY(8px) scale(0.96);
-    transition: opacity 500ms var(--ease-out), transform 600ms var(--ease-out);
-    white-space: nowrap;
-  }
-  .sense-callout.is-on { opacity: 1; transform: translateY(0) scale(1); }
-  .sense-callout__dot {
-    width: 8px; height: 8px; border-radius: 999px; background: var(--rippl-sun);
-    box-shadow: 0 0 0 4px rgba(217,119,64,0.16); flex-shrink: 0;
-  }
-  .sense-callout--a { top: 8%; left: -8%; }
-  .sense-callout--b { top: 42%; right: -7%; }
-  .sense-callout--c { bottom: 14%; left: -5%; }
-  @media (max-width: 980px) {
-    .sense-sticky {
-      grid-template-columns: 1fr; padding: 48px 24px; gap: 32px;
-      height: auto; position: static;
-    }
-    .sense-track { height: auto; }
-    .sense-media { height: 64vh; min-height: 380px; order: 2; }
-    .sense-copy { order: 1; }
-    .sense-title { font-size: clamp(40px, 9vw, 78px); }
-    .sense-callout--a, .sense-callout--c { left: 4%; }
-    .sense-callout--b { right: 4%; }
+  .sense-bay.is-portrait .sense-bay__copy { width: auto; right: clamp(24px, 6vw, 100px); bottom: clamp(110px, 15vh, 150px); }
+  .sense-bay.is-portrait .sense-bay__line { font-size: clamp(38px, 10.5vw, 72px); }
+  .sense-bay.is-portrait .sense-bay__ticks { grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
+  /* markers and an icon-only replay share one row under the copy */
+  .sense-bay.is-portrait .sense-bay__foot { flex-wrap: nowrap; gap: 16px; bottom: clamp(28px, 5vh, 48px); }
+  .sense-bay.is-portrait .sense-bay__replay { flex: none; width: 44px; padding: 0; font-size: 18px; }
+  .sense-bay.is-portrait .sense-bay__replay-label {
+    position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;
   }
   @media (prefers-reduced-motion: reduce) {
-    .sense-beat, .sense-callout {
-      transition: none !important; opacity: 1 !important; transform: none !important;
-    }
+    .sense-bay__ch { transition: none; }
   }
 
   /* ============ FAQ ============ */
@@ -1611,18 +1590,6 @@
     .af__header { padding-left: 16px; padding-right: 16px; gap: 10px 14px; }
     .sense-opener__row { gap: 8px 14px; }
 
-    /* RIPPLsense mobile: flex column so order works (grid ignores order on explicitly-placed items) */
-    .sense-sticky { display: flex; flex-direction: column; padding: 32px 16px; gap: 20px; }
-    /* Dissolve sense-copy so title + beats become direct flex children */
-    .sense-copy { display: contents; }
-    .sense-title { order: 1; font-size: clamp(40px, 13vw, 64px); }
-    .sense-media { order: 2; height: clamp(180px, 52vw, 240px); min-height: 180px; width: 100%; }
-    .sense-beats { order: 3; display: flex; flex-direction: column; gap: 24px; }
-    .sense-beat { font-size: 15px; }
-    /* Hide labels on mobile; contain zoom within rounded corners */
-    .sense-media__callouts { display: none; }
-    .sense-media { overflow: hidden; border-radius: 20px; }
-
     /* Intelligence bento → hero full-width, four cells as a 2×2 (stay two-up) */
     .bento {
       grid-template-columns: repeat(2, 1fr);
@@ -1692,7 +1659,6 @@
   @media (max-width: 400px) {
     .headline__lead { font-size: clamp(22px, 8vw, 34px); }
     .headline__word { font-size: inherit; }
-    .sense-title { font-size: clamp(34px, 13vw, 52px); }
     .af__stat { flex: 0 0 50%; }
     .nav__cta { font-size: 11px; padding: 8px 13px; }
   }
@@ -1721,7 +1687,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .beat, .bento__cell, .sense-beat, .sense-callout {
+    .beat, .bento__cell {
       opacity: 1 !important;
       transform: none !important;
       transition: none !important;
@@ -1889,51 +1855,99 @@
     </script>
   </section>
 
-  <!-- ============ Pillar 01 — RIPPLsense (Editorial) ============ -->
-  <section class="pillar" data-screen-label="04 Pillar 01 Sense" id="pillar-sense" style="background:var(--rippl-cream)">
-
-    <!-- Sticky 2-col scrollytelling -->
-    <div class="sense-track" id="sense-track">
-      <div class="sense-sticky">
-        <!-- Section opener — spans both columns at top of sticky -->
-        <div class="sense-opener" style="grid-column:1/-1; padding:0 0 clamp(12px,2vh,24px); border-top:none; background:transparent;">
-          <div class="sense-opener__row">
-            <span class="sense-opener__num">01</span>
-            <h2 class="sense-opener__name"><b>RIPPL</b>sense</h2>
-            <span class="sense-opener__tag">the hardware</span>
-          </div>
+  <!-- ============ Pillar 01 — RIPPLsense (shaping-bay film) ============ -->
+  <section class="sense-bay" data-screen-label="04 Pillar 01 Sense" id="pillar-sense" aria-labelledby="sense-bay-title">
+    <div class="sense-bay__stage">
+      <video class="sense-bay__video" id="sense-bay-video" muted playsinline preload="none" aria-hidden="true"></video>
+      <div class="sense-opener__row">
+        <span class="sense-opener__num">01</span>
+        <h2 class="sense-opener__name" id="sense-bay-title"><b>RIPPL</b>sense</h2>
+        <span class="sense-opener__tag">the hardware</span>
+      </div>
+      <div class="sense-bay__copy" aria-live="polite">
+        <div class="sense-bay__ch is-on">
+          <p class="sense-bay__line">Meet<br />RIPPLsense<span class="sense-bay__dot">.</span></p>
+          <p class="sense-bay__body">The tiny motion capture sensor for surfing.</p>
         </div>
-        <div class="sense-copy">
-          <h3 class="sense-title">
-            <span class="sense-title__line">ONE SENSOR.</span>
-            <span class="sense-title__line">EVERY BOARD<span class="sense-title__period">.</span></span>
-          </h3>
-          <ul class="sense-beats">
-            <li class="sense-beat" id="sense-b1"><b>Meet RIPPLsense.</b> A tiny sensor that sits on your tail. Mounts in seconds. Then it disappears.</li>
-            <li class="sense-beat" id="sense-b2"><b>Reads every movement.</b> A 9&#8209;axis IMU and centimeter&#8209;precise positioning measure your rides like never before.</li>
-            <li class="sense-beat" id="sense-b3"><b>Easy mounting system.</b> Change boards mid-session, snap in the RIPPLsense, get back in the lineup.</li>
-            <li class="sense-beat" id="sense-b4"><b>Built for the ocean.</b> IP68, marine&#8209;grade, days per charge. Attach before your session &#8212; then forget it.</li>
-          </ul>
+        <div class="sense-bay__ch">
+          <p class="sense-bay__line">Snap in<br />and go<span class="sense-bay__dot">.</span></p>
+          <p class="sense-bay__body">The RIPPL mount fixes to your tail, then RIPPLsense snaps in, ready to paddle out.</p>
         </div>
-        <div class="sense-media">
-          <img class="sense-media__img" id="sense-img" src="assets/img/sensor-board-tail-768.webp" width="768" height="1365" loading="lazy" decoding="async" alt="The RIPPL sensor mounted on the tail of a surfboard, golden hour" />
-          <div class="sense-media__callouts" aria-hidden="true">
-            <div class="sense-callout sense-callout--a" id="sense-co1">
-              <span class="sense-callout__dot"></span>
-              <span>9&#8209;axis IMU</span>
-            </div>
-            <div class="sense-callout sense-callout--b" id="sense-co2">
-              <span class="sense-callout__dot"></span>
-              <span>centimeter&#8209;precise GNSS</span>
-            </div>
-            <div class="sense-callout sense-callout--c" id="sense-co3">
-              <span class="sense-callout__dot"></span>
-              <span>marine&#8209;grade · IP68</span>
-            </div>
-          </div>
+        <div class="sense-bay__ch">
+          <p class="sense-bay__line">One sensor.<br />Every board<span class="sense-bay__dot">.</span></p>
+          <p class="sense-bay__body"><b>Precise motion capture</b> on every wave, every turn, every paddle.</p>
         </div>
       </div>
+      <div class="sense-bay__foot">
+        <ol class="sense-bay__ticks" aria-hidden="true">
+          <li class="is-on">meet</li><li>snap</li><li>ride</li>
+        </ol>
+        <button class="sense-bay__replay" id="sense-bay-replay" type="button"><span aria-hidden="true">↺</span> <span class="sense-bay__replay-label">Replay</span></button>
+      </div>
     </div>
+    <script>
+      (function () {
+        var section = document.getElementById('pillar-sense');
+        var stage = section.querySelector('.sense-bay__stage');
+        var video = document.getElementById('sense-bay-video');
+        var chapters = section.querySelectorAll('.sense-bay__ch');
+        var ticks = section.querySelectorAll('.sense-bay__ticks li');
+        var replay = document.getElementById('sense-bay-replay');
+
+        // Two web encodes (scripts/encode_video.swift), each with its own cues:
+        // [start time, chapter] — 0 meet · 1 snap in and go · 2 every board.
+        var FILMS = {
+          landscape: { src: 'assets/video/sense-board-1600.mp4', end: 14.35,
+                       cues: [[0, 0], [3.08, 1], [8.3, 2]] },   // wide shot · cut to the tail, mount then sensor drop · sensor clicks in
+          portrait:  { src: 'assets/video/sense-board-vertical-608.mp4', end: 10.7,
+                       cues: [[0, 0], [2.1, 1], [4.75, 2]] },   // mount drops in · sensor drops · sensor seated
+        };
+        var portrait = matchMedia('(orientation: portrait)').matches;
+        var film = portrait ? FILMS.portrait : FILMS.landscape;
+        if (portrait) section.classList.add('is-portrait');
+
+        var shown = 0;
+        function show(n) {
+          if (n === shown) return; shown = n;
+          chapters.forEach(function (c, i) { c.classList.toggle('is-on', i === n); });
+          ticks.forEach(function (t, i) { t.classList.toggle('is-on', i === n); });
+        }
+        function chapterAt(t) { var n = 0; film.cues.forEach(function (c) { if (t >= c[0]) n = c[1]; }); return n; }
+
+        // Don't compete with the hero: fetch the film once the page has loaded,
+        // or sooner if the reader gets here first.
+        var loaded = false;
+        function load() { if (!loaded) { loaded = true; video.preload = 'auto'; video.src = film.src; } }
+        if (document.readyState === 'complete') load(); else window.addEventListener('load', load);
+
+        // Reduced motion: no playback — rest on the final frame and the last chapter.
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          load();
+          video.addEventListener('loadedmetadata', function () { video.currentTime = film.end; }, { once: true });
+          show(2);
+          return;
+        }
+
+        // Follow the film frame by frame (timeupdate only fires ~4x a second).
+        if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
+          var onFrame = function (now, meta) { show(chapterAt(meta.mediaTime)); video.requestVideoFrameCallback(onFrame); };
+          video.requestVideoFrameCallback(onFrame);
+        } else {
+          video.addEventListener('timeupdate', function () { show(chapterAt(video.currentTime)); });
+        }
+        video.addEventListener('ended', function () { show(2); replay.classList.add('is-on'); });
+        replay.addEventListener('click', function () { replay.classList.remove('is-on'); video.currentTime = 0; video.play(); });
+
+        // Starts while the section is still coming up the screen; pauses if
+        // scrolled away early, resumes on return.
+        new IntersectionObserver(function (e) {
+          if (e[0].isIntersecting) load();
+          var seen = e[0].intersectionRatio >= 0.3;
+          if (seen && !video.ended) video.play().catch(function () {});
+          else if (!seen) video.pause();
+        }, { threshold: [0, 0.3] }).observe(stage);
+      })();
+    </script>
   </section>
 
   <!-- ============ Pillar 02 — RIPPLintelligence (bento) ============ -->
@@ -2314,33 +2328,6 @@
         window.addEventListener('resize', onScroll);
         update();
       }
-
-      // Pillar 01: Sense
-      (function () {
-        var track = document.getElementById('sense-track');
-        if (!track) return;
-        var img = document.getElementById('sense-img');
-        var targets = [
-          { el: document.getElementById('sense-b1'),  threshold: 0.08 },
-          { el: document.getElementById('sense-b2'),  threshold: 0.28 },
-          { el: document.getElementById('sense-b3'),  threshold: 0.50 },
-          { el: document.getElementById('sense-b4'),  threshold: 0.72 },
-          { el: document.getElementById('sense-co1'), threshold: 0.12 },
-          { el: document.getElementById('sense-co2'), threshold: 0.32 },
-          { el: document.getElementById('sense-co3'), threshold: 0.74 },
-        ];
-        var tick = false;
-        function update() {
-          tick = false;
-          var r = track.getBoundingClientRect(), vh = window.innerHeight;
-          var p = Math.min(1, Math.max(0, -r.top) / Math.max(1, track.offsetHeight - vh));
-          targets.forEach(function(t) { if (t.el) t.el.classList.toggle('is-on', p >= t.threshold); });
-          if (img) img.style.transform = 'scale(' + (1 + Math.min(0.12, p * 0.14)).toFixed(3) + ')';
-        }
-        window.addEventListener('scroll', function(){ if (!tick){ tick = true; requestAnimationFrame(update); } }, { passive: true });
-        window.addEventListener('resize', update);
-        update();
-      })();
 
       // Pillar 02: Intelligence (bento)
       const intelCards = Array.from(document.querySelectorAll('#pillar-intel .bento__cell'));

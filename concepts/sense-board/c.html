@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>C · Quiver, then snap — One sensor. Every board.</title>
+<link rel="stylesheet" href="shared.css" />
+<style>
+  /* C · Quiver, then snap — two beats of the same film. A cinematic banner of
+     the shaping bay (the quiver on the wall) for "one sensor", then a cream
+     split where the mount and sensor drop onto the tail for "snaps in". */
+  .quiver { position: relative; height: 82vh; min-height: 540px; max-height: 900px; overflow: hidden; background: var(--rippl-ink); color: var(--rippl-cream); }
+  .quiver video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .quiver::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(to top, rgba(14,14,14,0.82) 0%, rgba(14,14,14,0.35) 45%, rgba(14,14,14,0) 70%); }
+  .quiver__head { position: absolute; z-index: 1; top: clamp(32px, 8vh, 96px); left: var(--gutter); }
+  .quiver__copy { position: absolute; z-index: 1; left: var(--gutter); right: var(--gutter); bottom: clamp(40px, 9vh, 100px); display: grid; gap: 20px; }
+  .quiver__copy .body { color: rgba(242, 235, 220, 0.86); }
+
+  .snap { background: var(--rippl-cream); color: var(--rippl-cocoa); padding: clamp(80px, 12vh, 140px) var(--gutter); }
+  .snap__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: clamp(40px, 6vw, 110px); align-items: center; }
+  .snap__copy { display: grid; gap: clamp(20px, 3vh, 32px); }
+  .snap__copy .body { color: var(--rippl-cocoa-soft); }
+  /* two lines beside the card, like the current section */
+  .snap .display { font-size: clamp(40px, 4.6vw, 72px); }
+  .snap__facts { margin: 8px 0 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+  .snap__facts li { padding-top: 14px; border-top: 1px solid rgba(46, 30, 16, 0.18); }
+  .snap__facts b { display: block; font-size: 15px; font-weight: 700; letter-spacing: -0.01em; }
+  .snap__facts span { display: block; margin-top: 4px; font-size: 15px; line-height: 1.45; color: var(--rippl-cocoa-soft); }
+  .snap__card { position: relative; aspect-ratio: 16 / 10; border-radius: 16px; overflow: hidden; background: var(--rippl-ink); box-shadow: var(--shadow-card); }
+  .snap__card video { width: 100%; height: 100%; object-fit: cover; object-position: 80% 50%; }
+  .snap__card .replay { position: absolute; right: 16px; bottom: 16px; color: var(--rippl-cream); background: rgba(14,14,14,0.45); }
+
+  @media (max-width: 900px) {
+    .quiver { height: 72svh; min-height: 480px; }
+    .snap__grid { grid-template-columns: 1fr; }
+    .snap__card { order: -1; aspect-ratio: 16 / 9; }
+    .snap__facts { grid-template-columns: 1fr; gap: 0; }
+    .snap__facts li { padding: 14px 0; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ctx ctx--dark">↑ the RIPPLsense reveal · every ride, measured.</div>
+
+<section class="quiver" aria-labelledby="quiver-title">
+  <video id="quiver-video" muted playsinline preload="auto" aria-hidden="true"></video>
+  <div class="quiver__head eyebrow">
+    <span class="eyebrow__num">01</span>
+    <h2 class="eyebrow__name" id="quiver-title"><b>RIPPL</b>sense</h2>
+    <span class="eyebrow__tag">the hardware</span>
+  </div>
+  <div class="quiver__copy">
+    <p class="display">One sensor.<br />Your whole quiver<span class="dot">.</span></p>
+    <p class="body">Stick a mount on every board you own. RIPPLsense goes wherever you do.</p>
+  </div>
+</section>
+
+<section class="snap" aria-label="Snaps in, in seconds">
+  <div class="snap__grid">
+    <div class="snap__copy">
+      <p class="display">Snaps in,<br />in seconds<span class="dot">.</span></p>
+      <p class="body">Click RIPPLsense into the mount on your tail. Swap boards mid-session and paddle straight back out.</p>
+      <ul class="snap__facts">
+        <li><b>Any board</b><span>Shortboard, longboard, softtop.</span></li>
+        <li><b>Seconds to swap</b><span>Out of one mount, into the next.</span></li>
+        <li><b>Precise motion capture</b><span>Every wave, turn and paddle.</span></li>
+      </ul>
+    </div>
+    <div class="snap__card">
+      <video id="snap-video" muted playsinline preload="auto" aria-hidden="true"></video>
+      <button class="replay" id="snap-replay" type="button">↺ Replay</button>
+    </div>
+  </div>
+</section>
+
+<div class="ctx ctx--cream">↓ 02 · RIPPLintelligence</div>
+
+<nav class="concept-nav" aria-label="Concepts">
+  <a href="a.html">A · The shaping bay</a>
+  <a href="b.html">B · Three steps</a>
+  <a href="c.html" aria-current="page">C · Quiver, then snap</a>
+</nav>
+
+<script src="shared.js"></script>
+<script>
+(function () {
+  // Two slices of one film (one download): the wide shot before the cut, and
+  // the drop-and-snap at the end.
+  var WIDE_END = 3.0;       // stop just before the cut at 3.08s
+  var SNAP_START = 4.1;     // just before the mount drops (~4.5s)
+  var quiver = document.getElementById('quiver-video');
+  var snap = document.getElementById('snap-video');
+  var replay = document.getElementById('snap-replay');
+  quiver.src = snap.src = SB.src;
+
+  if (SB.reduce) { SB.seek(quiver, WIDE_END); SB.seek(snap, 15); return; }
+
+  // Banner: the slow push across the shaping bay, once, holding on its last frame.
+  SB.everyFrame(quiver, function (t) { if (t >= WIDE_END && !quiver.paused) quiver.pause(); });
+  SB.whenSeen(quiver, 0.3,
+    function () { if (quiver.currentTime < WIDE_END - 0.05) quiver.play().catch(function () {}); },
+    function () { quiver.pause(); });
+
+  // Card: the mount and sensor drop onto the tail, then hold. Replay on demand.
+  SB.seek(snap, SNAP_START);
+  snap.addEventListener('ended', function () { replay.classList.add('is-on'); });
+  replay.addEventListener('click', function () { replay.classList.remove('is-on'); SB.seek(snap, SNAP_START, function () { snap.play(); }); });
+  // Wait until the card is mostly in view, so it doesn't start while the
+  // banner above still has the reader's attention (on phones they're close).
+  SB.whenSeen(snap, 0.8,
+    function () { if (!snap.ended) snap.play().catch(function () {}); },
+    function () { snap.pause(); });
+})();
+</script>
+</body>
+</html>
