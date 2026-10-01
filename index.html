@@ -903,10 +903,17 @@
     display: flex; align-items: center; justify-content: space-between; gap: 24px;
   }
   .sense-bay__ticks { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 120px)); gap: 10px; }
-  .sense-bay__ticks li { font-size: 12px; font-weight: 600; letter-spacing: 0.14em; text-transform: lowercase; color: rgba(242, 235, 220, 0.45); }
-  .sense-bay__ticks li::before { content: ""; display: block; height: 2px; margin-bottom: 8px; background: rgba(242, 235, 220, 0.18); }
-  .sense-bay__ticks li.is-on { color: var(--rippl-cream); }
-  .sense-bay__ticks li.is-on::before { background: var(--rippl-cream); }
+  .sense-bay__ticks button {
+    display: block; width: 100%; min-height: 44px; padding: 0; border: 0; background: none; cursor: pointer; text-align: left;
+    font: 600 12px/1 var(--font-body); letter-spacing: 0.14em; text-transform: lowercase; color: rgba(242, 235, 220, 0.45);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .sense-bay__ticks button::before { content: ""; display: block; height: 2px; margin-bottom: 8px; background: rgba(242, 235, 220, 0.18); transition: background-color var(--dur-fast) var(--ease-out); }
+  .sense-bay__ticks button:hover { color: rgba(242, 235, 220, 0.75); }
+  .sense-bay__ticks button:hover::before { background: rgba(242, 235, 220, 0.4); }
+  .sense-bay__ticks button.is-on { color: var(--rippl-cream); }
+  .sense-bay__ticks button.is-on::before { background: var(--rippl-cream); }
+  .sense-bay__ticks button:focus-visible { outline: 2px solid var(--rippl-wave); outline-offset: 2px; }
   .sense-bay__replay {
     min-height: 44px; padding: 0 18px; border-radius: var(--radius-pill); cursor: pointer;
     font: 600 14px/1 var(--font-body); color: var(--rippl-cream); background: transparent; border: 1px solid currentColor;
@@ -1404,8 +1411,10 @@
         </div>
       </div>
       <div class="sense-bay__foot">
-        <ol class="sense-bay__ticks" aria-hidden="true">
-          <li class="is-on">meet</li><li>snap</li><li>ride</li>
+        <ol class="sense-bay__ticks" aria-label="Chapters">
+          <li><button type="button" class="is-on" aria-current="step">meet</button></li>
+          <li><button type="button">snap</button></li>
+          <li><button type="button">ride</button></li>
         </ol>
         <button class="sense-bay__replay" id="sense-bay-replay" type="button"><span aria-hidden="true">↺</span> <span class="sense-bay__replay-label">Replay</span></button>
       </div>
@@ -1416,7 +1425,7 @@
         var stage = section.querySelector('.sense-bay__stage');
         var video = document.getElementById('sense-bay-video');
         var chapters = section.querySelectorAll('.sense-bay__ch');
-        var ticks = section.querySelectorAll('.sense-bay__ticks li');
+        var ticks = section.querySelectorAll('.sense-bay__ticks button');
         var replay = document.getElementById('sense-bay-replay');
 
         // Two web encodes (scripts/encode_video.swift), each with its own cues:
@@ -1431,12 +1440,18 @@
         var film = portrait ? FILMS.portrait : FILMS.landscape;
         if (portrait) section.classList.add('is-portrait');
 
-        var shown = 0;
+        var shown = 0, picked = false;
         function show(n) {
           if (n === shown) return; shown = n;
           chapters.forEach(function (c, i) { c.classList.toggle('is-on', i === n); });
-          ticks.forEach(function (t, i) { t.classList.toggle('is-on', i === n); });
+          ticks.forEach(function (b, i) {
+            b.classList.toggle('is-on', i === n);
+            if (i === n) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+          });
         }
+        // The markers jump the copy to any chapter; the film carries on.
+        // Once someone picks one, the film stops moving the copy for them.
+        ticks.forEach(function (b, i) { b.addEventListener('click', function () { picked = true; show(i); }); });
         function chapterAt(t) { var n = 0; film.cues.forEach(function (c) { if (t >= c[0]) n = c[1]; }); return n; }
 
         // Don't compete with the hero: fetch the film once the page has loaded,
@@ -1455,13 +1470,16 @@
 
         // Follow the film frame by frame (timeupdate only fires ~4x a second).
         if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
-          var onFrame = function (now, meta) { show(chapterAt(meta.mediaTime)); video.requestVideoFrameCallback(onFrame); };
+          var onFrame = function (now, meta) { if (!picked) show(chapterAt(meta.mediaTime)); video.requestVideoFrameCallback(onFrame); };
           video.requestVideoFrameCallback(onFrame);
         } else {
-          video.addEventListener('timeupdate', function () { show(chapterAt(video.currentTime)); });
+          video.addEventListener('timeupdate', function () { if (!picked) show(chapterAt(video.currentTime)); });
         }
-        video.addEventListener('ended', function () { show(2); replay.classList.add('is-on'); });
-        replay.addEventListener('click', function () { replay.classList.remove('is-on'); video.currentTime = 0; video.play(); });
+        video.addEventListener('ended', function () { if (!picked) show(2); replay.classList.add('is-on'); });
+        replay.addEventListener('click', function () {
+          picked = false; replay.classList.remove('is-on'); show(0);
+          video.currentTime = 0; video.play();
+        });
 
         // Starts while the section is still coming up the screen; pauses if
         // scrolled away early, resumes on return.
