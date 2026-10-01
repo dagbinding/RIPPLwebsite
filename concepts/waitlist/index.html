@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>Shorter waitlist — concepts</title>
+<link rel="stylesheet" href="shared.css" />
+<style>
+  main { max-width: 900px; margin: 0 auto; padding: clamp(56px, 10vh, 110px) var(--gutter); display: grid; gap: 40px; }
+  .intro { display: grid; gap: 20px; }
+  .display { font-size: clamp(44px, 6.4vw, 96px); }
+  .list { margin: 0; padding: 0; list-style: none; display: grid; gap: 16px; }
+  .list a {
+    display: grid; grid-template-columns: 56px 1fr auto; gap: 16px; align-items: center;
+    padding: 24px; border-radius: 16px; background: var(--rippl-bone); box-shadow: var(--shadow-soft);
+    color: var(--rippl-cocoa); text-decoration: none;
+    transition: box-shadow var(--dur-fast) var(--ease-out), background-color var(--dur-fast) var(--ease-out);
+  }
+  .list a:hover { box-shadow: var(--shadow-card); background: #F6F1E5; }
+  .list a:focus-visible { outline: 2px solid var(--rippl-wave); outline-offset: 2px; }
+  .list .n { font-size: 36px; font-weight: 900; letter-spacing: -0.04em; }
+  .list b { display: block; font-size: 20px; letter-spacing: -0.01em; }
+  .list span span { display: block; margin-top: 4px; font-size: 16px; line-height: 1.5; color: var(--rippl-cocoa-soft); }
+  .list i { font-style: normal; font-weight: 600; }
+  .notes { display: grid; gap: 12px; font-size: 16px; line-height: 1.55; color: var(--rippl-cocoa-soft); }
+  .notes h2 { margin: 0; font-size: 20px; color: var(--rippl-cocoa); letter-spacing: -0.01em; }
+  .notes p { margin: 0; max-width: 62ch; }
+  .notes b { font-weight: 600; color: var(--rippl-cocoa); }
+  @media (max-width: 560px) { .list a { grid-template-columns: 40px 1fr; } .list i { display: none; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="intro">
+    <p class="display">Shorter<br />waitlist<span class="dot">.</span></p>
+    <p class="lede">Today's page is four screens and a two-page form before anyone is signed up. Each option below puts the form in the <b>first screen</b>, drops the referral tiers and asks for less.</p>
+  </div>
+  <ul class="list">
+    <li><a href="a.html"><span class="n">A</span><span><b>One screen</b><span>Headline, one line of why, first name and email, beside the sensor-on-the-tail photo. No scroll on desktop.</span></span><i>→</i></a></li>
+    <li><a href="b.html"><span class="n">B</span><span><b>Email first</b><span>A full-bleed photo and one email field. Once you're signed up, two optional taps (how often, what board) help match you to a drop.</span></span><i>→</i></a></li>
+    <li><a href="c.html"><span class="n">C</span><span><b>Form stays put</b><span>Keeps a short "what you get" story, but the form is pinned beside it the whole way down. On phones, a join bar follows you.</span></span><i>→</i></a></li>
+  </ul>
+  <div class="notes">
+    <h2>Common to all three</h2>
+    <p><b>Referrals move to after signup.</b> Instead of tiers up front, the success screen says "Surf with friends? Send them the link" with Copy and Share buttons. You still get word of mouth, with nothing to track or promise.</p>
+    <p><b>The forms here are prototypes.</b> Submitting shows the success state but sends nothing. To ship one, cut the Tally form to one page (first name and email) or post to Netlify Forms.</p>
+  </div>
+</main>
+</body>
+</html>
