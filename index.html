@@ -637,385 +637,76 @@
     max-width: 44ch;
   }
 
-  /* ============ Pillar 02 — intelligence (dark) ============ */
-  .pillar--intel {
-    background: var(--rippl-ink);
-    color: #fff;
+  /* ============ Pillar 02 — RIPPLiQ: motion to model ============
+     One real ride from the testing programme, three beats on the film's own
+     clock: the board's signal draws in (motion), its points fly into the rider
+     on the board (model), the readouts arrive (technique). Two loops, then it
+     holds on an action frame. The film is pre-rendered, so no ride data ships
+     with the page. The chapter markers jump the copy; the film carries on.
+     The model's frame (.iq__view, 5:4) lines up with the copy. The film is
+     taller: 10% of the frame above, 30% below, so the ride can rise and drop
+     out of the frame without cropping; the stage makes the same room. */
+  .iq { background: var(--rippl-ink); color: var(--rippl-cream); padding: clamp(64px, 10vh, 120px) clamp(24px, 6vw, 100px) clamp(72px, 11vh, 130px); overflow-x: clip; container-type: inline-size; }
+  .iq__stage {
+    --g: clamp(32px, 5vw, 80px); --fh: calc((100cqw - var(--g)) * 0.47619);
+    display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.25fr); gap: var(--g); align-items: center;
+    min-height: min(78vh, 760px); padding: calc(var(--fh) * 0.1) 0 calc(var(--fh) * 0.3);
   }
-  .pillar__track--intel { height: 220vh; }
-  .pillar--intel .pillar__stage--centered {
-    padding: clamp(56px, 10vh, 96px) clamp(24px, 6vw, 96px);
-    grid-template-rows: auto 1fr auto;
-    width: 100%;
+  .iq__side { display: grid; gap: clamp(28px, 5vh, 48px); align-content: center; }
+  .iq .sense-opener__num { color: rgba(242, 235, 220, 0.6); }
+  .iq .sense-opener__name { margin: 0; color: var(--rippl-cream); }
+  .iq .sense-opener__tag { color: rgba(242, 235, 220, 0.7); border-color: rgba(242, 235, 220, 0.35); }
+  .iq__copy { display: grid; }
+  .iq__ch {
+    grid-area: 1 / 1; display: grid; gap: 20px; align-content: start;
+    opacity: 0; transform: translateY(16px); pointer-events: none;
+    transition: opacity 420ms var(--ease-out), transform 420ms var(--ease-out);
   }
-
-  /* ============ Pillar 02 · Bento ============ */
-  .intel-bento-stage {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    padding: clamp(28px, 4vh, 44px) clamp(28px, 3.5vw, 56px) clamp(32px, 4vh, 48px);
-    gap: clamp(14px, 2vh, 22px);
-    overflow: hidden;
-    background: var(--rippl-ink);
+  .iq__ch.is-on { opacity: 1; transform: none; pointer-events: auto; }
+  .iq__line { margin: 0; font-weight: 900; text-transform: uppercase; line-height: 0.9; letter-spacing: -0.045em; font-size: clamp(40px, 4.8vw, 76px); text-wrap: balance; }
+  .iq__dot { color: var(--rippl-sun); }
+  .iq__body { margin: 0; max-width: 38ch; font-size: clamp(17px, 1.3vw, 20px); line-height: 1.55; color: rgba(242, 235, 220, 0.8); text-wrap: pretty; }
+  .iq__body b { font-weight: 600; color: var(--rippl-cream); }
+  .iq__foot { display: flex; align-items: center; gap: 24px; }
+  .iq__ticks { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 110px)); gap: 10px; }
+  .iq__ticks button {
+    display: block; width: 100%; min-height: 44px; padding: 0; border: 0; background: none; cursor: pointer; text-align: left;
+    font: 600 12px/1 var(--font-body); letter-spacing: 0.14em; text-transform: lowercase; color: rgba(242, 235, 220, 0.45);
+    transition: color var(--dur-fast) var(--ease-out);
   }
-  .intel-bento-stage__head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-    z-index: 5;
+  .iq__ticks button::before { content: ""; display: block; height: 2px; margin-bottom: 8px; background: rgba(242, 235, 220, 0.18); transition: background-color var(--dur-fast) var(--ease-out); }
+  .iq__ticks button:hover { color: rgba(242, 235, 220, 0.75); }
+  .iq__ticks button:hover::before { background: rgba(242, 235, 220, 0.4); }
+  .iq__ticks button.is-on { color: var(--rippl-cream); }
+  .iq__ticks button.is-on::before { background: var(--rippl-cream); }
+  .iq__ticks button:focus-visible { outline: 2px solid var(--rippl-wave); outline-offset: 2px; }
+  .iq__replay {
+    min-height: 44px; padding: 0 18px; border-radius: var(--radius-pill); cursor: pointer;
+    font: 600 14px/1 var(--font-body); color: var(--rippl-cream); background: transparent; border: 1px solid currentColor;
+    opacity: 0; pointer-events: none; transition: opacity var(--dur-base) var(--ease-out);
   }
-  .intel-bento-stage__brand {
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    color: rgba(255,255,255,0.55);
+  .iq__replay { flex: none; white-space: nowrap; }
+  .iq__replay.is-on { opacity: 0.85; pointer-events: auto; }
+  .iq__replay:hover { opacity: 1; }
+  .iq__replay:focus-visible { outline: 2px solid var(--rippl-wave); outline-offset: 2px; }
+  .iq__view { position: relative; aspect-ratio: 5 / 4; }
+  /* lighten: the film's black is a hair off the page's ink after encoding, so
+     the film's edges never show. The mask fades the faint water dots out. */
+  .iq__video {
+    position: absolute; left: 0; top: -10%; width: 100%; height: 140%; object-fit: cover; display: block; mix-blend-mode: lighten;
+    -webkit-mask-image: linear-gradient(to bottom, #000 84%, transparent); mask-image: linear-gradient(to bottom, #000 84%, transparent);
   }
-  .intel-bento-stage__brand b { color: #fff; font-weight: 900; }
-
-  .bento {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: minmax(0, 1.85fr) minmax(0, 1fr);
-    gap: 16px;
-    flex: 1;
-    min-height: 0;
-    position: relative;
-    z-index: 2;
+  .iq__src { position: absolute; left: 0; bottom: -30%; font-size: 12px; color: rgba(242, 235, 220, 0.45); }
+  @media (max-width: 900px) {
+    .iq__stage { grid-template-columns: 1fr; min-height: 0; padding: 0; }
+    /* square frame; the film runs 20% of it below, and the copy starts after */
+    .iq__view { order: -1; aspect-ratio: 1 / 1; margin-bottom: 20%; }
+    .iq__video { top: 0; height: 120%; }
+    .iq__src { bottom: -20%; }
+    .iq__ticks { grid-template-columns: repeat(3, minmax(0, 1fr)); flex: 1; min-width: 0; }
+    .iq__foot { gap: 16px; }
   }
-  .bento__cell {
-    position: relative;
-    background: linear-gradient(180deg, #1a1714 0%, #100d0a 100%);
-    border: 1px solid rgba(255,255,255,0.06);
-    border-radius: 22px;
-    overflow: hidden;
-    padding: clamp(15px, 1.7vw, 22px) clamp(16px, 1.9vw, 24px);
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: transform 700ms var(--ease-out), opacity 700ms var(--ease-out), border-color var(--dur-base) var(--ease-out);
-    will-change: opacity, transform;
-  }
-  .bento__cell.is-on { opacity: 1; transform: translateY(0); }
-  .bento__cell:hover { border-color: rgba(255,255,255,0.14); }
-
-  .bento__eyebrow {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 10.5px;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--rippl-sun);
-  }
-  .bento__eyebrow::before {
-    content: ""; width: 7px; height: 7px; border-radius: 999px; background: var(--rippl-sun);
-    box-shadow: 0 0 0 4px rgba(217,119,64,0.18);
-  }
-  .bento__h {
-    font-size: clamp(16px, 1.9vw, 22px);
-    font-weight: 900;
-    line-height: 1.05;
-    letter-spacing: -0.015em;
-    margin: 8px 0 6px;
-    color: #fff;
-  }
-  .bento__p {
-    font-size: clamp(12px, 1.4vw, 13px);
-    line-height: 1.45;
-    color: rgba(255,255,255,0.62);
-    margin: 0;
-    max-width: 28ch;
-  }
-
-  /* 1 · LIVE — full-width hero with watch product photo */
-  .bento__cell--live {
-    grid-column: 1 / -1;
-    grid-row: 1;
-    padding: 36px 40px;
-    background:
-      radial-gradient(ellipse at 70% 50%, rgba(74,124,138,0.22) 0%, transparent 55%),
-      linear-gradient(180deg, #1a1714 0%, #0d0b08 100%);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr;
-    align-items: center;
-    gap: 24px;
-    overflow: hidden;
-  }
-  .bento__copy {
-    z-index: 2;
-    max-width: 38ch;
-    align-self: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-  .bento__cell--live .bento__h {
-    font-size: clamp(38px, 4vw, 54px);
-    font-weight: 900;
-    line-height: 0.96;
-    letter-spacing: -0.025em;
-    text-transform: uppercase;
-    margin: 0.22em 0 0.3em;
-  }
-  .bento__cell--live .bento__h em {
-    font-style: normal;
-    color: var(--rippl-glow, #F4C04A);
-    font-weight: 300;
-    text-transform: lowercase;
-    font-size: 0.36em;
-    display: block;
-    margin-top: 0.6em;
-    line-height: 1.15;
-    letter-spacing: -0.005em;
-  }
-  .bento__cell--live .bento__p { font-size: 15px; max-width: 38ch; margin-top: 4px; }
-
-  .bento__media {
-    position: relative;
-    align-self: stretch;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: visible;
-  }
-  .bento__media::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 120%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: radial-gradient(circle at 50% 50%, rgba(74,124,138,0.34) 0%, rgba(74,124,138,0.10) 35%, transparent 65%);
-    pointer-events: none;
-    z-index: 0;
-  }
-  .bento__watch {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    z-index: 1;
-    height: clamp(340px, 51vh, 476px);
-    width: auto;
-    max-height: none;
-    filter: drop-shadow(0 30px 60px rgba(0,0,0,0.65));
-    transform: translate(-50%, -50%);
-  }
-  .bento__watch img {
-    display: block;
-    height: 100%;
-    width: auto;
-    max-width: none;
-  }
-  .bento__cue {
-    position: absolute;
-    left: 16px;
-    top: auto;
-    bottom: 24px;
-    z-index: 3;
-    background: rgba(22, 20, 24, 0.92);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.14);
-    border-radius: 14px;
-    padding: 12px 14px;
-    width: 220px;
-    box-shadow: 0 12px 32px rgba(0,0,0,0.55);
-  }
-  .bento__cue-label {
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: var(--rippl-sun);
-    margin-bottom: 4px;
-  }
-  .bento__cue-text {
-    font-size: 13px;
-    line-height: 1.35;
-    color: #fff;
-    font-weight: 500;
-  }
-
-  /* 2 · AI ANALYSIS */
-  .bento__quote {
-    margin: 8px 0 0;
-    color: rgba(255,255,255,0.92);
-    font-size: clamp(12px, 1.5vw, 14px);
-    line-height: 1.45;
-    flex: 1;
-  }
-  .bento__quote b { color: var(--rippl-glow, #F4C04A); font-weight: 700; }
-  .bento__quote-by {
-    margin-top: 10px;
-    font-size: 10px;
-    letter-spacing: 0.16em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.45);
-  }
-
-  /* 3 · WAVE INTELLIGENCE */
-  .bento__chart {
-    margin-top: auto;
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
-    align-items: end;
-    height: clamp(40px, 5vw, 64px);
-  }
-  .bento__bar {
-    background: linear-gradient(180deg, var(--rippl-sun) 0%, var(--rippl-glow, #F4C04A) 100%);
-    border-radius: 4px 4px 1px 1px;
-    width: 100%;
-  }
-  .bento__bar--peak {
-    background: linear-gradient(180deg, var(--rippl-glow, #F4C04A) 0%, #fff7e0 100%);
-    box-shadow: 0 0 14px rgba(244,192,74,0.45);
-  }
-  .bento__chart-labels {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 8px;
-    font-size: 10px;
-    letter-spacing: 0.10em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.45);
-  }
-  .bento__chart-labels b {
-    color: var(--rippl-glow, #F4C04A);
-    font-weight: 700;
-  }
-
-  /* 4 · TRAINING */
-  .bento__schedule {
-    margin-top: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .bento__schedule-row {
-    display: grid;
-    grid-template-columns: 32px 1fr auto;
-    gap: 10px;
-    align-items: center;
-    padding: clamp(5px, 0.7vw, 7px) 0;
-    border-top: 1px solid rgba(255,255,255,0.08);
-    font-size: clamp(10.5px, 1.3vw, 12px);
-  }
-  .bento__schedule-row:last-child { border-bottom: 1px solid rgba(255,255,255,0.08); }
-  .bento__schedule-day {
-    font-weight: 700;
-    color: rgba(255,255,255,0.55);
-    letter-spacing: 0.08em;
-  }
-  .bento__schedule-task { color: #fff; font-weight: 500; }
-  .bento__schedule-dur {
-    color: var(--rippl-glow, #F4C04A);
-    font-weight: 600;
-    font-feature-settings: "tnum" 1;
-  }
-
-  /* 5 · COMPARE */
-  .bento__stat {
-    display: flex;
-    align-items: baseline;
-    gap: 8px;
-    margin-top: 10px;
-  }
-  .bento__statnum {
-    font-size: clamp(28px, 3.4vw, 44px);
-    font-weight: 900;
-    line-height: 1;
-    letter-spacing: -0.04em;
-    color: var(--rippl-glow, #F4C04A);
-  }
-  .bento__statunit {
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.10em;
-    text-transform: uppercase;
-    color: rgba(255,255,255,0.55);
-  }
-  .bento__sparkline {
-    margin-top: auto;
-    height: clamp(30px, 3.4vw, 44px);
-    width: 100%;
-  }
-
-  /* Bento — responsive */
-  @media (max-width: 980px) {
-    /* Unpin the intelligence stage so the bento sizes to its content instead of
-       being clipped inside a 100vh sticky frame. */
-    .pillar__track--intel { height: auto !important; }
-    .intel-bento-stage {
-      position: static;
-      height: auto;
-      overflow: visible;
-      padding: 24px 20px 28px;
-    }
-    /* The scroll-reveal math no longer runs once unpinned — show every cell. */
-    .bento__cell { opacity: 1 !important; transform: none !important; }
-
-    /* Hero spans both columns; the remaining four cells form a 2×2 below. */
-    .bento {
-      grid-template-columns: repeat(2, 1fr);
-      grid-template-rows: none;
-      grid-auto-rows: minmax(150px, auto);
-      gap: 12px;
-    }
-    .bento__cell--live {
-      grid-column: 1 / -1;
-      grid-template-columns: 1.05fr 0.95fr;
-      align-items: center;
-      padding: 28px 28px 0;
-      overflow: hidden;
-    }
-    /* Desktop nudges the copy/watch up to sit under the oversized hero render —
-       reset them here so the text sits inside the card and the watch reflows. */
-    .bento__copy { transform: none; }
-    .bento__media {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 0;
-      align-self: stretch;
-      height: 100%;
-      overflow: visible;
-    }
-    .bento__media::before { width: 90%; }
-    .bento__watch {
-      position: relative;
-      top: auto;
-      left: auto;
-      height: auto;
-      max-height: none;
-      width: 100%;
-      transform: none;
-      filter: drop-shadow(0 18px 36px rgba(0,0,0,0.6));
-      display: flex;
-      justify-content: center;
-    }
-    .bento__watch img {
-      height: auto !important;
-      max-height: none !important;
-      width: 94%;
-      max-width: 280px;
-      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.85) 28%, rgba(0,0,0,1) 50%);
-      mask-image: linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.85) 28%, rgba(0,0,0,1) 50%);
-    }
-    .bento__cue { display: none; }
-    .bento__cell--live .bento__h { font-size: clamp(30px, 5.5vw, 44px); }
-  }
+  @media (prefers-reduced-motion: reduce) { .iq__ch { transition: none; } }
 
   /* ============ Pillar 03 RIPPLsocial — Film Edit ============ */
   .af { color: #F2EBDC; }
@@ -1455,30 +1146,6 @@
     .af__header { padding-left: 16px; padding-right: 16px; gap: 10px 14px; }
     .sense-opener__row { gap: 8px 14px; }
 
-    /* Intelligence bento → hero full-width, four cells as a 2×2 (stay two-up) */
-    .bento {
-      grid-template-columns: repeat(2, 1fr);
-      grid-template-rows: none;
-      grid-auto-rows: minmax(132px, auto);
-      gap: 10px;
-    }
-    .bento__cell { min-height: 0; padding: 15px 15px; }
-    /* Hero: stack copy over the watch so neither gets squeezed at phone width */
-    .bento__cell--live {
-      grid-template-columns: 1fr;
-      padding: 20px 18px 0;
-      min-height: 420px;
-      align-items: start;
-      overflow: hidden;
-    }
-    .bento__copy { max-width: none; }
-    .bento__cell--live .bento__p { font-size: 14px; max-width: none; }
-    .bento__media { margin-top: 0; }
-    .bento__watch img { width: 94%; max-width: 280px; max-height: none !important; }
-    .bento__cell--live .bento__h { font-size: clamp(28px, 8.5vw, 40px); }
-    /* Small-cell type: nudge headings up so they read well two-up */
-    .bento__cell:not(.bento__cell--live) .bento__h { font-size: clamp(15px, 4.6vw, 19px); }
-
     /* Social film section — keep scenes readable */
     .af__scene--2 { padding: 84px 16px 0; }
     .af__scene--3, .af__scene--4 { padding: 84px 16px 36px; }
@@ -1540,13 +1207,10 @@
     }
     .pillar__title { font-size: clamp(44px, 11vw, 88px); }
 
-    .pillar__track--intel { height: 320vh; }
-    .intel__phone { width: auto; height: 56vh; max-width: 280px; }
-    .intel__card { width: clamp(180px, 42vw, 240px); }
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .beat, .bento__cell {
+    .beat {
       opacity: 1 !important;
       transform: none !important;
       transition: none !important;
@@ -1811,113 +1475,109 @@
     </script>
   </section>
 
-  <!-- ============ Pillar 02 — RIPPLintelligence (bento) ============ -->
-  <section class="pillar pillar--intel" data-screen-label="05 Pillar 02 Intelligence" id="pillar-intel">
-    <div class="pillar__track pillar__track--intel">
-      <div class="intel-bento-stage">
-
-        <div class="sense-opener" style="background:transparent; border-top:1px solid rgba(242,235,220,0.12); margin-bottom:0;">
-          <div class="sense-opener__row">
-            <span class="sense-opener__num" style="color:rgba(242,235,220,0.5);">02</span>
-            <h2 class="sense-opener__name" style="color:rgba(242,235,220,0.95);"><b>RIPPL</b>intelligence</h2>
-            <span class="sense-opener__tag" style="color:rgba(242,235,220,0.5); border-color:rgba(242,235,220,0.18);">the coach</span>
+  <!-- ============ Pillar 02 — RIPPLiQ (motion to model) ============ -->
+  <section class="iq" data-screen-label="05 Pillar 02 RIPPLiQ" id="pillar-intel" aria-labelledby="iq-title">
+    <div class="iq__stage">
+      <div class="iq__side">
+        <div class="sense-opener__row">
+          <span class="sense-opener__num">02</span>
+          <h2 class="sense-opener__name" id="iq-title"><b>RIPPL</b>iQ</h2>
+          <span class="sense-opener__tag">the models</span>
+        </div>
+        <div class="iq__copy" aria-live="polite">
+          <div class="iq__ch is-on">
+            <p class="iq__line">Every ride<br />is motion<span class="iq__dot">.</span></p>
+            <p class="iq__body">RIPPLsense records how your board moves through every wave: each tilt of the rail, each lift of the nose.</p>
+          </div>
+          <div class="iq__ch">
+            <p class="iq__line">We turn it<br />into a model<span class="iq__dot">.</span></p>
+            <p class="iq__body">RIPPL rebuilds the ride in 3D, you and your board, and learns <b>what your technique looks like</b>.</p>
+          </div>
+          <div class="iq__ch">
+            <p class="iq__line">Your surfing,<br />decoded<span class="iq__dot">.</span></p>
+            <p class="iq__body">RIPPLiQ compares your personal model with surfers worldwide. See how the pros approach a wave, and the one change to <b>your technique</b> that takes you to the next level.</p>
           </div>
         </div>
-
-        <h2 class="pillar__sr">Unlock the why of surfing — five ways every session gets sharper.</h2>
-
-        <div class="bento" role="list">
-
-          <!-- 1 · LIVE COACHING — full-width hero -->
-          <div class="bento__cell bento__cell--live" role="listitem">
-            <div class="bento__copy">
-              <span class="bento__eyebrow">01 · live in the water</span>
-              <h3 class="bento__h">
-                Unlock the<br />why of surfing.
-                <em>in-the-lineup feedback with <span style="text-transform:uppercase">RIPPL</span>.</em>
-              </h3>
-              <p class="bento__p">Real-time feedback land on your watch the moment you kick out. Adjust before the next wave, not next session.</p>
-            </div>
-            <div class="bento__media">
-              <div class="bento__watch">
-                <img src="assets/img/watch-app-600.webp" width="600" height="997" loading="lazy" decoding="async" alt="Apple Watch showing a live coaching cue" style="padding: 0px; height: 470px" />
-              </div>
-            </div>
-          </div>
-
-          <!-- 2 · AI ANALYSIS -->
-          <div class="bento__cell bento__cell--analysis" role="listitem">
-            <span class="bento__eyebrow">02 · post-session</span>
-            <h3 class="bento__h">AI coach,<br />every wave.</h3>
-            <p class="bento__quote">"Open your shoulders earlier on the bottom turn — you'll carry <b>+0.4s</b> through the lip."</p>
-            <div class="bento__quote-by">→ WAVE 6 · 08:42</div>
-          </div>
-
-          <!-- 3 · WAVE INTELLIGENCE -->
-          <div class="bento__cell bento__cell--wave" role="listitem">
-            <span class="bento__eyebrow">03 · wave intelligence</span>
-            <h3 class="bento__h">Read every<br />wave fully.</h3>
-            <div class="bento__chart" aria-hidden="true">
-              <div class="bento__bar" style="height: 32%"></div>
-              <div class="bento__bar" style="height: 54%"></div>
-              <div class="bento__bar" style="height: 38%"></div>
-              <div class="bento__bar" style="height: 70%"></div>
-              <div class="bento__bar bento__bar--peak" style="height: 95%"></div>
-              <div class="bento__bar" style="height: 62%"></div>
-              <div class="bento__bar" style="height: 48%"></div>
-            </div>
-            <div class="bento__chart-labels">
-              <span>height</span>
-              <span><b>peak 2.65m</b></span>
-              <span>power</span>
-            </div>
-          </div>
-
-          <!-- 4 · TRAINING -->
-          <div class="bento__cell bento__cell--training" role="listitem">
-            <span class="bento__eyebrow">04 · training plans</span>
-            <h3 class="bento__h">Programs that adapt to you and your break.</h3>
-            <div class="bento__schedule">
-              <div class="bento__schedule-row">
-                <span class="bento__schedule-day">MON</span>
-                <span class="bento__schedule-task">Bottom-turn drills</span>
-                <span class="bento__schedule-dur">22m</span>
-              </div>
-              <div class="bento__schedule-row">
-                <span class="bento__schedule-day">WED</span>
-                <span class="bento__schedule-task">Small wave turns</span>
-                <span class="bento__schedule-dur">18m</span>
-              </div>
-              <div class="bento__schedule-row">
-                <span class="bento__schedule-day">FRI</span>
-                <span class="bento__schedule-task">Tide-push session at your local break</span>
-                <span class="bento__schedule-dur">90m</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- 5 · COMPARE -->
-          <div class="bento__cell bento__cell--compare" role="listitem">
-            <span class="bento__eyebrow">05 · SESSION INSIGHTS</span>
-            <h3 class="bento__h">You vs<br />last time.</h3>
-            <div class="bento__stat">
-              <span class="bento__statnum">+12%</span>
-              <span class="bento__statunit">AVG FLOW</span>
-            </div>
-            <svg class="bento__sparkline" viewBox="0 0 240 64" preserveAspectRatio="none" aria-hidden="true">
-              <defs>
-                <linearGradient id="bento-sun-fade" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stop-color="#F4C04A" stop-opacity="0.55" />
-                  <stop offset="1" stop-color="#F4C04A" stop-opacity="0" />
-                </linearGradient>
-              </defs>
-              <path d="M0,44 L24,40 L48,46 L72,38 L96,42 L120,32 L144,36 L168,24 L192,28 L216,18 L240,12 L240,64 L0,64 Z" fill="url(#bento-sun-fade)" />
-              <path d="M0,44 L24,40 L48,46 L72,38 L96,42 L120,32 L144,36 L168,24 L192,28 L216,18 L240,12" fill="none" stroke="#F4C04A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </div>
+        <div class="iq__foot">
+          <ol class="iq__ticks" aria-label="Chapters">
+            <li><button type="button" class="is-on" aria-current="step">motion</button></li>
+            <li><button type="button">model</button></li>
+            <li><button type="button">technique</button></li>
+          </ol>
+          <button class="iq__replay" id="iq-replay" type="button"><span aria-hidden="true">↺</span> Replay</button>
         </div>
       </div>
+      <div class="iq__view" id="iq-view">
+        <video class="iq__video" id="iq-video" muted playsinline preload="none" aria-hidden="true"></video>
+        <span class="iq__src">A real ride from our testing programme, measured by RIPPLsense and analysed by RIPPLiQ.</span>
+      </div>
     </div>
+    <script>
+      (function () {
+        var view = document.getElementById('iq-view');
+        var video = document.getElementById('iq-video');
+        var chapters = document.querySelectorAll('#pillar-intel .iq__ch');
+        var ticks = document.querySelectorAll('#pillar-intel .iq__ticks button');
+        var replay = document.getElementById('iq-replay');
+        // Square film for the stacked layout, 5:4 (plus room above and below)
+        // beside the copy. Chapter cues on the film's clock (s): the model
+        // forms from 4.2, the readouts arrive at 8.6, it holds from 15.7.
+        var small = matchMedia('(max-width: 900px)').matches;
+        var FILM = small ? { src: 'assets/video/iq-model-square-720.mp4', poster: 'assets/img/iq-model-square-720.webp' }
+                         : { src: 'assets/video/iq-model-1280.mp4', poster: 'assets/img/iq-model-1280.webp' };
+        var CUES = [[0, 0], [4.2, 1], [8.6, 2]];
+
+        var shown = 0, picked = false;
+        function show(n) {
+          if (n === shown) return; shown = n;
+          chapters.forEach(function (c, i) { c.classList.toggle('is-on', i === n); });
+          ticks.forEach(function (b, i) {
+            b.classList.toggle('is-on', i === n);
+            if (i === n) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+          });
+        }
+        // The markers jump the copy to any chapter; the film carries on.
+        // Once someone picks one, the film stops moving the copy for them.
+        ticks.forEach(function (b, i) { b.addEventListener('click', function () { picked = true; show(i); }); });
+        function chapterAt(t) { var n = 0; CUES.forEach(function (q) { if (t >= q[0]) n = q[1]; }); return n; }
+
+        // Reduced motion: no film, just its final frame and the last chapter.
+        if (matchMedia('(prefers-reduced-motion: reduce)').matches) { video.poster = FILM.poster; show(2); return; }
+
+        // Fetch the film only once the reader is within a screen of it, and
+        // never before the page itself has loaded: visitors who stop at the
+        // hero don't pay for it. Its opening frames are near-empty (the signal
+        // draws in from nothing), so a late start never shows a blank.
+        var loaded = false, near = false, seen = false;
+        function play() { if (loaded && seen && !video.ended) video.play().catch(function () {}); }
+        function load() {
+          if (loaded || !near || document.readyState !== 'complete') return;
+          loaded = true; video.preload = 'auto'; video.src = FILM.src;
+          play();   // already on screen when the source arrives: start now
+        }
+        window.addEventListener('load', load);
+        new IntersectionObserver(function (e) { if (e[0].isIntersecting) { near = true; load(); } },
+                                 { rootMargin: '0px 0px 100% 0px' }).observe(view);
+
+        function onFrame(t) { if (!picked) show(chapterAt(t)); }
+        if ('requestVideoFrameCallback' in HTMLVideoElement.prototype) {
+          var cb = function (now, meta) { onFrame(meta.mediaTime); video.requestVideoFrameCallback(cb); };
+          video.requestVideoFrameCallback(cb);
+        } else {
+          video.addEventListener('timeupdate', function () { onFrame(video.currentTime); });
+        }
+        video.addEventListener('ended', function () { replay.classList.add('is-on'); });
+        replay.addEventListener('click', function () {
+          picked = false; replay.classList.remove('is-on'); show(0);
+          video.currentTime = 0; play();
+        });
+        // Plays when 40% of the film is on screen; pauses if scrolled away.
+        new IntersectionObserver(function (e) {
+          seen = e[0].intersectionRatio >= 0.4;
+          if (seen) play(); else video.pause();
+        }, { threshold: [0, 0.4] }).observe(view);
+      })();
+    </script>
   </section>
 
   <!-- ============ Pillar 03 — RIPPLsocial (Film Edit) ============ -->
@@ -2200,45 +1860,6 @@
 
     // ============ Scroll-tied animations ============
     (function () {
-      function bindPillar(opts) {
-        const track = document.querySelector(opts.track);
-        if (!track) return;
-        const targets = opts.targets;
-        const N = targets.length;
-        let ticking = false;
-        function update() {
-          ticking = false;
-          const r = track.getBoundingClientRect();
-          const vh = window.innerHeight;
-          const total = Math.max(1, track.offsetHeight - vh);
-          const scrolled = Math.min(total, Math.max(0, -r.top));
-          const p = scrolled / total;
-          for (let i = 0; i < N; i++) {
-            const t = targets[i];
-            const on = p >= t.threshold && p <= (t.until ?? 2);
-            t.el.classList.toggle('is-on', on);
-          }
-          if (opts.onProgress) opts.onProgress(p);
-        }
-        function onScroll() { if (!ticking) { requestAnimationFrame(update); ticking = true; } }
-        window.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', onScroll);
-        update();
-      }
-
-      // Pillar 02: Intelligence (bento)
-      const intelCards = Array.from(document.querySelectorAll('#pillar-intel .bento__cell'));
-      bindPillar({
-        track: '#pillar-intel .pillar__track',
-        targets: [
-          { el: intelCards[0], threshold: 0.04 },
-          { el: intelCards[1], threshold: 0.22 },
-          { el: intelCards[2], threshold: 0.36 },
-          { el: intelCards[3], threshold: 0.50 },
-          { el: intelCards[4], threshold: 0.64 },
-        ]
-      });
-
       // Pillar 03: RIPPLsocial (Film Edit)
       (function () {
         var afTrack = document.getElementById('af-track');
