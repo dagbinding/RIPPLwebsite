@@ -1239,6 +1239,142 @@
   }
   .footer a:hover { color: #fff; }
   .footer__brand img { height: 18px; width: auto; display: block; }
+
+  /* ============ In-the-lineup feedback ============
+     The fall, then the watch: the film plays full width, the watch is tracked,
+     and RIPPLiQ's verdict grows out of it. Everything inside the film is in
+     stage units (--u): 1600 x 900 landscape, 450 x 800 on phones (vertical
+     edit). Concept and review tools: concepts/iq-feedback/review.html. */
+  .lineup {
+    --lu-score: #7FBE5F; --lu-alert: #C9523C; --lu-sheet: 420ms;
+    --lu-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+    background: var(--rippl-ink); color: var(--rippl-cream);
+    padding-top: clamp(64px, 10vh, 120px);
+  }
+  .lineup__head {
+    max-width: 1600px; margin: 0 auto; display: grid; gap: clamp(20px, 3vh, 32px);
+    padding: clamp(24px, 4vh, 48px) clamp(24px, 6vw, 100px) clamp(40px, 6vh, 72px);
+    border-top: 1px solid rgba(242, 235, 220, 0.12);
+  }
+  .lineup__row { display: flex; align-items: baseline; gap: 20px; flex-wrap: wrap; }
+  .lineup__name { margin: 0; font-size: clamp(22px, 2.4vw, 34px); font-weight: 300; letter-spacing: -0.01em; line-height: 1; color: rgba(242, 235, 220, 0.95); }
+  .lineup__name b { font-weight: 900; letter-spacing: -0.02em; }
+  .lineup__tag { font-size: clamp(11px, 0.85vw, 13px); font-weight: 600; letter-spacing: 0.18em; text-transform: lowercase; color: rgba(242, 235, 220, 0.5); padding: 4px 10px; border: 1px solid rgba(242, 235, 220, 0.18); border-radius: 999px; }
+  .lineup__body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: end; }
+  .lineup__display { margin: 0; font-size: clamp(44px, 6.4vw, 96px); font-weight: 900; text-transform: uppercase; line-height: 0.9; letter-spacing: -0.045em; text-wrap: balance; }
+  .lineup__display span { color: var(--rippl-sun); }
+  .lineup__blurb { margin: 0; max-width: 40ch; font-size: clamp(17px, 1.3vw, 20px); line-height: 1.55; color: rgba(242, 235, 220, 0.8); text-wrap: pretty; }
+  .lineup__blurb b { font-weight: 600; color: var(--rippl-cream); }
+  @media (max-width: 900px) { .lineup__body { grid-template-columns: 1fr; } }
+
+  .lineup__stage { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #000; container-type: inline-size; }
+  .lineup__stage > * { --u: calc(100cqw / 1600); }
+  .lineup.is-vert .lineup__stage { aspect-ratio: 9 / 16; }
+  .lineup.is-vert .lineup__stage > * { --u: calc(100cqw / 450); }
+  .lineup__film { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .lu-ov { position: absolute; inset: 0; font-size: calc(18 * var(--u)); }
+  .lu-at { position: absolute; left: calc(var(--x) * var(--u)); top: calc(var(--y) * var(--u)); width: calc(var(--w) * var(--u)); height: calc(var(--h) * var(--u)); }
+  .lu-bi { opacity: 0; transform: translateY(calc(16 * var(--u))); }
+  .lu-bi.is-on { opacity: 1; transform: none; transition: opacity var(--lu-sheet) var(--ease-out), transform var(--lu-sheet) var(--ease-out); }
+  .lu-fade { transform: none; }
+  .lu-glass {
+    border-radius: calc(24 * var(--u)); background: rgba(14, 14, 14, 0.66); color: var(--rippl-cream);
+    -webkit-backdrop-filter: blur(calc(18 * var(--u))) saturate(1.1); backdrop-filter: blur(calc(18 * var(--u))) saturate(1.1);
+    box-shadow: 0 calc(18 * var(--u)) calc(50 * var(--u)) rgba(14, 14, 14, 0.32);
+  }
+  /* phones, tablets, touch: solid cards; re-blurring the film every frame is
+     the costliest thing here on those devices */
+  @media (max-width: 1024px), (hover: none), (pointer: coarse) {
+    .lu-glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(14, 14, 14, 0.88); }
+  }
+  .lineup.is-vert .lu-glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(14, 14, 14, 0.88); border-radius: calc(16 * var(--u)); }
+  .lu-wm { font-weight: 900; letter-spacing: -0.02em; }
+  .lu-wm span { font-weight: 300; }
+  .lu-k { font-size: calc(13 * var(--u)); font-weight: 600; letter-spacing: 0.16em; text-transform: lowercase; color: rgba(242, 235, 220, 0.6); }
+  .lu-mono { font-family: var(--lu-mono); font-weight: 500; font-variant-numeric: tabular-nums; }
+
+  /* the watch: corner brackets, and a tether to the card */
+  .lu-anchor { position: absolute; z-index: 1; pointer-events: none; opacity: 0; transform: scale(1.08); }
+  .lu-anchor.is-on { opacity: 1; transform: none; transition: opacity var(--lu-sheet) var(--ease-out), transform var(--lu-sheet) var(--ease-out); }
+  .lu-anchor b { position: absolute; inset: calc(-22 * var(--u)) calc(-26 * var(--u)); }
+  .lineup.is-vert .lu-anchor b { inset: calc(-10 * var(--u)) calc(-12 * var(--u)); }
+  .lu-anchor i { position: absolute; width: 20%; height: 16%; border: 0 solid var(--rippl-cream); filter: drop-shadow(0 0 calc(4 * var(--u)) rgba(14, 14, 14, 0.7)); }
+  .lu-anchor i:nth-child(1) { left: 0; top: 0; border-left-width: calc(3 * var(--u)); border-top-width: calc(3 * var(--u)); border-top-left-radius: calc(14 * var(--u)); }
+  .lu-anchor i:nth-child(2) { right: 0; top: 0; border-right-width: calc(3 * var(--u)); border-top-width: calc(3 * var(--u)); border-top-right-radius: calc(14 * var(--u)); }
+  .lu-anchor i:nth-child(3) { left: 0; bottom: 0; border-left-width: calc(3 * var(--u)); border-bottom-width: calc(3 * var(--u)); border-bottom-left-radius: calc(14 * var(--u)); }
+  .lu-anchor i:nth-child(4) { right: 0; bottom: 0; border-right-width: calc(3 * var(--u)); border-bottom-width: calc(3 * var(--u)); border-bottom-right-radius: calc(14 * var(--u)); }
+  .lu-tether { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .lu-tether path { fill: none; stroke: var(--rippl-cream); stroke-width: calc(2 * var(--u)); stroke-dasharray: 1; stroke-dashoffset: 1; filter: drop-shadow(0 0 calc(3 * var(--u)) rgba(14, 14, 14, 0.6)); }
+  .lu-tether circle { fill: var(--rippl-cream); opacity: 0; }
+  .lu-tether .is-on path { stroke-dashoffset: 0; transition: stroke-dashoffset var(--lu-sheet) var(--ease-out); }
+  .lu-tether .is-on circle { opacity: 1; transition: opacity var(--dur-base) var(--ease-out); }
+  .lineup.is-vert .lu-tether { display: none; }
+
+  /* the card: the rider held at the fall, the board at that moment, the wave */
+  .lu-card { display: grid; grid-template-rows: auto 1fr auto; gap: calc(12 * var(--u)); padding: calc(22 * var(--u)) calc(24 * var(--u)); }
+  .lu-card__head, .lu-verdict__head { display: flex; align-items: baseline; justify-content: space-between; gap: calc(12 * var(--u)); }
+  .lu-card__head .lu-wm { font-size: calc(22 * var(--u)); }
+  .lu-card__fig { position: relative; min-height: 0; }
+  .lu-card__fig canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .lu-live { position: absolute; right: 0; top: 0; margin: 0; display: grid; gap: calc(9 * var(--u)); justify-items: end; text-align: right; }
+  .lu-live div { display: grid; gap: calc(2 * var(--u)); }
+  .lu-live dt { margin: 0; }
+  .lu-live dd { margin: 0; font-family: var(--lu-mono); font-weight: 500; font-size: calc(22 * var(--u)); white-space: nowrap; }
+  .lu-tl { display: grid; gap: calc(8 * var(--u)); }
+  .lu-track { position: relative; height: calc(4 * var(--u)); border-radius: 999px; background: rgba(242, 235, 220, 0.18); }
+  .lu-track__fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: inherit; background: var(--rippl-cream); transition: width 900ms var(--ease-out); }
+  .lu-track i { position: absolute; top: 50%; width: calc(8 * var(--u)); height: calc(8 * var(--u)); margin: calc(-4 * var(--u)) 0 0 calc(-4 * var(--u)); border-radius: 50%; background: rgba(242, 235, 220, 0.45); transition: background-color var(--dur-base) var(--ease-out); }
+  .lu-track i.is-past { background: var(--rippl-cream); }
+  .lu-track i.is-fall { width: calc(12 * var(--u)); height: calc(12 * var(--u)); margin: calc(-6 * var(--u)) 0 0 calc(-6 * var(--u)); background: var(--lu-alert); }
+  .lu-read { display: flex; justify-content: space-between; gap: calc(12 * var(--u)); font-size: calc(15 * var(--u)); color: rgba(242, 235, 220, 0.75); }
+  .lu-read b { font-weight: 600; color: var(--lu-alert); }
+
+  /* the verdict: grows out of the watch screen. One cue, one number. */
+  .lu-verdict { display: grid; align-content: start; gap: calc(8 * var(--u)); padding: calc(20 * var(--u)) calc(28 * var(--u)); background: rgba(14, 14, 14, 0.88); transform-origin: 0 0; }
+  .lu-verdict:not(.is-on) { opacity: 0; transform: translate(calc(var(--fx) * var(--u)), calc(var(--fy) * var(--u))) scale(var(--fsx), var(--fsy)); }
+  .lu-verdict.is-on { opacity: 1; transform: none; transition: opacity var(--dur-base) var(--ease-out), transform var(--lu-sheet) var(--ease-out); }
+  .lu-verdict__head .lu-wm { font-size: calc(20 * var(--u)); }
+  .lu-score { display: flex; align-items: baseline; gap: calc(8 * var(--u)); }
+  .lu-score b { font-family: var(--lu-mono); font-weight: 500; font-size: calc(26 * var(--u)); color: var(--lu-score); }
+  .lu-verdict__hl { margin: calc(2 * var(--u)) 0 0; font-size: calc(38 * var(--u)); font-weight: 900; letter-spacing: -0.03em; line-height: 0.98; text-wrap: balance; }
+  .lu-verdict__hl span { color: var(--rippl-sun); }
+  .lu-verdict__cue { margin: 0; font-size: calc(18 * var(--u)); line-height: 1.4; color: rgba(242, 235, 220, 0.82); text-wrap: pretty; }
+  .lu-bar { display: grid; gap: calc(7 * var(--u)); margin-top: calc(4 * var(--u)); }
+  .lu-bar__row { display: flex; justify-content: space-between; align-items: baseline; gap: calc(12 * var(--u)); font-size: calc(14 * var(--u)); color: rgba(242, 235, 220, 0.7); }
+  .lu-bar__row b { font-family: var(--lu-mono); font-weight: 500; font-size: calc(20 * var(--u)); color: var(--rippl-cream); }
+  .lu-bar__row small, .lu-bar__ref { font-family: var(--lu-mono); font-size: calc(14 * var(--u)); color: var(--lu-score); }
+  .lu-bar__ref { display: none; }
+  .lu-bar__track { position: relative; height: calc(6 * var(--u)); border-radius: 999px; background: rgba(242, 235, 220, 0.16); }
+  .lu-bar__fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: inherit; background: var(--rippl-cream); transition: width 700ms var(--ease-out); }
+  .lu-bar.is-on .lu-bar__fill { width: var(--v); }
+  .lu-bar__mark { position: absolute; left: var(--m); top: calc(-5 * var(--u)); bottom: calc(-5 * var(--u)); width: calc(3 * var(--u)); margin-left: calc(-1.5 * var(--u)); border-radius: 999px; background: var(--lu-score); }
+  .lu-verdict__foot { margin: calc(4 * var(--u)) 0 0; padding-top: calc(10 * var(--u)); border-top: 1px solid rgba(242, 235, 220, 0.14); font-size: calc(15 * var(--u)); color: rgba(242, 235, 220, 0.7); }
+  .lu-verdict__foot b { font-family: var(--lu-mono); font-weight: 500; color: var(--rippl-glow); }
+
+  /* phones: the vertical edit; the card on top, the verdict under it growing
+     out of the watch; type sized for a phone (1 unit ~ 0.87 px at 390 px) */
+  .lineup.is-vert .lu-k { font-size: calc(12.5 * var(--u)); letter-spacing: 0.1em; }
+  .lineup.is-vert .lu-card { gap: calc(7 * var(--u)); padding: calc(12 * var(--u)) calc(15 * var(--u)); }
+  .lineup.is-vert .lu-card__head .lu-wm, .lineup.is-vert .lu-verdict__head .lu-wm { font-size: calc(18 * var(--u)); }
+  .lineup.is-vert .lu-live { grid-template-columns: auto auto; gap: calc(2 * var(--u)) calc(16 * var(--u)); }
+  .lineup.is-vert .lu-live div { gap: 0; }
+  .lineup.is-vert .lu-live dd { font-size: calc(16.5 * var(--u)); line-height: 1.15; }
+  .lineup.is-vert .lu-tl { gap: calc(6 * var(--u)); }
+  .lineup.is-vert .lu-read { font-size: calc(13.5 * var(--u)); }
+  .lineup.is-vert .lu-verdict { gap: calc(7 * var(--u)); padding: calc(13 * var(--u)) calc(16 * var(--u)); }
+  .lineup.is-vert .lu-score b { font-size: calc(22 * var(--u)); }
+  .lineup.is-vert .lu-verdict__hl { font-size: calc(30 * var(--u)); }
+  .lineup.is-vert .lu-verdict__cue { font-size: calc(18 * var(--u)); line-height: 1.32; }
+  .lineup.is-vert .lu-bar__row { font-size: calc(13.5 * var(--u)); }
+  .lineup.is-vert .lu-bar__row b { font-size: calc(18 * var(--u)); }
+  .lineup.is-vert .lu-bar__track { height: calc(5 * var(--u)); }
+  .lineup.is-vert .lu-long, .lineup.is-vert .lu-bar__row small, .lineup.is-vert .lu-verdict__foot { display: none; }
+  .lineup.is-vert .lu-bar__ref { display: block; justify-self: end; font-size: calc(13 * var(--u)); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .lu-bi.is-on, .lu-anchor.is-on, .lu-verdict.is-on, .lu-bar__fill, .lu-track__fill, .lu-track i, .lu-tether .is-on path, .lu-tether .is-on circle { transition: none; }
+  }
 </style>
 
 <!-- PostHog Analytics -->
@@ -1596,6 +1732,57 @@
         }, { threshold: [0, 0.4] }).observe(view);
       })();
     </script>
+  </section>
+
+  <!-- ============ In-the-lineup feedback — the fall, then the watch ============ -->
+  <section class="lineup" data-screen-label="05b In-the-lineup feedback" id="lineup" aria-labelledby="lineup-title">
+    <div class="lineup__head">
+      <div class="lineup__row">
+        <h2 class="lineup__name" id="lineup-title"><b>In-the-lineup</b> feedback</h2>
+        <span class="lineup__tag">live on your wrist</span>
+      </div>
+      <div class="lineup__body">
+        <p class="lineup__display">Not next session.<br />Next wave<span>.</span></p>
+        <p class="lineup__blurb">RIPPLsense reads your board through every wave, and our models turn that motion into feedback in seconds. Fall, glance at your wrist, and know what to change before you paddle back out. You get better <b>on the next wave, not the next session</b>.</p>
+      </div>
+    </div>
+
+    <div class="lineup__stage">
+      <video class="lineup__film" muted playsinline preload="none" poster="assets/img/lineup-fall-poster.jpg" aria-hidden="true"></video>
+      <div class="lu-anchor" aria-hidden="true"><b><i></i><i></i><i></i><i></i></b></div>
+      <div class="lu-ov">
+        <svg class="lu-tether" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+          <g data-at="0.45"><path pathLength="1" /><circle r="5" /></g>
+        </svg>
+        <div class="lu-at lu-glass lu-card lu-bi" data-at="0.7">
+          <div class="lu-card__head"><span class="lu-wm">RIPPL<span>iQ</span></span><span class="lu-k">wave 7 · the fall</span></div>
+          <div class="lu-card__fig">
+            <canvas aria-hidden="true"></canvas>
+            <dl class="lu-live">
+              <div><dt class="lu-k">rail</dt><dd data-live="rail">38°</dd></div>
+              <div><dt class="lu-k">turn</dt><dd data-live="turn">160</dd></div>
+              <div><dt class="lu-k">speed</dt><dd data-live="speed">16</dd></div>
+              <div><dt class="lu-k">nose</dt><dd data-live="nose">up 16°</dd></div>
+            </dl>
+          </div>
+          <div class="lu-tl">
+            <div class="lu-track"><span class="lu-track__fill"></span></div>
+            <div class="lu-read"><span><b>fall</b> · last top turn</span><span class="lu-mono">0:05.8</span></div>
+          </div>
+        </div>
+        <div class="lu-at lu-glass lu-verdict" data-at="1.3">
+          <div class="lu-verdict__head lu-bi lu-fade" data-at="1.55"><span><span class="lu-wm">RIPPL<span>iQ</span></span> <span class="lu-k">&nbsp;wave 7</span></span><span class="lu-score"><span class="lu-k">score</span><b>6.4</b></span></div>
+          <p class="lu-verdict__hl lu-bi" data-at="1.65">Release the rail sooner<span>.</span></p>
+          <p class="lu-verdict__cue lu-bi lu-fade" data-at="1.85">You held the rail 0.5 s on your last top turn. Surfers in the next skill level, on average, release in 0.3 s on waves of this size. Try transitioning sooner to maintain speed and avoid the stall that caused you to fall.</p>
+          <div class="lu-bar lu-bi lu-fade" data-at="2.1">
+            <div class="lu-bar__row"><span>time on the rail<span class="lu-long">, off the top</span></span><span><b data-bar="val">0.5 s</b> <small data-bar="ref">/ 0.3 s next level</small></span></div>
+            <div class="lu-bar__track"><span class="lu-bar__fill"></span><span class="lu-bar__mark"></span></div>
+            <small class="lu-bar__ref" data-bar="under">0.3 s next skill level, average</small>
+          </div>
+          <p class="lu-verdict__foot lu-bi lu-fade" data-at="2.4">Next set in <b>1:15</b>.</p>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- ============ Pillar 03 — RIPPLsocial (Film Edit) ============ -->
@@ -2005,5 +2192,166 @@
     <span>© 2026 RIPPL · intelligent motion tech for surfing</span>
   </footer>
 
+  <!-- In-the-lineup feedback: the film, the tracked watch, the cues. Loads its
+       film and rider only as the section approaches; runs only while it moves. -->
+  <script src="assets/lineup/iq.js"></script>
+  <script>
+  (function () {
+    var root = document.getElementById('lineup');
+    if (!root || !window.IQ) return;
+    var stage = root.querySelector('.lineup__stage'), vid = root.querySelector('.lineup__film');
+    var anchorEl = root.querySelector('.lu-anchor'), card = root.querySelector('.lu-card'), vCard = root.querySelector('.lu-verdict');
+    var reduce = IQ.reduce;
+
+    // The watch screen in each film, tracked frame by frame (template match on
+    // the watch case, position and scale, smoothed): [film s, x, y, scale] in
+    // stage units; trackW is the screen's width at scale 1.
+    var LAYOUTS = {
+      h: { W: 1600, film: 'assets/video/lineup-fall-1280.mp4', poster: 'assets/img/lineup-fall-poster.jpg', start: 6.6, trackW: 265,
+           card: { x: 40, y: 40, w: 520, h: 400 }, verdict: { x: 580, y: 18, w: 700, h: 300 },
+           track: [[6.00,720,789,0.588],[6.08,718,787,0.596],[6.17,717,782,0.603],[6.25,711,773,0.619],[6.33,712,761,0.634],[6.42,714,746,0.647],[6.50,715,730,0.660],[6.58,715,715,0.670],[6.67,715,700,0.681],[6.75,714,686,0.688],[6.83,714,672,0.695],[6.92,715,658,0.702],[7.00,716,645,0.709],[7.08,719,633,0.713],[7.17,722,621,0.716],[7.25,725,610,0.720],[7.33,729,601,0.724],[7.42,733,592,0.727],[7.50,737,583,0.731],[7.58,741,576,0.734],[7.67,746,570,0.742],[7.75,750,564,0.746],[7.83,755,559,0.749],[7.92,761,553,0.753],[8.00,766,547,0.757],[8.08,770,541,0.757],[8.17,774,535,0.757],[8.25,776,532,0.761],[8.33,777,530,0.765],[8.42,778,530,0.768],[8.50,779,531,0.772],[8.58,780,531,0.776],[8.67,782,531,0.776],[8.75,783,530,0.776],[8.83,784,528,0.776],[8.92,785,525,0.776],[9.00,787,522,0.776],[9.08,788,519,0.776],[9.17,789,516,0.776],[9.25,791,514,0.776],[9.33,792,512,0.776],[9.42,793,509,0.776],[9.50,794,506,0.776],[9.58,795,503,0.776],[9.67,795,499,0.776],[9.75,795,496,0.776],[9.83,795,494,0.776],[9.92,795,493,0.776],[10.00,794,493,0.776],[10.08,792,494,0.776],[10.17,790,497,0.776],[10.25,788,501,0.776],[10.33,785,506,0.776],[10.42,783,512,0.776],[10.50,781,518,0.776],[10.58,779,524,0.776],[10.67,778,529,0.776],[10.75,777,533,0.776],[10.83,776,535,0.776],[10.92,776,537,0.780],[11.00,777,537,0.784],[11.08,778,537,0.788],[11.17,780,536,0.792],[11.25,781,535,0.796],[11.33,783,534,0.800],[11.42,784,533,0.804],[11.50,786,531,0.809],[11.58,788,530,0.813],[11.67,789,528,0.821],[11.75,790,526,0.825],[11.83,791,524,0.830],[11.92,792,521,0.838],[12.00,792,519,0.846],[12.08,793,515,0.851],[12.17,792,512,0.859],[12.25,792,509,0.868],[12.33,791,506,0.872],[12.42,790,503,0.877],[12.50,788,500,0.881],[12.58,787,498,0.886],[12.67,786,497,0.890],[12.75,786,496,0.895],[12.83,785,495,0.899],[12.92,785,496,0.909],[13.00,784,498,0.913],[13.08,784,500,0.918],[13.17,783,502,0.922],[13.25,783,506,0.927],[13.33,784,509,0.927],[13.42,785,512,0.932],[13.50,786,516,0.937],[13.58,787,519,0.941],[13.67,787,520,0.946],[13.75,788,521,0.951],[13.83,788,521,0.951],[13.92,788,519,0.951],[14.00,787,517,0.956],[14.08,787,515,0.961],[14.17,786,512,0.965],[14.25,786,510,0.970],[14.33,785,508,0.975],[14.42,785,506,0.975],[14.50,785,505,0.980],[14.58,786,505,0.985],[14.67,786,506,0.990],[14.75,787,508,0.995],[14.83,788,510,1.000],[14.92,789,512,1.000],[15.00,790,513,1.000],[15.08,791,514,1.000],[15.17,791,514,1.000],[15.25,791,513,1.000],[15.33,791,512,1.000],[15.42,790,510,1.000],[15.50,789,509,1.000],[15.58,788,507,1.000],[15.67,787,506,1.000],[15.75,785,505,1.000],[15.83,784,505,1.000],[15.92,783,505,1.000],[16.00,783,506,1.000],[16.08,783,507,1.000],[16.17,783,508,1.000],[16.25,784,510,1.000],[16.33,785,511,1.000],[16.42,786,514,1.000],[16.50,787,516,1.000],[16.58,788,519,1.000],[16.67,788,522,1.000],[16.75,788,524,1.000],[16.83,788,526,1.000],[16.92,788,526,1.000],[17.00,788,527,1.000]] },
+      v: { W: 450, film: 'assets/video/lineup-fall-vertical-720.mp4', poster: 'assets/img/lineup-fall-vertical-poster.jpg', start: 7.0, trackW: 100,
+           card: { x: 12, y: 12, w: 426, h: 164 }, verdict: { x: 12, y: 184, w: 426, h: 296 },
+           track: [[6.80,203,693,0.950],[6.87,203,688,0.956],[6.93,203,684,0.955],[7.00,204,674,0.960],[7.07,204,664,0.965],[7.13,205,655,0.970],[7.20,205,646,0.975],[7.27,205,636,0.985],[7.33,204,629,0.990],[7.40,203,621,0.995],[7.47,202,613,1.000],[7.53,201,608,1.000],[7.60,200,601,1.000],[7.67,200,594,1.000],[7.73,200,588,1.000],[7.80,200,583,1.000],[7.87,200,578,1.000],[7.93,201,575,1.000],[8.00,202,572,1.000],[8.07,203,570,1.000],[8.13,205,568,1.000],[8.20,206,567,1.000],[8.27,208,566,1.000],[8.33,208,565,1.000],[8.40,208,564,1.000],[8.47,208,564,1.000],[8.53,208,563,1.000],[8.60,209,563,1.000],[8.67,209,562,1.000],[8.73,211,561,1.000],[8.80,211,560,1.000],[8.87,212,559,1.000],[8.93,212,559,1.000],[9.00,211,558,1.000],[9.07,211,558,1.000],[9.13,210,558,1.000],[9.20,209,557,1.000],[9.27,208,556,1.000],[9.33,207,556,1.000],[9.40,206,555,1.000],[9.47,205,554,1.000],[9.53,204,554,1.000],[9.60,203,554,1.000],[9.67,203,553,1.000],[9.73,203,553,1.000],[9.80,204,554,1.000],[9.87,204,555,1.000],[9.93,205,556,1.000],[10.00,205,557,1.000],[10.07,206,558,1.000],[10.13,207,559,1.000],[10.20,208,559,1.000],[10.27,209,559,1.000],[10.33,208,558,1.000],[10.40,208,558,1.000],[10.47,207,558,1.000],[10.53,206,559,1.000],[10.60,206,560,1.000],[10.67,206,561,1.000],[10.73,206,562,1.000],[10.80,206,563,1.000]] }
+    };
+    var mode = null, L = LAYOUTS.h, tracked = null;
+    function watchAt(t) {
+      var T = L.track, a = T[0], b = a, m = 0;
+      if (t > a[0]) {
+        b = T[T.length - 1]; a = b;
+        for (var i = 1; i < T.length; i++) if (T[i][0] >= t) { a = T[i - 1]; b = T[i]; m = (t - a[0]) / (b[0] - a[0]); break; }
+      }
+      return { x: a[1] + (b[1] - a[1]) * m, y: a[2] + (b[2] - a[2]) * m, w: L.trackW * (a[3] + (b[3] - a[3]) * m) };
+    }
+    function A() { var an = tracked || watchAt(0), h = an.w * 1.18; return { l: an.x - an.w / 2, t: an.y - h / 2, w: an.w, h: h }; }
+
+    // The wave's moments by the board's roll; the last top turn never released.
+    var EV = [0, 1.1, 3.3, 3.8, 5.1, 5.8], FALL_T = 5.8, TT2 = 5.8, SCORE = 6.4, BUILT = 3.2;
+    // PLACEHOLDER: not measured yet. Replace with the real average from RIPPL
+    // data before this goes live.
+    var NEXT_LEVEL = 0.3;
+
+    var still = null, cues = [], fill = root.querySelector('.lu-track__fill'), dots = [], scoreEl = root.querySelector('.lu-score b');
+    function setup(s) {
+      still = s;
+      function fmt(t) { return Math.floor(t / 60) + ':' + (t % 60 < 10 ? '0' : '') + (t % 60).toFixed(1); }
+      // time on the rail after the last top turn: peak rail until it's back under 20 deg
+      var held = 0; for (var t = TT2; t < TT2 + 1.2; t += 0.02) { if (Math.abs(IQ.at(s, s.roll, t)) < 20) break; held = t - TT2; }
+      var last = held.toFixed(1), next = NEXT_LEVEL.toFixed(1);
+      root.querySelector('.lu-verdict__cue').textContent = 'You held the rail ' + last + ' s on your last top turn. Surfers in the next skill level, on average, release in ' + next + ' s on waves of this size. Try transitioning sooner to maintain speed and avoid the stall that caused you to fall.';
+      root.querySelector('[data-bar="val"]').textContent = last + ' s';
+      root.querySelector('[data-bar="ref"]').textContent = '/ ' + next + ' s next level';
+      root.querySelector('[data-bar="under"]').textContent = next + ' s next skill level, average';
+      var bar = root.querySelector('.lu-bar');
+      bar.style.setProperty('--v', Math.min(100, last * 100) + '%'); bar.style.setProperty('--m', Math.min(100, NEXT_LEVEL * 100) + '%');
+      // the board at the fall
+      function live(k, html) { root.querySelector('[data-live="' + k + '"]').innerHTML = html; }
+      var pitch = IQ.at(s, s.pitch, FALL_T);
+      live('rail', Math.round(Math.abs(IQ.at(s, s.roll, FALL_T))) + '°');
+      live('turn', Math.round(Math.abs(IQ.at(s, s.turn, FALL_T))) + '<span class="lu-k"> °/s</span>');
+      live('speed', Math.round(IQ.at(s, s.speed, FALL_T) * 3.6) + '<span class="lu-k"> km/h</span>');
+      live('nose', Math.abs(pitch) < 4 ? 'level' : (pitch < 0 ? 'up ' : 'down ') + Math.round(Math.abs(pitch)) + '°');
+      root.querySelector('.lu-read .lu-mono').textContent = fmt(FALL_T);
+      var track = root.querySelector('.lu-track');
+      dots = EV.map(function (e, i) { var d = document.createElement('i'); d.style.left = (e / s.duration * 100) + '%'; if (i === EV.length - 1) d.className = 'is-fall'; track.appendChild(d); return d; });
+      // the rider, drawn once (and again only on resize)
+      IQ.surface(root.querySelector('.lu-card__fig canvas'), function (sf) {
+        sf.clear();
+        var view = IQ.view(s, { cx: sf.w * 0.4, cy: sf.h * 0.52, scale: Math.min(sf.w / 2.4, sf.h / 1.5), az: Math.PI + 0.42, el: 0.16, centre: s.centre });
+        IQ.drawStill(sf.ctx, s, view, { ink: '#F2EBDC', size: Math.max(1.2, sf.w / 300), board: 0.55 });
+      });
+    }
+    cues = Array.prototype.map.call(root.querySelectorAll('.lu-ov [data-at]'), function (el) { return { el: el, at: parseFloat(el.dataset.at), on: false }; });
+
+    function layout() {
+      var a = A(), k = 100 / L.W;
+      anchorEl.style.left = (a.l * k) + 'cqw'; anchorEl.style.top = (a.t * k) + 'cqw';
+      anchorEl.style.width = (a.w * k) + 'cqw'; anchorEl.style.height = (a.h * k) + 'cqw';
+      var c = L.card, x0 = a.l - 26, y0 = a.t - 22;
+      root.querySelector('.lu-tether path').setAttribute('d', 'M' + x0 + ' ' + y0 + ' L' + (c.x + c.w - 7) + ' ' + (c.y + c.h - 7));
+      var dot = root.querySelector('.lu-tether circle'); dot.setAttribute('cx', x0); dot.setAttribute('cy', y0);
+      var v = L.verdict;
+      vCard.style.setProperty('--fx', a.l - v.x); vCard.style.setProperty('--fy', a.t - v.y);
+      vCard.style.setProperty('--fsx', (a.w / v.w).toFixed(3)); vCard.style.setProperty('--fsy', (a.h / v.h).toFixed(3));
+    }
+    function place(el, r) { el.style.setProperty('--x', r.x); el.style.setProperty('--y', r.y); el.style.setProperty('--w', r.w); el.style.setProperty('--h', r.h); }
+
+    // ---- the clock follows the film, then runs on while it holds its last frame
+    var clock = 0, last = 0, raf = 0, seen = false, started = false;
+    function apply(c) {
+      cues.forEach(function (q) { var on = c >= q.at; if (on !== q.on) { q.on = on; q.el.classList.toggle('is-on', on); } });
+      anchorEl.classList.toggle('is-on', c >= 0);
+      if (!still) return;
+      var built = c >= 0.7;
+      fill.style.width = built ? (FALL_T / still.duration * 100) + '%' : '0%';
+      dots.forEach(function (d, i) { d.classList.toggle('is-past', built); });
+      scoreEl.textContent = (SCORE * Math.min(1, 1 - Math.pow(1 - Math.max(0, Math.min(1, (c - 1.6) / 0.6)), 3))).toFixed(1);
+    }
+    function tick(now) {
+      raf = 0;
+      var dt = last ? Math.min(0.05, (now - last) / 1000) : 0; last = now;
+      if (!vid.ended && vid.readyState >= 2) clock = vid.currentTime; else clock += dt;
+      tracked = watchAt(vid.currentTime); layout();
+      var c = clock - L.start;
+      apply(c);
+      if (seen && ((!vid.paused && !vid.ended) || c < BUILT)) wake(); else last = 0;
+    }
+    function wake() { if (!raf) raf = requestAnimationFrame(tick); }
+    function restart() {
+      cues.forEach(function (q) { q.on = false; q.el.style.transition = 'none'; q.el.classList.remove('is-on'); });
+      anchorEl.style.transition = 'none'; anchorEl.classList.remove('is-on');
+      void stage.offsetWidth;
+      cues.forEach(function (q) { q.el.style.transition = ''; }); anchorEl.style.transition = '';
+      clock = 0; last = 0; vid.currentTime = 0;
+      vid.play().catch(function () {});
+      wake();
+    }
+    // reduced motion: the finished frame, nothing moving
+    function still_frame() {
+      vid.addEventListener('loadedmetadata', function () {
+        vid.currentTime = Math.max(0, vid.duration - 0.05);
+        tracked = watchAt(vid.currentTime); layout(); apply(99);
+      }, { once: true });
+    }
+
+    // ---- layout per screen: the vertical edit on phones -------------------------
+    var phone = matchMedia('(max-width: 700px)');
+    function setMode() {
+      var m = phone.matches ? 'v' : 'h';
+      if (m === mode) return;
+      var changed = mode !== null; mode = m; L = LAYOUTS[m];
+      root.classList.toggle('is-vert', m === 'v');
+      root.querySelector('.lu-tether').setAttribute('viewBox', m === 'v' ? '0 0 450 800' : '0 0 1600 900');
+      place(card, L.card); place(vCard, L.verdict);
+      vid.poster = L.poster;
+      if (changed && vid.getAttribute('src')) { vid.src = L.film; if (reduce) still_frame(); else if (seen) restart(); }
+      tracked = null; layout();
+    }
+    setMode();
+    phone.addEventListener('change', setMode);
+
+    // ---- load once within a screen of it, and never before the page itself
+    // has loaded (as the RIPPLiQ pillar does): visitors who stop early don't
+    // pay for it. Play while it's on screen; replay if it had finished.
+    var loading = false, near = false;
+    function begin() { if (seen && loading && !reduce && (!started || vid.ended)) { started = true; restart(); } }
+    function load() {
+      if (loading || !near || document.readyState !== 'complete') return;
+      loading = true;
+      IQ.loadStill('assets/lineup/fall-still.json').then(function (s) { setup(s); if (reduce) apply(99); else apply(clock - L.start); });
+      vid.preload = 'auto'; vid.src = L.film;
+      if (reduce) still_frame(); else begin();
+    }
+    window.addEventListener('load', load);
+    new IntersectionObserver(function (e) { if (e[0].isIntersecting) { near = true; load(); } },
+                             { rootMargin: '0px 0px 100% 0px' }).observe(stage);
+    if (!reduce) new IntersectionObserver(function (e) {
+      seen = e[0].isIntersecting;
+      if (!seen) { vid.pause(); return; }
+      if (!started || vid.ended) begin();
+      else { vid.play().catch(function () {}); wake(); }
+    }, { threshold: 0.35 }).observe(stage);
+  })();
+  </script>
 </body>
 </html>

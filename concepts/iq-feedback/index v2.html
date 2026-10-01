@@ -1,0 +1,659 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>RIPPLiQ watch overlays</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;display=swap" />
+<style>
+  @font-face { font-family: "Inter"; font-weight: 300; font-display: swap; src: url("../../styles/fonts/Inter-Light.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url("../../styles/fonts/Inter-Regular.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 500; font-display: swap; src: url("../../styles/fonts/Inter-Medium.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 600; font-display: swap; src: url("../../styles/fonts/Inter-SemiBold.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 700; font-display: swap; src: url("../../styles/fonts/Inter-Bold.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 900; font-display: swap; src: url("../../styles/fonts/Inter-Black.woff2") format("woff2"); }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; }
+  :root {
+    --rippl-cream: #F2EBDC; --rippl-bone: #FAF6EC;
+    --rippl-cocoa: #2E1E10;
+    --rippl-ink: #0E0E0E; --rippl-ink-soft: #1A1A1A; --rippl-ink-line: #2A2A2A; --rippl-ink-fg-mute: #8A8378;
+    --rippl-sun: #D97740; --rippl-glow: #F4C04A; --rippl-wave: #4A7C8A; --rippl-score: #7FBE5F; --rippl-alert: #C9523C;
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --dur-fast: 120ms; --dur-base: 220ms; --dur-sheet: 420ms;
+    --shadow-lift: 0 18px 50px rgba(14, 14, 14, 0.32);
+    --gutter: clamp(16px, 3vw, 40px);
+  }
+  body { font-family: var(--font-body); background: var(--rippl-ink); color: var(--rippl-cream); -webkit-font-smoothing: antialiased; }
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  button, input, select { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--rippl-wave); outline-offset: 2px; }
+
+  /* ---- Review chrome -------------------------------------------------- */
+  .bar {
+    position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px;
+    padding: 12px var(--gutter); background: rgba(14, 14, 14, 0.94); border-bottom: 1px solid var(--rippl-ink-line);
+  }
+  .bar__name { margin: 0; font-size: 18px; font-weight: 300; letter-spacing: -0.01em; white-space: nowrap; }
+  .bar__name b { font-weight: 900; letter-spacing: -0.02em; }
+  .bar__name span { margin-left: 8px; font-size: 13px; font-weight: 600; letter-spacing: 0.16em; text-transform: lowercase; color: var(--rippl-ink-fg-mute); }
+  .bar__group { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .bar__spacer { flex: 1; }
+  .seg { display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: var(--rippl-ink-soft); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .seg button, .seg label, .btn {
+    display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border: 0; border-radius: 999px;
+    background: transparent; color: rgba(242, 235, 220, 0.7); font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap;
+    transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  }
+  .seg button:hover, .seg label:hover, .btn:hover { color: var(--rippl-cream); background: rgba(242, 235, 220, 0.06); }
+  .seg button[aria-selected="true"], .seg button[aria-pressed="true"], .seg label.is-on { background: var(--rippl-cream); color: var(--rippl-ink); }
+  .seg button b { font-weight: 900; }
+  .btn { border: 1px solid rgba(242, 235, 220, 0.22); }
+  .btn[aria-pressed="true"] { background: var(--rippl-cream); color: var(--rippl-ink); border-color: var(--rippl-cream); }
+  .seg label:focus-within { outline: 2px solid var(--rippl-wave); outline-offset: 2px; }
+  .seg input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .delay { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(242, 235, 220, 0.7); }
+  .delay input { width: 72px; min-height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid rgba(242, 235, 220, 0.22); background: var(--rippl-ink-soft); }
+  .size { display: none; align-items: center; gap: 8px; font-size: 13px; color: rgba(242, 235, 220, 0.7); }
+  .is-editing .size { display: inline-flex; }
+
+  main { padding: 20px var(--gutter) 96px; display: grid; gap: 40px; justify-items: center; }
+
+  /* ---- The stage: a 16:9 frame, everything inside in 1600 x 900 units ---- */
+  .stage-wrap { width: min(100%, calc((100vh - 120px) * 16 / 9)); min-width: 0; }
+  .stage {
+    position: relative; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 10px; background: #000;
+    container-type: inline-size; user-select: none; -webkit-user-select: none;
+  }
+  .stage:fullscreen { border-radius: 0; width: 100vw; height: auto; max-height: 100vh; margin: auto; }
+  .stage > * { --u: calc(100cqw / 1600); }
+  .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+  .stage.is-green .bg { visibility: hidden; }
+  .stage.is-green { background: #00B140; }
+
+  .ov { position: absolute; inset: 0; font-size: calc(18 * var(--u)); }
+  .ov[hidden] { display: none; }
+  .at { position: absolute; left: calc(var(--x) * var(--u)); top: calc(var(--y) * var(--u)); width: calc(var(--w) * var(--u)); height: calc(var(--h) * var(--u)); }
+  .tether { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .tether path {
+    fill: none; stroke: var(--rippl-cream); stroke-width: calc(2 * var(--u)); stroke-dasharray: 1; stroke-dashoffset: 1;
+    filter: drop-shadow(0 0 calc(3 * var(--u)) rgba(14, 14, 14, 0.6));
+  }
+  .tether circle { fill: var(--rippl-cream); opacity: 0; }
+  .tether .is-on path, .tether path.is-on { stroke-dashoffset: 0; transition: stroke-dashoffset var(--dur-sheet) var(--ease-out); }
+  .tether .is-on circle { opacity: 1; transition: opacity var(--dur-base) var(--ease-out); }
+
+  /* build-in: everything in an overlay arrives on its own cue */
+  .bi { opacity: 0; transform: translateY(calc(16 * var(--u))); }
+  .bi.is-on { opacity: 1; transform: none; transition: opacity var(--dur-sheet) var(--ease-out), transform var(--dur-sheet) var(--ease-out); }
+  .bi--fade { transform: none; }
+
+  /* glass: the watch app's ink, let the sea through a little */
+  .glass {
+    border-radius: calc(24 * var(--u)); background: rgba(14, 14, 14, 0.66);
+    -webkit-backdrop-filter: blur(calc(18 * var(--u))) saturate(1.1); backdrop-filter: blur(calc(18 * var(--u))) saturate(1.1);
+    box-shadow: 0 calc(18 * var(--u)) calc(50 * var(--u)) rgba(14, 14, 14, 0.32);
+    color: var(--rippl-cream);
+  }
+  .wm { font-weight: 900; letter-spacing: -0.02em; }
+  .wm span { font-weight: 300; }
+  .k { font-size: calc(13 * var(--u)); font-weight: 600; letter-spacing: 0.16em; text-transform: lowercase; color: rgba(242, 235, 220, 0.6); }
+  .hl { margin: 0; font-weight: 900; letter-spacing: -0.03em; line-height: 0.98; text-wrap: balance; }
+  .cue { margin: 0; font-size: calc(19 * var(--u)); line-height: 1.4; color: rgba(242, 235, 220, 0.82); text-wrap: pretty; }
+  .cue b { font-weight: 600; color: var(--rippl-cream); }
+  .score { font-family: var(--font-mono); font-weight: 500; letter-spacing: -0.04em; line-height: 1; color: var(--rippl-score); }
+  .alert-dot { display: inline-block; width: calc(9 * var(--u)); height: calc(9 * var(--u)); border-radius: 50%; background: var(--rippl-alert); }
+  canvas { display: block; }
+
+  /* the watch: corner brackets, and in edit mode a box you can drag */
+  .anchor { position: absolute; z-index: 5; pointer-events: none; }
+  .anchor b { position: absolute; inset: calc(-22 * var(--u)) calc(-26 * var(--u)); }
+  .anchor i { position: absolute; width: 20%; height: 16%; border: 0 solid var(--rippl-cream); filter: drop-shadow(0 0 calc(4 * var(--u)) rgba(14, 14, 14, 0.7)); }
+  .anchor i:nth-child(1) { left: 0; top: 0; border-left-width: calc(3 * var(--u)); border-top-width: calc(3 * var(--u)); border-top-left-radius: calc(14 * var(--u)); }
+  .anchor i:nth-child(2) { right: 0; top: 0; border-right-width: calc(3 * var(--u)); border-top-width: calc(3 * var(--u)); border-top-right-radius: calc(14 * var(--u)); }
+  .anchor i:nth-child(3) { left: 0; bottom: 0; border-left-width: calc(3 * var(--u)); border-bottom-width: calc(3 * var(--u)); border-bottom-left-radius: calc(14 * var(--u)); }
+  .anchor i:nth-child(4) { right: 0; bottom: 0; border-right-width: calc(3 * var(--u)); border-bottom-width: calc(3 * var(--u)); border-bottom-right-radius: calc(14 * var(--u)); }
+  .anchor { opacity: 0; transform: scale(1.08); }
+  .anchor.is-on { opacity: 1; transform: none; transition: opacity var(--dur-sheet) var(--ease-out), transform var(--dur-sheet) var(--ease-out); }
+  .is-editing .anchor { opacity: 1; transform: none; pointer-events: auto; cursor: move; outline: 1px dashed var(--rippl-glow); outline-offset: 4px; }
+  .is-editing .anchor::after { content: "watch screen"; position: absolute; left: 0; top: calc(100% + 8px); font: 600 12px var(--font-body); letter-spacing: 0.14em; color: var(--rippl-glow); white-space: nowrap; }
+
+  /* ---- A · Replay card ------------------------------------------------ */
+  .a-card { display: grid; grid-template-rows: auto 1fr auto; gap: calc(12 * var(--u)); padding: calc(22 * var(--u)) calc(24 * var(--u)); }
+  .a-head { display: flex; align-items: baseline; justify-content: space-between; gap: calc(12 * var(--u)); }
+  .a-head .wm { font-size: calc(22 * var(--u)); }
+  .a-fig { position: relative; min-height: 0; }
+  .a-fig canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .a-live { position: absolute; right: 0; top: 0; display: grid; gap: calc(9 * var(--u)); justify-items: end; text-align: right; }
+  .a-live div { display: grid; gap: calc(2 * var(--u)); }
+  .a-live b { font-family: var(--font-mono); font-weight: 500; font-size: calc(22 * var(--u)); white-space: nowrap; }
+  .a-tl { display: grid; gap: calc(8 * var(--u)); }
+  .a-track { position: relative; height: calc(4 * var(--u)); border-radius: 999px; background: rgba(242, 235, 220, 0.18); }
+  .a-track__fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: inherit; background: var(--rippl-cream); }
+  .a-track i { position: absolute; top: 50%; width: calc(8 * var(--u)); height: calc(8 * var(--u)); margin: calc(-4 * var(--u)) 0 0 calc(-4 * var(--u)); border-radius: 50%; background: rgba(242, 235, 220, 0.45); }
+  .a-track i.is-past { background: var(--rippl-cream); }
+  .a-track i.fall { width: calc(12 * var(--u)); height: calc(12 * var(--u)); margin: calc(-6 * var(--u)) 0 0 calc(-6 * var(--u)); background: var(--rippl-alert); }
+  .a-read { display: flex; justify-content: space-between; gap: calc(12 * var(--u)); font-size: calc(15 * var(--u)); color: rgba(242, 235, 220, 0.75); }
+  .a-read b { font-weight: 600; color: var(--rippl-cream); }
+  .a-read .is-fall { color: var(--rippl-alert); }
+  .a-verdict { display: grid; grid-template-columns: minmax(0, 1.12fr) minmax(0, 1fr); gap: calc(28 * var(--u)); padding: calc(22 * var(--u)) calc(28 * var(--u)); }
+  .v-main, .v-side { display: grid; align-content: start; gap: calc(12 * var(--u)); min-width: 0; }
+  .v-score { display: flex; align-items: center; gap: calc(16 * var(--u)); }
+  .v-score .score { font-size: calc(60 * var(--u)); }
+  .v-score .k { line-height: 1.5; }
+  .a-verdict .hl { font-size: calc(32 * var(--u)); }
+  /* measured vs inferred: solid tag for what the board measured, dashed for
+     what the model infers about the body */
+  .tag { justify-self: start; display: inline-flex; align-items: center; min-height: calc(24 * var(--u)); padding: 0 calc(10 * var(--u)); border-radius: 999px; border: 1px solid rgba(242, 235, 220, 0.5); font-size: calc(12 * var(--u)); font-weight: 600; letter-spacing: 0.14em; text-transform: lowercase; color: rgba(242, 235, 220, 0.8); white-space: nowrap; }
+  .tag--model { border-style: dashed; }
+  .tag .wm { text-transform: none; letter-spacing: 0; }
+  .v-model { display: grid; gap: calc(8 * var(--u)); margin-top: calc(2 * var(--u)); }
+  .v-model .cue { font-size: calc(17 * var(--u)); }
+  .v-table { width: 100%; border-collapse: collapse; font-size: calc(15 * var(--u)); color: rgba(242, 235, 220, 0.75); }
+  .v-table th { padding: 0 0 calc(6 * var(--u)); font-size: calc(12 * var(--u)); font-weight: 600; letter-spacing: 0.14em; text-transform: lowercase; color: rgba(242, 235, 220, 0.55); text-align: right; white-space: nowrap; }
+  .v-table th:first-child { text-align: left; }
+  .v-table td { padding: calc(7 * var(--u)) 0; border-top: 1px solid rgba(242, 235, 220, 0.12); }
+  .v-table td + td { padding-left: calc(14 * var(--u)); text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .v-table td:nth-child(2) { font-size: calc(20 * var(--u)); font-weight: 500; color: var(--rippl-cream); }
+  .v-table td:nth-child(3) { color: rgba(242, 235, 220, 0.6); }
+  .a-foot { display: flex; justify-content: space-between; gap: calc(12 * var(--u)); padding-top: calc(10 * var(--u)); border-top: 1px solid rgba(242, 235, 220, 0.14); font-size: calc(15 * var(--u)); color: rgba(242, 235, 220, 0.7); }
+  .a-foot b { font-family: var(--font-mono); font-weight: 500; color: var(--rippl-glow); }
+
+  /* ---- D · You vs you --------------------------------------------------- */
+  .d-card { display: grid; grid-template-columns: calc(250 * var(--u)) 1fr; gap: calc(22 * var(--u)); padding: calc(22 * var(--u)) calc(26 * var(--u)) calc(22 * var(--u)) calc(18 * var(--u)); background: rgba(14, 14, 14, 0.9); transform-origin: 0 0; }
+  .d-card:not(.is-on) { opacity: 0; transform: translate(calc(var(--fx) * var(--u)), calc(var(--fy) * var(--u))) scale(var(--fsx), var(--fsy)); }
+  .d-card.is-on { opacity: 1; transform: none; transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-sheet) var(--ease-out); }
+  .d-fig { position: relative; }
+  .d-fig canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .d-text { display: grid; align-content: start; gap: calc(12 * var(--u)); }
+  .d-text .wm { font-size: calc(20 * var(--u)); }
+  .d-text .hl { font-size: calc(34 * var(--u)); }
+  .d-key { margin: calc(4 * var(--u)) 0 0; padding: 0; list-style: none; display: grid; gap: calc(8 * var(--u)); }
+  .d-key li { display: grid; grid-template-columns: calc(26 * var(--u)) 1fr auto; align-items: center; gap: calc(10 * var(--u)); font-size: calc(15 * var(--u)); color: rgba(242, 235, 220, 0.75); }
+  .d-key li b { font-family: var(--font-mono); font-weight: 500; font-size: calc(20 * var(--u)); color: var(--rippl-cream); }
+  .d-key i { height: calc(3 * var(--u)); border-radius: 999px; background: var(--rippl-cream); }
+  .d-key li.good i { background: repeating-linear-gradient(90deg, var(--rippl-score) 0 calc(6 * var(--u)), transparent 0 calc(10 * var(--u))); }
+  .d-key li.good b { color: var(--rippl-score); }
+  .d-foot { margin-top: calc(4 * var(--u)); padding-top: calc(12 * var(--u)); border-top: 1px solid rgba(242, 235, 220, 0.14); font-size: calc(15 * var(--u)); color: rgba(242, 235, 220, 0.7); }
+  .d-foot b { font-family: var(--font-mono); font-weight: 500; color: var(--rippl-glow); }
+
+  /* ---- Notes under the stage -------------------------------------------- */
+  .notes { width: min(100%, 1100px); display: grid; gap: 56px; }
+  .note { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px 56px; }
+  .note h2, .lib h2, .prod h2 { margin: 0; font-size: clamp(28px, 3vw, 44px); font-weight: 900; letter-spacing: -0.035em; line-height: 1; text-transform: uppercase; }
+  .note h2 .dot, .lib h2 .dot, .prod h2 .dot { color: var(--rippl-sun); }
+  .note p, .lib p, .prod p, .prod li { margin: 0; font-size: 16px; line-height: 1.6; color: rgba(242, 235, 220, 0.78); text-wrap: pretty; }
+  .note p b, .lib b, .prod b { font-weight: 600; color: var(--rippl-cream); }
+  .note__lede { display: grid; gap: 16px; align-content: start; }
+  .note__k { font-size: 13px; font-weight: 600; letter-spacing: 0.16em; text-transform: lowercase; color: var(--rippl-ink-fg-mute); }
+  .note dl { margin: 0; display: grid; gap: 16px; }
+  .note dt { font-size: 13px; font-weight: 600; letter-spacing: 0.16em; text-transform: lowercase; color: var(--rippl-ink-fg-mute); }
+  .note dd { margin: 4px 0 0; font-size: 16px; line-height: 1.55; color: rgba(242, 235, 220, 0.85); }
+  .lib { display: grid; gap: 24px; }
+  .lib__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .lib__card { display: grid; align-content: start; gap: 12px; padding: 24px; border-radius: 16px; background: var(--rippl-ink-soft); }
+  .lib__card h3 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.015em; }
+  .lib__card ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+  .lib__card li { font-size: 15px; line-height: 1.5; color: rgba(242, 235, 220, 0.78); }
+  .lib__card li b { display: block; font-weight: 600; color: var(--rippl-cream); }
+  .lib__card .tag { min-height: 24px; padding: 0 10px; font-size: 12px; }
+  .prod { display: grid; gap: 20px; }
+  .prod ol { margin: 0; padding-left: 20px; display: grid; gap: 10px; max-width: 75ch; }
+  kbd { font-family: var(--font-mono); font-size: 13px; padding: 2px 6px; border-radius: 6px; background: var(--rippl-ink-soft); border: 1px solid var(--rippl-ink-line); }
+
+  @media (max-width: 900px) {
+    .note { grid-template-columns: 1fr; }
+    .lib__grid { grid-template-columns: 1fr; }
+    .bar__spacer { display: none; }
+    .bar { position: static; }
+  }
+  /* hide the review chrome for a clean recording */
+  .clean .bar, .clean .notes { display: none; }
+  .clean main { padding: 0; min-height: 100vh; align-content: center; }
+  .clean .stage-wrap { width: min(100vw, calc(100vh * 16 / 9)); }
+  .clean .stage { border-radius: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bi.is-on, .anchor.is-on, .d-card.is-on, .tether .is-on path, .tether path.is-on, .tether .is-on circle { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <p class="bar__name"><b>RIPPL</b>iQ <span>watch overlays</span></p>
+  <div class="seg" role="tablist" aria-label="Concept">
+    <button type="button" role="tab" data-c="a" aria-selected="true"><b>A</b> Replay card</button>
+    <button type="button" role="tab" data-c="d" aria-selected="false"><b>D</b> You vs. you</button>
+  </div>
+  <span class="bar__spacer"></span>
+  <div class="bar__group">
+    <button class="btn" type="button" id="replay"><span aria-hidden="true">↺</span> Replay</button>
+    <div class="seg" aria-label="Background">
+      <button type="button" data-bg="film" aria-pressed="true">Film</button>
+      <button type="button" data-bg="photo" aria-pressed="false">Photo</button>
+      <label id="clip-label">Your clip<input type="file" id="clip" accept="video/*,image/*" /></label>
+    </div>
+    <button class="btn" type="button" id="green" aria-pressed="false">Green screen</button>
+    <label class="delay">Start at <input type="number" id="delay" min="0" max="20" step="0.1" value="2" /> s</label>
+    <button class="btn" type="button" id="edit" aria-pressed="false">Move watch</button>
+    <label class="size">Size <input type="range" id="anchor-size" min="80" max="420" step="2" /></label>
+    <button class="btn" type="button" id="clean" title="Hide everything but the frame (H)">Clean</button>
+    <button class="btn" type="button" id="full">Fullscreen</button>
+  </div>
+</header>
+
+<main>
+  <div class="stage-wrap">
+    <div class="stage" id="stage" aria-label="Overlay preview over the watch POV film">
+      <img class="bg" id="bg-img" alt="" hidden />
+      <video class="bg" id="bg-vid" muted playsinline preload="auto"></video>
+
+      <div class="anchor" id="anchor" aria-hidden="true"><b><i></i><i></i><i></i><i></i></b></div>
+
+      <!-- A · Replay card: two cards tethered to the watch. The ride replaying
+           on the left, live board readouts beside it; the verdict above the
+           watch: what RIPPLsense measured (solid tag) and what the RIPPLiQ
+           model infers about the body (dashed tag). -->
+      <div class="ov" id="ov-a" data-c="a">
+        <svg class="tether" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+          <g data-at="0.45"><path id="a-t1" pathLength="1" /><circle id="a-t1d" r="5" /></g>
+          <g data-at="0.95"><path id="a-t2" pathLength="1" /><circle id="a-t2d" r="5" /></g>
+        </svg>
+        <section class="at glass a-card bi" data-at="0.7" id="a-card" style="--x: 40; --y: 40; --w: 548; --h: 400">
+          <div class="a-head"><span class="wm">RIPPL<span>iQ</span></span><span class="k">wave 7 · replay</span></div>
+          <div class="a-fig">
+            <canvas id="a-canvas"></canvas>
+            <div class="a-live">
+              <div><span class="k">rail</span><b id="a-rail">0°</b></div>
+              <div><span class="k">turn</span><b id="a-turn">0</b></div>
+              <div><span class="k">speed</span><b id="a-speed">0</b></div>
+              <div><span class="k">weight</span><b id="a-weight">level</b></div>
+            </div>
+          </div>
+          <div class="a-tl">
+            <div class="a-track" id="a-track"><span class="a-track__fill" id="a-fill"></span></div>
+            <div class="a-read"><span id="a-event"><b>takeoff</b></span><span class="mono" id="a-time">0:00.0</span></div>
+          </div>
+        </section>
+        <section class="at glass a-verdict bi" data-at="1.2" id="a-verdict" style="--x: 628; --y: 32; --w: 932; --h: 254">
+          <div class="v-main">
+            <div class="v-score"><span class="score" id="a-score">0.0</span><span class="k">wave score<br />fell after the last top turn</span></div>
+            <p class="hl">Get off your back foot<span style="color: var(--rippl-sun)">.</span></p>
+            <div class="v-model bi bi--fade" data-at="2.0">
+              <span class="tag tag--model"><span class="wm">RIPPL<span>iQ</span></span>&nbsp;model · likely cause</span>
+              <p class="cue" id="a-model"></p>
+            </div>
+          </div>
+          <div class="v-side">
+            <span class="tag bi bi--fade" data-at="1.5">measured by&nbsp;<span class="wm">RIPPL<span>sense</span></span></span>
+            <table class="v-table bi bi--fade" data-at="1.6">
+              <thead><tr><td></td><th scope="col">last top turn</th><th scope="col">first top turn</th></tr></thead>
+              <tbody>
+                <tr><td>weight shift forward</td><td id="m-shift"></td><td id="m-shift-1"></td></tr>
+                <tr><td>speed out of the turn</td><td id="m-speed"></td><td id="m-speed-1"></td></tr>
+                <tr><td>stuck on the rail</td><td id="m-rail"></td><td id="m-rail-1"></td></tr>
+              </tbody>
+            </table>
+            <div class="a-foot bi bi--fade" data-at="2.3"><span>Next set in <b>1:15</b></span><span>Try it on the next one</span></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- D · You vs. you: the watch screen grows into one card. The fall,
+           and the same rider in control a second earlier, on top of each other. -->
+      <div class="ov" id="ov-d" data-c="d" hidden>
+        <section class="at glass d-card" data-at="0.3" id="d-card" style="--x: 500; --y: 22; --w: 600; --h: 312">
+          <div class="d-fig bi bi--fade" data-at="0.7"><canvas id="d-canvas"></canvas></div>
+          <div class="d-text">
+            <span class="bi bi--fade" data-at="0.75"><span class="wm">RIPPL<span>iQ</span></span> <span class="k">&nbsp;wave 7</span></span>
+            <p class="hl bi" data-at="0.9">Stay low through the lip<span style="color: var(--rippl-sun)">.</span></p>
+            <ul class="d-key">
+              <li class="bi bi--fade" data-at="1.15"><i></i><span id="d-fall-t">the fall</span><b id="d-fall">0°</b></li>
+              <li class="good bi bi--fade" data-at="1.4"><i></i><span id="d-good-t">in control</span><b id="d-good">0°</b></li>
+            </ul>
+            <p class="d-foot bi bi--fade" data-at="1.8">Front knee, as your RIPPLiQ model reads it. Next set in <b>1:15</b>.</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <div class="notes">
+    <section class="note" id="note"></section>
+
+    <section class="lib" aria-labelledby="lib-title">
+      <h2 id="lib-title">What RIPPLiQ can say<span class="dot">.</span></h2>
+      <p>RIPPLsense measures <b>how the board moves</b>. Everything about your body is the RIPPLiQ model's read of that motion, so the overlay always says which is which: numbers from the board are stated plainly, and the body is offered as <b>the likely cause</b>. The rule that keeps it watch-sized: one score, one cue, three numbers, one likely cause.</p>
+      <div class="lib__grid">
+        <div class="lib__card">
+          <span class="tag">measured by&nbsp;<span class="wm">RIPPL<span>sense</span></span></span>
+          <h3>The board's motion</h3>
+          <ul>
+            <li><b>Rail angle</b>How far the board leans into each turn (up to 46° on this wave).</li>
+            <li><b>Turn rate</b>How fast the board rotates through a turn, in degrees per second (about 200°/s in the bottom turns here).</li>
+            <li><b>Speed in and out</b>What each turn costs or earns you, in km/h.</li>
+            <li><b>Weight transfer</b>The board's pitch: nose up when your weight is back, nose down when it moves forward, and how far it swings after a turn.</li>
+            <li><b>Rail to rail</b>How quickly you roll from one rail to the other, and how long you stay stuck on a rail before releasing.</li>
+            <li><b>Where on the wave</b>Ride height: up and down the face at each turn.</li>
+          </ul>
+        </div>
+        <div class="lib__card">
+          <span class="tag tag--model">inferred by your&nbsp;<span class="wm">RIPPL<span>iQ</span></span>&nbsp;model</span>
+          <h3>Your body</h3>
+          <ul>
+            <li><b>Knee bend</b>"Your front knee likely opened to about 130°." Compression, read from how the board moved.</li>
+            <li><b>Weight over your feet</b>"Most likely on your back foot", from pitch and how the board released.</li>
+            <li><b>Upper body</b>Shoulders leading the turn or arriving late, from the turn rate against the rail.</li>
+            <li><b>Always worded as likely</b>"Suggests", "most likely", "about": the model reads your motion, it doesn't see you.</li>
+          </ul>
+        </div>
+        <div class="lib__card">
+          <span class="tag">your verdict</span>
+          <h3>What to do with it</h3>
+          <ul>
+            <li><b>Wave score</b>One number, comparable wave to wave.</li>
+            <li><b>Why it ended</b>Fall detected, and what the board was doing when it happened.</li>
+            <li><b>You vs. you</b>This turn against your own better one: earlier in the wave, or your best this season.</li>
+            <li><b>One cue for the next set</b>Timed to the watch's next-set countdown.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="prod" aria-labelledby="prod-title">
+      <h2 id="prod-title">Putting it on the film<span class="dot">.</span></h2>
+      <ol>
+        <li><b>Film</b> is the Higgsfield clip (app_watch_video, 1280 × 720, 12 s). The watch is tracked frame by frame, in position and size, so the brackets and tethers stay on it as the hand bobs and comes closer. The overlay runs on the film's clock and the film holds its last frame if the overlay runs longer.</li>
+        <li><b>Start at</b> is when the overlay begins, in film seconds. 2 s lands it while the watch still says "Fall detected", and the verdict's "Next set in 1:15" arrives just as the watch switches to its next-set screen at about 4.6 s.</li>
+        <li><b>Photo</b> and <b>Your clip</b> aren't tracked: use <b>Move watch</b> to drag the brackets onto the watch screen and set its size. It's remembered on this browser.</li>
+        <li>To composite in an editor: <b>Green screen</b> (it keeps the film's timing and tracking), then <b>Clean</b> (or <kbd>H</kbd>) and <b>Fullscreen</b>, and screen-record at 1920 × 1080. Key out the green and lay it over the clip from frame 0.</li>
+        <li>The ride is real: session 2272. Rail, turn rate, speed and pitch come from the board's log. The rider is rebuilt by our pose model and stood on RIPPL's board CAD; it's smoothed over about 0.1 s and played back on curves, since the model rebuilds the body independently at 10 fps. The wave score and wave number are placeholders.</li>
+      </ol>
+    </section>
+  </div>
+</main>
+
+<script src="iq.js"></script>
+<script>
+(function () {
+  var stage = document.getElementById('stage');
+  var tabs = document.querySelectorAll('[role="tab"]');
+  var ovs = { a: document.getElementById('ov-a'), d: document.getElementById('ov-d') };
+  var anchorEl = document.getElementById('anchor');
+  var note = document.getElementById('note');
+
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem('iqov:' + k); localStorage.setItem('iqov:' + k, v); } catch (e) { return null; } }
+
+  // The watch screen in stage units (1600 x 900): centre and width, h = w * 1.18.
+  var anchor = { x: 808, y: 520, w: 214 };
+  try { var s = JSON.parse(store('anchor')); if (s && s.w) anchor = s; } catch (e) {}
+  var anchorPlaced = anchor;
+  // The watch screen in the Higgsfield film (app_watch_video, 12 s), tracked
+  // frame by frame: a template of the watch case with the screen masked out
+  // (its content changes at 4.6 s), searched in position and scale at 12 fps,
+  // lightly smoothed. [video s, x, y, scale] in stage units.
+  var TRACK = [[1.08,725,698,0.874],[1.16,725,691,0.881],[1.25,725,684,0.886],[1.33,724,670,0.895],[1.41,724,656,0.904],[1.50,724,644,0.913],[1.58,725,632,0.918],[1.66,727,621,0.922],[1.75,730,610,0.927],[1.83,733,600,0.932],[1.91,737,590,0.937],[2.00,741,581,0.941],[2.08,746,572,0.946],[2.16,750,564,0.956],[2.25,754,557,0.961],[2.33,759,551,0.965],[2.41,763,545,0.970],[2.50,768,540,0.975],[2.58,773,534,0.975],[2.66,777,528,0.975],[2.75,781,523,0.980],[2.83,784,518,0.985],[2.91,786,515,0.990],[3.00,787,514,0.995],[3.08,788,514,1.000],[3.16,789,514,1.005],[3.25,790,514,1.010],[3.33,791,514,1.015],[3.41,793,513,1.020],[3.50,794,511,1.025],[3.58,795,508,1.020],[3.66,796,505,1.020],[3.75,797,502,1.014],[3.83,799,500,1.009],[3.91,800,497,1.004],[4.00,801,496,1.009],[4.08,803,493,1.004],[4.16,804,490,1.004],[4.25,804,487,1.008],[4.33,805,484,1.008],[4.41,805,480,1.008],[4.50,805,478,1.013],[4.58,805,476,1.017],[4.66,805,475,1.012],[4.75,804,476,1.012],[4.83,802,477,1.007],[4.91,800,480,1.002],[5.00,798,483,0.997],[5.08,795,488,0.997],[5.16,793,494,1.002],[5.25,791,500,1.007],[5.33,789,506,1.012],[5.41,787,511,1.017],[5.50,786,515,1.022],[5.58,786,518,1.022],[5.66,786,519,1.022],[5.75,786,519,1.022],[5.83,787,519,1.027],[5.91,789,518,1.032],[6.00,790,517,1.037],[6.08,792,516,1.042],[6.16,794,515,1.047],[6.25,795,513,1.052],[6.33,797,512,1.058],[6.41,798,511,1.063],[6.50,800,510,1.074],[6.58,801,508,1.084],[6.66,802,506,1.090],[6.75,802,503,1.100],[6.83,803,500,1.111],[6.91,803,497,1.117],[7.00,803,493,1.122],[7.08,802,490,1.134],[7.16,802,486,1.139],[7.25,801,483,1.145],[7.33,800,480,1.150],[7.41,798,478,1.156],[7.50,797,477,1.162],[7.58,796,476,1.168],[7.66,796,476,1.173],[7.75,795,476,1.179],[7.83,795,477,1.185],[7.91,795,479,1.185],[8.00,795,481,1.191],[8.08,795,484,1.197],[8.16,795,487,1.203],[8.25,796,491,1.209],[8.33,796,494,1.215],[8.41,797,497,1.215],[8.50,798,499,1.221],[8.58,799,500,1.227],[8.66,800,500,1.233],[8.75,800,500,1.239],[8.83,799,499,1.245],[8.91,799,497,1.245],[9.00,798,495,1.251],[9.08,798,493,1.257],[9.16,798,490,1.264],[9.25,798,488,1.270],[9.33,798,486,1.276],[9.41,798,485,1.276],[9.50,798,485,1.276],[9.58,798,485,1.276],[9.66,799,486,1.276],[9.75,800,488,1.276],[9.83,801,490,1.282],[9.91,802,491,1.289],[10.00,803,492,1.295],[10.08,803,492,1.302],[10.16,803,492,1.308],[10.25,803,491,1.308],[10.33,802,489,1.308],[10.41,802,488,1.308],[10.50,801,487,1.308],[10.58,799,485,1.308],[10.66,798,484,1.308],[10.75,797,484,1.308],[10.83,796,484,1.308],[10.91,795,484,1.308],[11.00,795,485,1.308],[11.08,795,486,1.308],[11.16,796,487,1.308],[11.25,796,489,1.308],[11.33,797,491,1.308],[11.41,798,493,1.308],[11.50,799,495,1.308],[11.58,800,498,1.308],[11.66,801,500,1.301],[11.75,802,501,1.295],[11.83,802,502,1.288],[11.91,802,503,1.283],[12.00,802,503,1.275]], TRACK_W = 196;
+  var tracked = null;
+  function watchAt(t) {
+    var a = TRACK[0], b = a, m = 0;
+    if (t > a[0]) {
+      b = TRACK[TRACK.length - 1]; a = b;
+      for (var i = 1; i < TRACK.length; i++) if (TRACK[i][0] >= t) { a = TRACK[i - 1]; b = TRACK[i]; m = (t - a[0]) / (b[0] - a[0]); break; }
+    }
+    return { x: a[1] + (b[1] - a[1]) * m, y: a[2] + (b[2] - a[2]) * m, w: TRACK_W * (a[3] + (b[3] - a[3]) * m) };
+  }
+  function A() { var anchor = tracked || anchorPlaced, h = anchor.w * 1.18; return { l: anchor.x - anchor.w / 2, t: anchor.y - h / 2, r: anchor.x + anchor.w / 2, b: anchor.y + h / 2, w: anchor.w, h: h }; }
+
+  // The moments of the wave, by the board's roll: rail over hardest each turn.
+  // The last top turn never released: the board stayed on its rail and bled
+  // speed, and the ride ends there (FALL_T).
+  var EV = [
+    { t: 0.0, k: 'takeoff' }, { t: 1.1, k: 'bottom turn' }, { t: 3.3, k: 'bottom turn' },
+    { t: 3.8, k: 'top turn' }, { t: 5.1, k: 'bottom turn' }, { t: 5.8, k: 'top turn' }, { t: 6.3, k: 'fall', fall: true }];
+  var TT1 = 3.8, TT2 = 5.8, FALL_T = 6.3, SCORE = 6.4;
+  // D's poses: the model's read of the body entering the last top turn, and a
+  // second earlier
+  var FALL = 5.5, GOOD = 4.4;
+
+  var NOTES = {
+    a: { n: 'A', name: 'Replay card', lede: 'The overlay reads as the watch app, opened up. <b>The ride replaying on the left, the verdict above the watch</b>, both tethered to it. The verdict keeps two things apart: what RIPPLsense <b>measured</b> about the board, and what your RIPPLiQ model <b>infers</b> about your body.',
+         shows: 'Your real ride as the point-cloud rider on the board, with live rail angle, turn rate, speed and weight (fore/aft, from the board\'s pitch). Then one cue, three measured numbers against your own first top turn, and the model\'s likely cause.',
+         best: 'Explaining the product plainly and honestly: the numbers are the sensor\'s, and anything about your body is labelled as the model\'s read.',
+         watch: 'The verdict carries a lot for a few seconds of film. The new clip holds the watch for about 9 s, which is enough if the overlay starts at about 2 s.' },
+    d: { n: 'D', name: 'You vs. you', lede: 'The watch screen <b>grows into one card</b> above the wrist. Inside, two of you on top of each other: the pose at the fall, and the same rider in control a second earlier, dashed in green.',
+         shows: 'One comparison, one number, one cue. The difference is the message: your front knee straightened out on the last top turn.',
+         best: 'The quietest and most personal. Lets the watch stay the hero and makes "your personal model" tangible: it compares you to you.',
+         watch: 'The card covers the space above the watch, so the watch must sit low enough in the frame for it to fit.' }
+  };
+  function renderNote(c) {
+    var d = NOTES[c];
+    note.innerHTML = '<div class="note__lede"><span class="note__k">' + d.n + ' · selected</span><h2>' + d.name + '<span class="dot">.</span></h2><p>' + d.lede + '</p></div>' +
+      '<dl><div><dt>what it shows</dt><dd>' + d.shows + '</dd></div><div><dt>best for</dt><dd>' + d.best + '</dd></div><div><dt>watch out</dt><dd>' + d.watch + '</dd></div></dl>';
+  }
+
+  IQ.load('ride.json').then(function (ride) {
+    var J = IQ.J, F = ride.front, B = ride.back;
+    function knee(t, side) { var P = IQ.joints(ride, t); return IQ.angle(P, J[side + '_hip'], J[side + '_knee'], J[side + '_ankle']); }
+    var fallKnee = Math.round(knee(FALL, F)), goodKnee = Math.round(knee(GOOD, F)), fallBack = Math.round(knee(FALL, B));
+    var avg = 0, nk = 0; for (var t = 0; t < FALL - 0.4; t += 0.1) { avg += knee(t, F); nk++; } avg = Math.round(avg / nk);
+    function fmt(t) { var s = Math.max(0, t); return Math.floor(s / 60) + ':' + (s % 60 < 10 ? '0' : '') + (s % 60).toFixed(1); }
+    function ease(x) { x = Math.max(0, Math.min(1, x)); return 1 - Math.pow(1 - x, 3); }
+    // A centre that follows the rider partway (k = 0 fixed, 1 locked on).
+    // (smoothed and interpolated, so the camera glides instead of stepping
+    // at every 10 fps frame)
+    function follow(t, k) { var c = IQ.centreAt(ride, t), C = ride.centre;
+      return [C[0] + (c[0] - C[0]) * k, C[1] + (c[1] - C[1]) * k, C[2] + (c[2] - C[2]) * k]; }
+
+    // ---- what the board measured through a top turn (peak rail at tp) --------
+    function scan(from, to, fn) { var best = null; for (var t = from; t <= to + 1e-6; t += 0.02) { var v = fn(t); if (best == null || v.k > best.k) best = v; } return best; }
+    function topTurn(tp) {
+      var low = scan(tp - 0.4, tp, function (t) { return { k: -IQ.at(ride, ride.pitch, t) }; }).k;   // nose highest (weight back)
+      var high = scan(tp, tp + 0.6, function (t) { return { k: IQ.at(ride, ride.pitch, t) }; }).k;   // nose lowest after (weight forward)
+      var release = 0; for (var t = tp; t < tp + 1.2; t += 0.02) { if (Math.abs(IQ.at(ride, ride.roll, t)) < 20) break; release = t - tp; }
+      return { shift: low + high, out: IQ.at(ride, ride.speed, tp + 0.4) * 3.6, release: release };
+    }
+
+    // ---- copy: measured numbers from the board, the body as the model's read --
+    var last = topTurn(TT2), first = topTurn(TT1);
+    function set(id, v) { document.getElementById(id).textContent = v; }
+    set('m-shift', Math.round(last.shift) + '°'); set('m-shift-1', Math.round(first.shift) + '°');
+    set('m-speed', Math.round(last.out) + ' km/h'); set('m-speed-1', Math.round(first.out) + ' km/h');
+    set('m-rail', last.release.toFixed(1) + ' s'); set('m-rail-1', first.release.toFixed(1) + ' s');
+    var five = function (v) { return Math.round(v / 5) * 5; };
+    document.getElementById('a-model').innerHTML = 'Weight likely stayed on your back foot. Front knee <b>about ' + five(fallKnee) + '°</b>, against about ' + five(avg) + '° through the rest of the wave.';
+    set('d-fall', fallKnee + '°'); set('d-good', goodKnee + '°');
+    set('d-fall-t', fmt(FALL) + ' · the fall'); set('d-good-t', fmt(GOOD) + ' · in control');
+
+    // ---- A · Replay card ---------------------------------------------------
+    var aS = IQ.surface(document.getElementById('a-canvas'));
+    var track = document.getElementById('a-track'), fill = document.getElementById('a-fill');
+    var REPLAY = FALL_T + 0.35;   // the replay runs to just past the fall
+    var dots = EV.map(function (e) { var i = document.createElement('i'); i.style.left = (e.t / REPLAY * 100) + '%'; if (e.fall) i.className = 'fall'; track.appendChild(i); return i; });
+    var aTurn = document.getElementById('a-turn'), aWeight = document.getElementById('a-weight');
+    var aRail = document.getElementById('a-rail'), aSpeed = document.getElementById('a-speed'), aEvent = document.getElementById('a-event'), aTime = document.getElementById('a-time'), aScore = document.getElementById('a-score');
+    function drawA(c) {
+      // replay starts with the card, loops: ride, the fall, a beat, again
+      var LOOP = REPLAY + 1.4, rt = c < 0.9 ? 0 : (c - 0.9) % LOOP;
+      if (IQ.reduce) rt = FALL_T;
+      var shown = Math.min(rt, REPLAY), fallen = Math.max(0, Math.min(1, (rt - FALL_T) / 0.35));
+      aS.clear();
+      var w = aS.w, h = aS.h;
+      var view = IQ.view(ride, { cx: w * 0.4, cy: h * 0.52, scale: Math.min(w / 2.4, h / 1.5), az: Math.PI + 0.42, el: 0.16, centre: follow(shown, 0.6) });
+      var fade = rt > REPLAY ? Math.max(0.2, 1 - (rt - REPLAY) / 0.6) : 1;
+      IQ.points(aS.ctx, ride, Math.min(shown, FALL_T + 0.3), view, { ink: fallen > 0.5 ? '#C9523C' : '#F2EBDC', size: Math.max(1.2, w / 300), alpha: fade, board: 0.55 });
+      fill.style.width = (shown / REPLAY * 100) + '%';
+      dots.forEach(function (d, i) { d.classList.toggle('is-past', shown >= EV[i].t); });
+      var ev = EV[0]; EV.forEach(function (e) { if (shown >= e.t) ev = e; });
+      aEvent.innerHTML = ev.fall ? '<b class="is-fall">fall</b> · after the top turn' : '<b>' + ev.k + '</b>';
+      aTime.textContent = fmt(shown);
+      aRail.textContent = Math.round(Math.abs(IQ.at(ride, ride.roll, shown))) + '°';
+      aSpeed.innerHTML = Math.round(IQ.at(ride, ride.speed, shown) * 3.6) + '<span class="k"> km/h</span>';
+      aTurn.innerHTML = Math.round(Math.abs(IQ.at(ride, ride.turn, shown))) + '<span class="k"> °/s</span>';
+      // the board's pitch: nose up is weight on the back foot, nose down forward
+      var pitch = IQ.at(ride, ride.pitch, shown);
+      aWeight.innerHTML = Math.abs(pitch) < 4 ? 'level' : (pitch < 0 ? 'back ' : 'fwd ') + Math.round(Math.abs(pitch)) + '°';
+      aScore.textContent = (SCORE * ease((c - 1.3) / 0.6)).toFixed(1);
+    }
+    function layoutA() {
+      var a = A();
+      // corner to corner: the bracket's outer corner to the card's nearest one
+      // (7 units in, onto its 24-unit radius)
+      setTether('a-t1', [a.l - 26, a.t - 22], [588 - 7, 440 - 7]);
+      // straight up from the bracket's top-right corner into the verdict
+      setTether('a-t2', [a.r + 26, a.t - 22], [Math.max(652, Math.min(1536, a.r + 26)), 286]);
+    }
+    function setTether(id, from, to) {
+      var x0 = from[0], y0 = from[1];
+      document.getElementById(id).setAttribute('d', 'M' + x0 + ' ' + y0 + ' L' + to[0] + ' ' + to[1]);
+      var dot = document.getElementById(id + 'd'); dot.setAttribute('cx', x0); dot.setAttribute('cy', y0);
+    }
+
+    // ---- D · You vs. you ---------------------------------------------------
+    var dS = IQ.surface(document.getElementById('d-canvas')), dCard = document.getElementById('d-card');
+    function drawD(c) {
+      dS.clear();
+      var w = dS.w, h = dS.h, ctx = dS.ctx;
+      var cen = follow(FALL, 1);
+      var view = IQ.view(ride, { cx: w * 0.5, cy: h * 0.5, scale: Math.min(w / 1.3, h / 1.1), az: Math.PI + 0.42, el: 0.14, centre: cen });
+      IQ.points(ctx, ride, FALL, view, { ink: '#F2EBDC', size: Math.max(1, w / 240), alpha: 0.38, board: 0.8 });
+      // the good pose, moved so its feet stand where the fall's feet are
+      var P = IQ.joints(ride, FALL), G = IQ.joints(ride, GOOD), o = new Float32Array(42);
+      var fx = (P[J.l_ankle * 3] + P[J.r_ankle * 3]) / 2, fy = (P[J.l_ankle * 3 + 1] + P[J.r_ankle * 3 + 1]) / 2, fz = (P[J.l_ankle * 3 + 2] + P[J.r_ankle * 3 + 2]) / 2;
+      var gx = (G[J.l_ankle * 3] + G[J.r_ankle * 3]) / 2, gy = (G[J.l_ankle * 3 + 1] + G[J.r_ankle * 3 + 1]) / 2, gz = (G[J.l_ankle * 3 + 2] + G[J.r_ankle * 3 + 2]) / 2;
+      for (var i = 0; i < 14; i++) { o[i * 3] = G[i * 3] - gx + fx; o[i * 3 + 1] = G[i * 3 + 1] - gy + fy; o[i * 3 + 2] = G[i * 3 + 2] - gz + fz; }
+      var ghost = IQ.reduce ? 1 : ease((c - 1.4) / 0.5);
+      var lw = Math.max(1.5, w / 110);
+      if (ghost > 0) IQ.skeleton(ctx, ride, GOOD, view, { joints: o, color: '#7FBE5F', width: lw, alpha: ghost, dash: [lw * 2.2, lw * 1.6] });
+      var S = IQ.skeleton(ctx, ride, FALL, view, { color: '#F2EBDC', width: lw, dot: lw * 0.9 });
+      var k = S[J[F + '_knee']];
+      ctx.fillStyle = '#C9523C'; ctx.beginPath(); ctx.arc(k[0], k[1], lw * 1.6, 0, 6.2832); ctx.fill();
+    }
+    function layoutD() {
+      // grow from the watch screen: the card's start transform is the anchor rect
+      var a = A(), x = 500, y = 22, cw = 600, ch = 312;
+      dCard.style.setProperty('--fx', a.l - x); dCard.style.setProperty('--fy', a.t - y);
+      dCard.style.setProperty('--fsx', (a.w / cw).toFixed(3)); dCard.style.setProperty('--fsy', (a.h / ch).toFixed(3));
+    }
+
+    var DRAW = { a: drawA, d: drawD };
+
+    // ---- clock, concepts, cues -----------------------------------------------
+    var active = store('concept') || 'a'; if (!DRAW[active]) active = 'a';
+    var source = 'film';
+    var testT = null, clock = 0, last = 0, delay = parseFloat(store('delay12')); if (isNaN(delay)) delay = 2.0;
+    var delayIn = document.getElementById('delay'); delayIn.value = delay;
+    function cues(c) {
+      ovs[active].querySelectorAll('[data-at]').forEach(function (el) { el.classList.toggle('is-on', c >= parseFloat(el.dataset.at)); });
+      anchorEl.classList.toggle('is-on', c >= 0);
+    }
+    function reset() {
+      var all = document.querySelectorAll('.ov [data-at], #anchor');
+      all.forEach(function (el) { el.style.transition = 'none'; el.classList.remove('is-on'); });
+      void stage.offsetWidth;
+      all.forEach(function (el) { el.style.transition = ''; });
+      clock = IQ.reduce ? 99 : 0; testT = null;
+      var v = document.getElementById('bg-vid');
+      if (!v.hidden) { v.currentTime = IQ.reduce ? Math.max(0, (v.duration || 5) - 0.05) : 0; if (!IQ.reduce) v.play().catch(function () {}); }
+    }
+    function select(c) {
+      active = c; store('concept', c);
+      tabs.forEach(function (t) { t.setAttribute('aria-selected', String(t.dataset.c === c)); });
+      Object.keys(ovs).forEach(function (k) { ovs[k].hidden = k !== c; });
+      renderNote(c); layout(); reset();
+    }
+    function layout() {
+      var a = A();
+      anchorEl.style.left = (a.l / 16) + 'cqw'; anchorEl.style.top = (a.t / 16) + 'cqw';
+      anchorEl.style.width = (a.w / 16) + 'cqw'; anchorEl.style.height = (a.h / 16) + 'cqw';
+      layoutA(); layoutD();
+    }
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { select(t.dataset.c); });
+      t.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0; if (!d) return;
+        var n = tabs[(i + d + tabs.length) % tabs.length]; n.focus(); select(n.dataset.c);
+      });
+    });
+    document.getElementById('replay').addEventListener('click', reset);
+    delayIn.addEventListener('change', function () { delay = Math.max(0, parseFloat(delayIn.value) || 0); store('delay12', delay); reset(); });
+
+    function tick(now) {
+      var dt = last ? Math.min(0.05, (now - last) / 1000) : 0; last = now;
+      var vid = document.getElementById('bg-vid');
+      if (testT != null) clock = testT;
+      else if (!IQ.reduce && !vid.hidden && !vid.ended && vid.readyState >= 2) clock = vid.currentTime; else clock += dt;
+      if (source === 'film') { tracked = watchAt(vid.currentTime); layout(); } else tracked = null;
+      var c = clock - delay;
+      cues(c);
+      DRAW[active](Math.max(0, c));
+      requestAnimationFrame(tick);
+    }
+    (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () {
+      select(active);
+      if (store('bg') === 'photo') show('photo', 'media/pov-watch.webp', false); else show('film', 'media/pov-watch.mp4', true);
+      requestAnimationFrame(tick);
+    });
+
+    // ---- backgrounds ---------------------------------------------------------
+    var img = document.getElementById('bg-img'), vid = document.getElementById('bg-vid'), clip = document.getElementById('clip');
+    var editBtn = document.getElementById('edit'), sizeIn = document.getElementById('anchor-size');
+    var bgBtns = document.querySelectorAll('button[data-bg]'), clipLabel = document.getElementById('clip-label');
+    var greenBtn = document.getElementById('green');
+    // film: the Higgsfield clip, the watch tracked. photo: the still. clip: yours.
+    function show(src, url, isVideo) {
+      source = src; if (src !== 'clip') store('bg', src);
+      if (isVideo) { img.hidden = true; vid.hidden = false; if (vid.getAttribute('src') !== url) vid.src = url; }
+      else { vid.hidden = true; vid.pause(); img.hidden = false; img.src = url; }
+      bgBtns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.bg === src)); });
+      clipLabel.classList.toggle('is-on', src === 'clip');
+      editBtn.hidden = src === 'film';
+      if (src === 'film') { document.body.classList.remove('is-editing'); editBtn.setAttribute('aria-pressed', 'false'); }
+      layout(); reset();
+    }
+    bgBtns.forEach(function (b) { b.addEventListener('click', function () {
+      if (b.dataset.bg === 'film') show('film', 'media/pov-watch.mp4', true);
+      else show('photo', 'media/pov-watch.webp', false);
+    }); });
+    clip.addEventListener('change', function () {
+      var f = clip.files[0]; if (!f) return;
+      show('clip', URL.createObjectURL(f), /^video/.test(f.type));
+    });
+    greenBtn.addEventListener('click', function () {
+      var on = !stage.classList.contains('is-green');
+      stage.classList.toggle('is-green', on); greenBtn.setAttribute('aria-pressed', String(on));
+    });
+
+    // ---- the watch anchor: drag it onto the watch in your clip ---------------
+    sizeIn.value = anchor.w;
+    editBtn.addEventListener('click', function () {
+      var on = !document.body.classList.contains('is-editing');
+      document.body.classList.toggle('is-editing', on); editBtn.setAttribute('aria-pressed', String(on));
+    });
+    sizeIn.addEventListener('input', function () { anchor.w = +sizeIn.value; layout(); store('anchor', JSON.stringify(anchor)); });
+    anchorEl.addEventListener('pointerdown', function (e) {
+      if (!document.body.classList.contains('is-editing')) return;
+      e.preventDefault(); anchorEl.setPointerCapture(e.pointerId);
+      var r = stage.getBoundingClientRect(), k = 1600 / r.width, sx = e.clientX, sy = e.clientY, ox = anchor.x, oy = anchor.y;
+      function move(ev) { anchor.x = Math.round(ox + (ev.clientX - sx) * k); anchor.y = Math.round(oy + (ev.clientY - sy) * k); layout(); }
+      function up() { anchorEl.removeEventListener('pointermove', move); anchorEl.removeEventListener('pointerup', up); store('anchor', JSON.stringify(anchor)); }
+      anchorEl.addEventListener('pointermove', move); anchorEl.addEventListener('pointerup', up);
+    });
+
+    // ---- clean + fullscreen --------------------------------------------------
+    function clean() { document.body.classList.toggle('clean'); }
+    document.getElementById('clean').addEventListener('click', clean);
+    document.addEventListener('keydown', function (e) { if ((e.key === 'h' || e.key === 'H') && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) clean(); });
+    document.getElementById('full').addEventListener('click', function () { if (stage.requestFullscreen) stage.requestFullscreen(); });
+    // review hook: hold everything at overlay time c (Replay lets go)
+    window.__iq = { at: function (c) { testT = c + delay; vid.pause(); vid.currentTime = Math.min(testT, (vid.duration || 5) - 0.02); }, ride: ride };
+  });
+})();
+</script>
+</body>
+</html>

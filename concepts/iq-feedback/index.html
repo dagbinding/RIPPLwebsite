@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>RIPPLiQ watch overlays</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;display=swap" />
+<style>
+  @font-face { font-family: "Inter"; font-weight: 300; font-display: swap; src: url("../../styles/fonts/Inter-Light.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url("../../styles/fonts/Inter-Regular.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 500; font-display: swap; src: url("../../styles/fonts/Inter-Medium.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 600; font-display: swap; src: url("../../styles/fonts/Inter-SemiBold.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 700; font-display: swap; src: url("../../styles/fonts/Inter-Bold.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 900; font-display: swap; src: url("../../styles/fonts/Inter-Black.woff2") format("woff2"); }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; }
+  :root {
+    --rippl-cream: #F2EBDC; --rippl-bone: #FAF6EC;
+    --rippl-cocoa: #2E1E10;
+    --rippl-ink: #0E0E0E; --rippl-ink-soft: #1A1A1A; --rippl-ink-line: #2A2A2A; --rippl-ink-fg-mute: #8A8378;
+    --rippl-sun: #D97740; --rippl-glow: #F4C04A; --rippl-wave: #4A7C8A; --rippl-score: #7FBE5F; --rippl-alert: #C9523C;
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --dur-fast: 120ms; --dur-base: 220ms; --dur-sheet: 420ms;
+    --shadow-lift: 0 18px 50px rgba(14, 14, 14, 0.32);
+    --gutter: clamp(16px, 3vw, 40px);
+  }
+  body { font-family: var(--font-body); background: var(--rippl-ink); color: var(--rippl-cream); -webkit-font-smoothing: antialiased; }
+  .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+  button, input, select { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--rippl-wave); outline-offset: 2px; }
+
+  /* ---- Review chrome -------------------------------------------------- */
+  .bar {
+    position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px;
+    padding: 12px var(--gutter); background: rgba(14, 14, 14, 0.94); border-bottom: 1px solid var(--rippl-ink-line);
+  }
+  .bar__name { margin: 0; font-size: 18px; font-weight: 300; letter-spacing: -0.01em; white-space: nowrap; }
+  .bar__name b { font-weight: 900; letter-spacing: -0.02em; }
+  .bar__name span { margin-left: 8px; font-size: 13px; font-weight: 600; letter-spacing: 0.16em; text-transform: lowercase; color: var(--rippl-ink-fg-mute); }
+  .bar__group { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+  .bar__spacer { flex: 1; }
+  .seg { display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: var(--rippl-ink-soft); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .seg button, .seg label, .btn {
+    display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 14px; border: 0; border-radius: 999px;
+    background: transparent; color: rgba(242, 235, 220, 0.7); font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap;
+    transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  }
+  .seg button:hover, .seg label:hover, .btn:hover { color: var(--rippl-cream); background: rgba(242, 235, 220, 0.06); }
+  .seg button[aria-selected="true"], .seg button[aria-pressed="true"], .seg label.is-on { background: var(--rippl-cream); color: var(--rippl-ink); }
+  .seg button b { font-weight: 900; }
+  .btn { border: 1px solid rgba(242, 235, 220, 0.22); }
+  .btn[aria-pressed="true"] { background: var(--rippl-cream); color: var(--rippl-ink); border-color: var(--rippl-cream); }
+  .seg label:focus-within { outline: 2px solid var(--rippl-wave); outline-offset: 2px; }
+  .seg input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .delay { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(242, 235, 220, 0.7); }
+  .delay input { width: 72px; min-height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid rgba(242, 235, 220, 0.22); background: var(--rippl-ink-soft); }
+  .size { display: none; align-items: center; gap: 8px; font-size: 13px; color: rgba(242, 235, 220, 0.7); }
+  .is-editing .size { display: inline-flex; }
+
+  main { padding: 20px 0 96px; display: grid; gap: 40px; justify-items: center; }
+
+  /* ---- Section header: the homepage's opener row, then the hero line ---- */
+  .lu-head { width: 100%; max-width: 1600px; padding-inline: clamp(24px, 6vw, 100px); display: grid; gap: clamp(20px, 3vh, 32px); padding-top: clamp(24px, 5vh, 56px); border-top: 1px solid rgba(242, 235, 220, 0.12); }
+  .lu-head__row { display: flex; align-items: baseline; gap: 20px; flex-wrap: wrap; }
+  .lu-head__name { margin: 0; font-size: clamp(22px, 2.4vw, 34px); font-weight: 300; letter-spacing: -0.01em; line-height: 1; color: rgba(242, 235, 220, 0.95); }
+  .lu-head__name b { font-weight: 900; letter-spacing: -0.02em; }
+  .lu-head__tag { font-size: clamp(11px, 0.85vw, 13px); font-weight: 600; letter-spacing: 0.18em; text-transform: lowercase; color: rgba(242, 235, 220, 0.5); padding: 4px 10px; border: 1px solid rgba(242, 235, 220, 0.18); border-radius: 999px; }
+  .lu-head__body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: end; }
+  .lu-head__display { margin: 0; font-size: clamp(44px, 6.4vw, 96px); font-weight: 900; text-transform: uppercase; line-height: 0.9; letter-spacing: -0.045em; text-wrap: balance; }
+  .lu-head__display .dot { color: var(--rippl-sun); }
+  .lu-head__blurb { margin: 0; max-width: 40ch; font-size: clamp(17px, 1.3vw, 20px); line-height: 1.55; color: rgba(242, 235, 220, 0.8); text-wrap: pretty; }
+  .lu-head__blurb b { font-weight: 600; color: var(--rippl-cream); }
+  .is-vert .lu-head { width: min(100%, 520px); }
+  .is-vert .lu-head__body { grid-template-columns: 1fr; }
+  @media (max-width: 900px) { .lu-head__body { grid-template-columns: 1fr; } }
+  .clean .lu-head { display: none; }
+
+  /* ---- The stage: a 16:9 frame, everything inside in 1600 x 900 units ---- */
+  /* full bleed: the film spans the window, edge to edge */
+  .stage-wrap { width: 100%; min-width: 0; }
+  .stage {
+    position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #000;
+    container-type: inline-size; user-select: none; -webkit-user-select: none;
+  }
+  .stage:fullscreen { border-radius: 0; width: 100vw; height: auto; max-height: 100vh; margin: auto; }
+  .stage > * { --u: calc(100cqw / 1600); }
+  /* vertical (phones, or the Vertical toggle): a 9:16 frame in 450 x 800 units,
+     so a unit is about a pixel on a phone */
+  .is-vert .stage-wrap { width: min(100%, 520px, calc((100vh - 120px) * 9 / 16)); }
+  .is-vert .stage { aspect-ratio: 9 / 16; }
+  .is-vert .stage > * { --u: calc(100cqw / 450); }
+  .is-vert.clean .stage-wrap { width: min(100vw, calc(100vh * 9 / 16)); }
+  .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+  .stage.is-green .bg { visibility: hidden; }
+  .stage.is-green { background: #00B140; }
+
+  .ov { position: absolute; inset: 0; font-size: calc(18 * var(--u)); }
+  .ov[hidden] { display: none; }
+  .at { position: absolute; left: calc(var(--x) * var(--u)); top: calc(var(--y) * var(--u)); width: calc(var(--w) * var(--u)); height: calc(var(--h) * var(--u)); }
+  .tether { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .tether path {
+    fill: none; stroke: var(--rippl-cream); stroke-width: calc(2 * var(--u)); stroke-dasharray: 1; stroke-dashoffset: 1;
+    filter: drop-shadow(0 0 calc(3 * var(--u)) rgba(14, 14, 14, 0.6));
+  }
+  .tether circle { fill: var(--rippl-cream); opacity: 0; }
+  .tether .is-on path, .tether path.is-on { stroke-dashoffset: 0; transition: stroke-dashoffset var(--dur-sheet) var(--ease-out); }
+  .tether .is-on circle { opacity: 1; transition: opacity var(--dur-base) var(--ease-out); }
+
+  /* build-in: everything in an overlay arrives on its own cue */
+  .bi { opacity: 0; transform: translateY(calc(16 * var(--u))); }
+  .bi.is-on { opacity: 1; transform: none; transition: opacity var(--dur-sheet) var(--ease-out), transform var(--dur-sheet) var(--ease-out); }
+  .bi--fade { transform: none; }
+
+  /* glass: the watch app's ink, let the sea through a little */
+  .glass {
+    border-radius: calc(24 * var(--u)); background: rgba(14, 14, 14, 0.66);
+    -webkit-backdrop-filter: blur(calc(18 * var(--u))) saturate(1.1); backdrop-filter: blur(calc(18 * var(--u))) saturate(1.1);
+    box-shadow: 0 calc(18 * var(--u)) calc(50 * var(--u)) rgba(14, 14, 14, 0.32);
+    color: var(--rippl-cream);
+  }
+  /* Phones, tablets and touch screens: no blur behind the cards. Re-blurring the
+     film under them every frame is the costliest thing on the page there. */
+  @media (max-width: 1024px), (hover: none), (pointer: coarse) {
+    .glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(14, 14, 14, 0.88); }
+  }
+  .is-vert .glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(14, 14, 14, 0.88); }
+  .wm { font-weight: 900; letter-spacing: -0.02em; }
+  .wm span { font-weight: 300; }
+  .k { font-size: calc(13 * var(--u)); font-weight: 600; letter-spacing: 0.16em; text-transform: lowercase; color: rgba(242, 235, 220, 0.6); }
+  .hl { margin: 0; font-weight: 900; letter-spacing: -0.03em; line-height: 0.98; text-wrap: balance; }
+  .cue { margin: 0; font-size: calc(19 * var(--u)); line-height: 1.4; color: rgba(242, 235, 220, 0.82); text-wrap: pretty; }
+  .cue b { font-weight: 600; color: var(--rippl-cream); }
+  .score { font-family: var(--font-mono); font-weight: 500; letter-spacing: -0.04em; line-height: 1; color: var(--rippl-score); }
+  .alert-dot { display: inline-block; width: calc(9 * var(--u)); height: calc(9 * var(--u)); border-radius: 50%; background: var(--rippl-alert); }
+  canvas { display: block; }
+
+  /* the watch: corner brackets, and in edit mode a box you can drag */
+  .anchor { position: absolute; z-index: 5; pointer-events: none; }
+  .anchor b { position: absolute; inset: calc(-22 * var(--u)) calc(-26 * var(--u)); }
+  .anchor i { position: absolute; width: 20%; height: 16%; border: 0 solid var(--rippl-cream); filter: drop-shadow(0 0 calc(4 * var(--u)) rgba(14, 14, 14, 0.7)); }
+  .anchor i:nth-child(1) { left: 0; top: 0; border-left-width: calc(3 * var(--u)); border-top-width: calc(3 * var(--u)); border-top-left-radius: calc(14 * var(--u)); }
+  .anchor i:nth-child(2) { right: 0; top: 0; border-right-width: calc(3 * var(--u)); border-top-width: calc(3 * var(--u)); border-top-right-radius: calc(14 * var(--u)); }
+  .anchor i:nth-child(3) { left: 0; bottom: 0; border-left-width: calc(3 * var(--u)); border-bottom-width: calc(3 * var(--u)); border-bottom-left-radius: calc(14 * var(--u)); }
+  .anchor i:nth-child(4) { right: 0; bottom: 0; border-right-width: calc(3 * var(--u)); border-bottom-width: calc(3 * var(--u)); border-bottom-right-radius: calc(14 * var(--u)); }
+  .anchor { opacity: 0; transform: scale(1.08); }
+  .anchor.is-on { opacity: 1; transform: none; transition: opacity var(--dur-sheet) var(--ease-out), transform var(--dur-sheet) var(--ease-out); }
+  .is-editing .anchor { opacity: 1; transform: none; pointer-events: auto; cursor: move; outline: 1px dashed var(--rippl-glow); outline-offset: 4px; }
+  .is-editing .anchor::after { content: "watch screen"; position: absolute; left: 0; top: calc(100% + 8px); font: 600 12px var(--font-body); letter-spacing: 0.14em; color: var(--rippl-glow); white-space: nowrap; }
+
+  /* ---- A · Replay card ------------------------------------------------ */
+  .a-card { display: grid; grid-template-rows: auto 1fr auto; gap: calc(12 * var(--u)); padding: calc(22 * var(--u)) calc(24 * var(--u)); }
+  .a-head { display: flex; align-items: baseline; justify-content: space-between; gap: calc(12 * var(--u)); }
+  .a-head .wm { font-size: calc(22 * var(--u)); }
+  .a-fig { position: relative; min-height: 0; }
+  .a-fig canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .a-live { position: absolute; right: 0; top: 0; display: grid; gap: calc(9 * var(--u)); justify-items: end; text-align: right; }
+  .a-live div { display: grid; gap: calc(2 * var(--u)); }
+  .a-live b { font-family: var(--font-mono); font-weight: 500; font-size: calc(22 * var(--u)); white-space: nowrap; }
+  .a-tl { display: grid; gap: calc(8 * var(--u)); }
+  .a-track { position: relative; height: calc(4 * var(--u)); border-radius: 999px; background: rgba(242, 235, 220, 0.18); }
+  .a-track__fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: inherit; background: var(--rippl-cream); transition: width 900ms var(--ease-out); }
+  .a-track i { transition: background-color var(--dur-base) var(--ease-out); }
+  .a-track i { position: absolute; top: 50%; width: calc(8 * var(--u)); height: calc(8 * var(--u)); margin: calc(-4 * var(--u)) 0 0 calc(-4 * var(--u)); border-radius: 50%; background: rgba(242, 235, 220, 0.45); }
+  .a-track i.is-past { background: var(--rippl-cream); }
+  .a-track i.fall { width: calc(12 * var(--u)); height: calc(12 * var(--u)); margin: calc(-6 * var(--u)) 0 0 calc(-6 * var(--u)); background: var(--rippl-alert); }
+  .a-read { display: flex; justify-content: space-between; gap: calc(12 * var(--u)); font-size: calc(15 * var(--u)); color: rgba(242, 235, 220, 0.75); }
+  .a-read b { font-weight: 600; color: var(--rippl-cream); }
+  .a-read .is-fall { color: var(--rippl-alert); }
+  /* The verdict: grows out of the watch screen. One cue, one number. */
+  .v-card { display: grid; align-content: start; gap: calc(8 * var(--u)); padding: calc(20 * var(--u)) calc(28 * var(--u)); background: rgba(14, 14, 14, 0.88); transform-origin: 0 0; }
+  .v-card:not(.is-on) { opacity: 0; transform: translate(calc(var(--fx) * var(--u)), calc(var(--fy) * var(--u))) scale(var(--fsx), var(--fsy)); }
+  .v-card.is-on { opacity: 1; transform: none; transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-sheet) var(--ease-out); }
+  .v-head { display: flex; align-items: baseline; justify-content: space-between; gap: calc(12 * var(--u)); }
+  .v-head .wm { font-size: calc(20 * var(--u)); }
+  .v-score { display: flex; align-items: baseline; gap: calc(8 * var(--u)); }
+  .v-score b { font-family: var(--font-mono); font-weight: 500; font-size: calc(26 * var(--u)); color: var(--rippl-score); }
+  .v-card .hl { font-size: calc(38 * var(--u)); margin-top: calc(2 * var(--u)); }
+  .v-card .cue { font-size: calc(18 * var(--u)); }
+  .v-card .cue .wm { color: var(--rippl-cream); }
+  .v-bar { display: grid; gap: calc(7 * var(--u)); margin-top: calc(4 * var(--u)); }
+  .v-bar__row { display: flex; justify-content: space-between; align-items: baseline; gap: calc(12 * var(--u)); font-size: calc(14 * var(--u)); color: rgba(242, 235, 220, 0.7); }
+  .v-bar__row b { font-family: var(--font-mono); font-weight: 500; font-size: calc(20 * var(--u)); color: var(--rippl-cream); }
+  .v-bar__row small { font-family: var(--font-mono); font-size: calc(14 * var(--u)); color: var(--rippl-score); }
+  .v-bar__ref { display: none; }
+  .v-bar__track { position: relative; height: calc(6 * var(--u)); border-radius: 999px; background: rgba(242, 235, 220, 0.16); }
+  .v-bar__fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: inherit; background: var(--rippl-cream); transition: width 700ms var(--ease-out); }
+  .v-bar.is-on .v-bar__fill { width: var(--v); }
+  .v-bar__mark { position: absolute; left: var(--m); top: calc(-5 * var(--u)); bottom: calc(-5 * var(--u)); width: calc(3 * var(--u)); margin-left: calc(-1.5 * var(--u)); border-radius: 999px; background: var(--rippl-score); }
+  .v-foot { margin: calc(4 * var(--u)) 0 0; padding-top: calc(10 * var(--u)); border-top: 1px solid rgba(242, 235, 220, 0.14); font-size: calc(15 * var(--u)); color: rgba(242, 235, 220, 0.7); }
+  .v-foot b { font-family: var(--font-mono); font-weight: 500; color: var(--rippl-glow); }
+  /* vertical: the replay card on top, the verdict under it growing out of the
+     watch; type sized for a phone (1 unit ~ 0.87 px at 390 px wide) */
+  .is-vert .tether { display: none; }
+  .is-vert .anchor b { inset: calc(-10 * var(--u)) calc(-12 * var(--u)); }
+  .is-vert .glass { border-radius: calc(16 * var(--u)); }
+  .is-vert .k { font-size: calc(12.5 * var(--u)); letter-spacing: 0.1em; }
+  .is-vert .a-card { gap: calc(7 * var(--u)); padding: calc(12 * var(--u)) calc(15 * var(--u)); }
+  .is-vert .a-head .wm, .is-vert .v-head .wm { font-size: calc(18 * var(--u)); }
+  .is-vert .a-live { grid-template-columns: auto auto; gap: calc(2 * var(--u)) calc(16 * var(--u)); }
+  .is-vert .a-live div { gap: 0; }
+  .is-vert .a-live b { font-size: calc(16.5 * var(--u)); line-height: 1.15; }
+  .is-vert .a-tl { gap: calc(6 * var(--u)); }
+  .is-vert .a-read { font-size: calc(13.5 * var(--u)); }
+  .is-vert .v-card { gap: calc(7 * var(--u)); padding: calc(13 * var(--u)) calc(16 * var(--u)); }
+  .is-vert .v-score b { font-size: calc(22 * var(--u)); }
+  .is-vert .v-card .hl { font-size: calc(30 * var(--u)); }
+  .is-vert .v-card .cue { font-size: calc(18 * var(--u)); line-height: 1.32; }
+  .is-vert .v-bar__row { font-size: calc(13.5 * var(--u)); }
+  .is-vert .v-bar__row b { font-size: calc(18 * var(--u)); }
+  .is-vert .v-bar__row small { font-size: calc(13 * var(--u)); }
+  .is-vert .v-bar__track { height: calc(5 * var(--u)); }
+  .is-vert .v-long, .is-vert .v-bar__row small { display: none; }
+  .is-vert .v-bar__ref { display: block; justify-self: end; font-family: var(--font-mono); font-size: calc(13 * var(--u)); color: var(--rippl-score); }
+  /* the cue carries the action on phones; the next-set line makes way */
+  .is-vert .v-foot { display: none; }
+
+  /* measured vs inferred: solid tag for what the board measured, dashed for
+     what the model infers about the body */
+  .tag { justify-self: start; display: inline-flex; align-items: center; min-height: calc(24 * var(--u)); padding: 0 calc(10 * var(--u)); border-radius: 999px; border: 1px solid rgba(242, 235, 220, 0.5); font-size: calc(12 * var(--u)); font-weight: 600; letter-spacing: 0.14em; text-transform: lowercase; color: rgba(242, 235, 220, 0.8); white-space: nowrap; }
+  .tag--model { border-style: dashed; }
+  .tag .wm { text-transform: none; letter-spacing: 0; }
+
+  /* ---- Notes under the stage -------------------------------------------- */
+  .notes { width: min(100%, 1100px); padding: 0 var(--gutter); display: grid; gap: 56px; }
+  .note { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px 56px; }
+  .note h2, .lib h2, .prod h2 { margin: 0; font-size: clamp(28px, 3vw, 44px); font-weight: 900; letter-spacing: -0.035em; line-height: 1; text-transform: uppercase; }
+  .note h2 .dot, .lib h2 .dot, .prod h2 .dot { color: var(--rippl-sun); }
+  .note p, .lib p, .prod p, .prod li { margin: 0; font-size: 16px; line-height: 1.6; color: rgba(242, 235, 220, 0.78); text-wrap: pretty; }
+  .note p b, .lib b, .prod b { font-weight: 600; color: var(--rippl-cream); }
+  .note__lede { display: grid; gap: 16px; align-content: start; }
+  .note__k { font-size: 13px; font-weight: 600; letter-spacing: 0.16em; text-transform: lowercase; color: var(--rippl-ink-fg-mute); }
+  .note dl { margin: 0; display: grid; gap: 16px; }
+  .note dt { font-size: 13px; font-weight: 600; letter-spacing: 0.16em; text-transform: lowercase; color: var(--rippl-ink-fg-mute); }
+  .note dd { margin: 4px 0 0; font-size: 16px; line-height: 1.55; color: rgba(242, 235, 220, 0.85); }
+  .lib { display: grid; gap: 24px; }
+  .lib__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .lib__card { display: grid; align-content: start; gap: 12px; padding: 24px; border-radius: 16px; background: var(--rippl-ink-soft); }
+  .lib__card h3 { margin: 0; font-size: 20px; font-weight: 700; letter-spacing: -0.015em; }
+  .lib__card ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+  .lib__card li { font-size: 15px; line-height: 1.5; color: rgba(242, 235, 220, 0.78); }
+  .lib__card li b { display: block; font-weight: 600; color: var(--rippl-cream); }
+  .lib__card .tag { min-height: 24px; padding: 0 10px; font-size: 12px; }
+  .prod { display: grid; gap: 20px; }
+  .prod ol { margin: 0; padding-left: 20px; display: grid; gap: 10px; max-width: 75ch; }
+  kbd { font-family: var(--font-mono); font-size: 13px; padding: 2px 6px; border-radius: 6px; background: var(--rippl-ink-soft); border: 1px solid var(--rippl-ink-line); }
+
+  @media (max-width: 900px) {
+    .note { grid-template-columns: 1fr; }
+    .lib__grid { grid-template-columns: 1fr; }
+    .bar__spacer { display: none; }
+    .bar { position: static; }
+  }
+  /* hide the review chrome for a clean recording */
+  .clean .bar, .clean .notes { display: none; }
+  .clean main { padding: 0; min-height: 100vh; align-content: center; }
+  .clean .stage-wrap { width: min(100vw, calc(100vh * 16 / 9)); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bi.is-on, .anchor.is-on, .v-card.is-on, .v-bar__fill, .a-track__fill, .a-track i, .tether .is-on path, .tether path.is-on, .tether .is-on circle { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <p class="bar__name"><b>RIPPL</b>iQ <span>watch overlays</span></p>
+  <span class="bar__spacer"></span>
+  <div class="bar__group">
+    <button class="btn" type="button" id="replay"><span aria-hidden="true">↺</span> Replay</button>
+    <div class="seg" aria-label="Background">
+      <button type="button" data-bg="film" aria-pressed="true">Film</button>
+      <button type="button" data-bg="photo" aria-pressed="false">Photo</button>
+      <label id="clip-label">Your clip<input type="file" id="clip" accept="video/*,image/*" /></label>
+    </div>
+    <button class="btn" type="button" id="orient" aria-pressed="false">Vertical</button>
+    <button class="btn" type="button" id="green" aria-pressed="false">Green screen</button>
+    <label class="delay">Start at <input type="number" id="delay" min="0" max="20" step="0.1" value="6.6" /> s</label>
+    <button class="btn" type="button" id="edit" aria-pressed="false">Move watch</button>
+    <label class="size">Size <input type="range" id="anchor-size" min="80" max="420" step="2" /></label>
+    <button class="btn" type="button" id="clean" title="Hide everything but the frame (H)">Clean</button>
+    <button class="btn" type="button" id="full">Fullscreen</button>
+  </div>
+</header>
+
+<main>
+  <!-- Section header: what this is and why it matters, before the film plays -->
+  <header class="lu-head" aria-labelledby="lu-title">
+    <div class="lu-head__row">
+      <h2 class="lu-head__name" id="lu-title"><b>In-the-lineup</b> feedback</h2>
+      <span class="lu-head__tag">live on your wrist</span>
+    </div>
+    <div class="lu-head__body">
+      <p class="lu-head__display">Not next session.<br />Next wave<span class="dot">.</span></p>
+      <p class="lu-head__blurb">RIPPLsense reads your board through every wave, and our models turn that motion into feedback in seconds. Fall, glance at your wrist, and know what to change before you paddle back out. You get better <b>on the next wave, not the next session</b>.</p>
+    </div>
+  </header>
+
+  <div class="stage-wrap">
+    <div class="stage" id="stage" aria-label="Overlay preview over the watch POV film">
+      <img class="bg" id="bg-img" alt="" hidden />
+      <video class="bg" id="bg-vid" muted playsinline preload="none" poster="media/fall-film-poster.jpg"></video>
+
+      <div class="anchor" id="anchor" aria-hidden="true"><b><i></i><i></i><i></i><i></i></b></div>
+
+      <!-- The fall: the rider held at the moment it went wrong, with the board's
+           readouts and the wave's timeline; the verdict grows out of the watch.
+           Positions (--x, --y, --w, --h) are set per layout by the script. -->
+      <div class="ov" id="ov-a" data-c="a">
+        <svg class="tether" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+          <g data-at="0.45"><path id="a-t1" pathLength="1" /><circle id="a-t1d" r="5" /></g>
+        </svg>
+        <section class="at glass a-card bi" data-at="0.7" id="a-card" style="--x: 40; --y: 40; --w: 520; --h: 400">
+          <div class="a-head"><span class="wm">RIPPL<span>iQ</span></span><span class="k">wave 7 · the fall</span></div>
+          <div class="a-fig">
+            <canvas id="a-canvas"></canvas>
+            <div class="a-live">
+              <div><span class="k">rail</span><b id="a-rail">0°</b></div>
+              <div><span class="k">turn</span><b id="a-turn">0</b></div>
+              <div><span class="k">speed</span><b id="a-speed">0</b></div>
+              <div><span class="k">nose</span><b id="a-nose">level</b></div>
+            </div>
+          </div>
+          <div class="a-tl">
+            <div class="a-track" id="a-track"><span class="a-track__fill" id="a-fill"></span></div>
+            <div class="a-read"><span id="a-event"><b>takeoff</b></span><span class="mono" id="a-time">0:00.0</span></div>
+          </div>
+        </section>
+        <section class="at glass v-card" data-at="1.3" id="a-verdict" style="--x: 580; --y: 18; --w: 700; --h: 300">
+          <div class="v-head bi bi--fade" data-at="1.55"><span><span class="wm">RIPPL<span>iQ</span></span> <span class="k">&nbsp;wave 7</span></span><span class="v-score"><span class="k">score</span><b id="a-score">0.0</b></span></div>
+          <p class="hl bi" data-at="1.65">Release the rail sooner<span style="color: var(--rippl-sun)">.</span></p>
+          <p class="cue bi bi--fade" data-at="1.85" id="v-cue">You held the rail on your last top turn. Surfers in the next skill level release sooner on waves of this size. Try transitioning sooner to maintain speed and avoid the stall that caused you to fall.</p>
+          <div class="v-bar bi bi--fade" data-at="2.1" id="v-bar">
+            <div class="v-bar__row"><span>time on the rail<span class="v-long">, off the top</span></span><span><b id="v-val">0 s</b> <small id="v-ref">0 s next level</small></span></div>
+            <div class="v-bar__track"><span class="v-bar__fill"></span><span class="v-bar__mark"></span></div>
+            <small class="v-bar__ref" id="v-ref-under">0 s next skill level, average</small>
+          </div>
+          <p class="v-foot bi bi--fade" data-at="2.4">Next set in <b>1:15</b>.</p>
+        </section>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="notes">
+    <section class="note" id="note"></section>
+
+    <section class="lib" aria-labelledby="lib-title">
+      <h2 id="lib-title">What RIPPLiQ can say<span class="dot">.</span></h2>
+      <p>RIPPLsense measures <b>how the board moves</b>, and for now that's all the site talks about: every cue is something the board did, in numbers you can check. The RIPPLiQ model can also read your body from that motion; that stays off the site until we're ready to stand behind it. The rule that keeps it watch-sized: one score, one cue, one number.</p>
+      <div class="lib__grid">
+        <div class="lib__card">
+          <span class="tag">measured by&nbsp;<span class="wm">RIPPL<span>sense</span></span></span>
+          <h3>The board's motion</h3>
+          <ul>
+            <li><b>Rail angle</b>How far the board leans into each turn (up to 46° on this wave).</li>
+            <li><b>Turn rate</b>How fast the board rotates through a turn, in degrees per second (about 200°/s in the bottom turns here).</li>
+            <li><b>Speed in and out</b>What each turn costs or earns you, in km/h.</li>
+            <li><b>Weight transfer</b>The board's pitch: nose up when your weight is back, nose down when it moves forward, and how far it swings after a turn.</li>
+            <li><b>Rail to rail</b>How quickly you roll from one rail to the other, and how long you stay stuck on a rail before releasing.</li>
+            <li><b>Where on the wave</b>Ride height: up and down the face at each turn.</li>
+          </ul>
+        </div>
+        <div class="lib__card">
+          <span class="tag tag--model">later · inferred by your&nbsp;<span class="wm">RIPPL<span>iQ</span></span>&nbsp;model</span>
+          <h3>Your body, not on the site yet</h3>
+          <ul>
+            <li><b>Knee bend</b>"Your front knee likely opened to about 130°." Compression, read from how the board moved.</li>
+            <li><b>Weight over your feet</b>"Most likely on your back foot", from pitch and how the board released.</li>
+            <li><b>Upper body</b>Shoulders leading the turn or arriving late, from the turn rate against the rail.</li>
+            <li><b>Always worded as likely</b>"Suggests", "most likely", "about": the model reads your motion, it doesn't see you.</li>
+          </ul>
+        </div>
+        <div class="lib__card">
+          <span class="tag">your verdict</span>
+          <h3>What to do with it</h3>
+          <ul>
+            <li><b>Wave score</b>One number, comparable wave to wave.</li>
+            <li><b>Why it ended</b>Fall detected, and what the board was doing when it happened.</li>
+            <li><b>You vs. you</b>This turn against your own better one: earlier in the wave, or your best this season.</li>
+            <li><b>One cue for the next set</b>Timed to the watch's next-set countdown.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="prod" aria-labelledby="prod-title">
+      <h2 id="prod-title">Putting it on the film<span class="dot">.</span></h2>
+      <ol>
+        <li><b>Film</b> is the Fall video: the wipeout, underwater, then the cut to the POV watch shot. Landscape (1280 × 720, 17 s, cut at 5.5 s) on desktop and tablet; on phones, or with <b>Vertical</b>, the vertical edit (406 × 720, 10.9 s, cut at 5.8 s) with its own layout. The watch is tracked frame by frame in both, in position and size, so the brackets and the verdict's grow-out stay on it.</li>
+        <li><b>Start at</b> is when the overlay begins, in film seconds, kept per layout: 6.6 s landscape and 7.0 s vertical, as each watch comes up showing "Fall detected".</li>
+        <li><b>Photo</b> and <b>Your clip</b> aren't tracked: use <b>Move watch</b> to drag the brackets onto the watch screen and set its size. It's remembered on this browser.</li>
+        <li>To composite in an editor: <b>Green screen</b> (it keeps the film's timing and tracking), then <b>Clean</b> (or <kbd>H</kbd>) and <b>Fullscreen</b>, and screen-record at 1920 × 1080. Key out the green and lay it over the clip from frame 0.</li>
+        <li><b>Built for the page.</b> The landscape film is 3.7 MB and the vertical 1.1 MB (re-encoded from 26 MB and 4.7 MB), and neither loads until the section is on screen; a 32 KB poster holds the frame until then, and the film pauses when you scroll away. The rider is one 20 KB still, drawn once (and again only if the card resizes). The animation loop runs only while the overlay is building or the film is playing on screen, then stops. Phones, tablets and touch screens get solid cards instead of frosted glass.</li>
+        <li>The ride is real: session 2272. Rail, turn rate, speed and pitch come from the board's log. The rider is rebuilt by our pose model and stood on RIPPL's board CAD; it's smoothed over about 0.1 s and played back on curves, since the model rebuilds the body independently at 10 fps. The wave score and wave number are placeholders.</li>
+      </ol>
+    </section>
+  </div>
+</main>
+
+<script src="iq.js"></script>
+<script>
+(function () {
+  var stage = document.getElementById('stage');
+  var anchorEl = document.getElementById('anchor');
+  var vid = document.getElementById('bg-vid'), img = document.getElementById('bg-img');
+  var card = document.getElementById('a-card'), vCard = document.getElementById('a-verdict');
+
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem('iqov:' + k); localStorage.setItem('iqov:' + k, v); } catch (e) { return null; } }
+
+  // The watch screen in each film, tracked frame by frame: a template of the
+  // watch case with the screen masked out (its content changes), searched in
+  // position and scale, lightly smoothed. [video s, x, y, scale] in stage
+  // units; w is the screen's width at scale 1.
+  var LAYOUTS = {
+    h: { W: 1600, film: 'media/fall-film-1280.mp4', poster: 'media/fall-film-poster.jpg', delay: 6.6, trackW: 265,
+         card: { x: 40, y: 40, w: 520, h: 400 }, verdict: { x: 580, y: 18, w: 700, h: 300 }, anchor: { x: 808, y: 520, w: 214 },
+         track: [[6.00,720,789,0.588],[6.08,718,787,0.596],[6.17,717,782,0.603],[6.25,711,773,0.619],[6.33,712,761,0.634],[6.42,714,746,0.647],[6.50,715,730,0.660],[6.58,715,715,0.670],[6.67,715,700,0.681],[6.75,714,686,0.688],[6.83,714,672,0.695],[6.92,715,658,0.702],[7.00,716,645,0.709],[7.08,719,633,0.713],[7.17,722,621,0.716],[7.25,725,610,0.720],[7.33,729,601,0.724],[7.42,733,592,0.727],[7.50,737,583,0.731],[7.58,741,576,0.734],[7.67,746,570,0.742],[7.75,750,564,0.746],[7.83,755,559,0.749],[7.92,761,553,0.753],[8.00,766,547,0.757],[8.08,770,541,0.757],[8.17,774,535,0.757],[8.25,776,532,0.761],[8.33,777,530,0.765],[8.42,778,530,0.768],[8.50,779,531,0.772],[8.58,780,531,0.776],[8.67,782,531,0.776],[8.75,783,530,0.776],[8.83,784,528,0.776],[8.92,785,525,0.776],[9.00,787,522,0.776],[9.08,788,519,0.776],[9.17,789,516,0.776],[9.25,791,514,0.776],[9.33,792,512,0.776],[9.42,793,509,0.776],[9.50,794,506,0.776],[9.58,795,503,0.776],[9.67,795,499,0.776],[9.75,795,496,0.776],[9.83,795,494,0.776],[9.92,795,493,0.776],[10.00,794,493,0.776],[10.08,792,494,0.776],[10.17,790,497,0.776],[10.25,788,501,0.776],[10.33,785,506,0.776],[10.42,783,512,0.776],[10.50,781,518,0.776],[10.58,779,524,0.776],[10.67,778,529,0.776],[10.75,777,533,0.776],[10.83,776,535,0.776],[10.92,776,537,0.780],[11.00,777,537,0.784],[11.08,778,537,0.788],[11.17,780,536,0.792],[11.25,781,535,0.796],[11.33,783,534,0.800],[11.42,784,533,0.804],[11.50,786,531,0.809],[11.58,788,530,0.813],[11.67,789,528,0.821],[11.75,790,526,0.825],[11.83,791,524,0.830],[11.92,792,521,0.838],[12.00,792,519,0.846],[12.08,793,515,0.851],[12.17,792,512,0.859],[12.25,792,509,0.868],[12.33,791,506,0.872],[12.42,790,503,0.877],[12.50,788,500,0.881],[12.58,787,498,0.886],[12.67,786,497,0.890],[12.75,786,496,0.895],[12.83,785,495,0.899],[12.92,785,496,0.909],[13.00,784,498,0.913],[13.08,784,500,0.918],[13.17,783,502,0.922],[13.25,783,506,0.927],[13.33,784,509,0.927],[13.42,785,512,0.932],[13.50,786,516,0.937],[13.58,787,519,0.941],[13.67,787,520,0.946],[13.75,788,521,0.951],[13.83,788,521,0.951],[13.92,788,519,0.951],[14.00,787,517,0.956],[14.08,787,515,0.961],[14.17,786,512,0.965],[14.25,786,510,0.970],[14.33,785,508,0.975],[14.42,785,506,0.975],[14.50,785,505,0.980],[14.58,786,505,0.985],[14.67,786,506,0.990],[14.75,787,508,0.995],[14.83,788,510,1.000],[14.92,789,512,1.000],[15.00,790,513,1.000],[15.08,791,514,1.000],[15.17,791,514,1.000],[15.25,791,513,1.000],[15.33,791,512,1.000],[15.42,790,510,1.000],[15.50,789,509,1.000],[15.58,788,507,1.000],[15.67,787,506,1.000],[15.75,785,505,1.000],[15.83,784,505,1.000],[15.92,783,505,1.000],[16.00,783,506,1.000],[16.08,783,507,1.000],[16.17,783,508,1.000],[16.25,784,510,1.000],[16.33,785,511,1.000],[16.42,786,514,1.000],[16.50,787,516,1.000],[16.58,788,519,1.000],[16.67,788,522,1.000],[16.75,788,524,1.000],[16.83,788,526,1.000],[16.92,788,526,1.000],[17.00,788,527,1.000]] },
+    v: { W: 450, film: 'media/fall-film-vert-720.mp4', poster: 'media/fall-film-vert-poster.jpg', delay: 7.0, trackW: 100,
+         card: { x: 12, y: 12, w: 426, h: 164 }, verdict: { x: 12, y: 184, w: 426, h: 296 }, anchor: { x: 225, y: 560, w: 100 },
+         track: [[6.80,203,693,0.950],[6.87,203,688,0.956],[6.93,203,684,0.955],[7.00,204,674,0.960],[7.07,204,664,0.965],[7.13,205,655,0.970],[7.20,205,646,0.975],[7.27,205,636,0.985],[7.33,204,629,0.990],[7.40,203,621,0.995],[7.47,202,613,1.000],[7.53,201,608,1.000],[7.60,200,601,1.000],[7.67,200,594,1.000],[7.73,200,588,1.000],[7.80,200,583,1.000],[7.87,200,578,1.000],[7.93,201,575,1.000],[8.00,202,572,1.000],[8.07,203,570,1.000],[8.13,205,568,1.000],[8.20,206,567,1.000],[8.27,208,566,1.000],[8.33,208,565,1.000],[8.40,208,564,1.000],[8.47,208,564,1.000],[8.53,208,563,1.000],[8.60,209,563,1.000],[8.67,209,562,1.000],[8.73,211,561,1.000],[8.80,211,560,1.000],[8.87,212,559,1.000],[8.93,212,559,1.000],[9.00,211,558,1.000],[9.07,211,558,1.000],[9.13,210,558,1.000],[9.20,209,557,1.000],[9.27,208,556,1.000],[9.33,207,556,1.000],[9.40,206,555,1.000],[9.47,205,554,1.000],[9.53,204,554,1.000],[9.60,203,554,1.000],[9.67,203,553,1.000],[9.73,203,553,1.000],[9.80,204,554,1.000],[9.87,204,555,1.000],[9.93,205,556,1.000],[10.00,205,557,1.000],[10.07,206,558,1.000],[10.13,207,559,1.000],[10.20,208,559,1.000],[10.27,209,559,1.000],[10.33,208,558,1.000],[10.40,208,558,1.000],[10.47,207,558,1.000],[10.53,206,559,1.000],[10.60,206,560,1.000],[10.67,206,561,1.000],[10.73,206,562,1.000],[10.80,206,563,1.000]] }
+  };
+  var mode = 'h', L = LAYOUTS.h, source = 'film';
+  var anchorPlaced = null, tracked = null;
+  function watchAt(t) {
+    var T = L.track, a = T[0], b = a, m = 0;
+    if (t > a[0]) {
+      b = T[T.length - 1]; a = b;
+      for (var i = 1; i < T.length; i++) if (T[i][0] >= t) { a = T[i - 1]; b = T[i]; m = (t - a[0]) / (b[0] - a[0]); break; }
+    }
+    return { x: a[1] + (b[1] - a[1]) * m, y: a[2] + (b[2] - a[2]) * m, w: L.trackW * (a[3] + (b[3] - a[3]) * m) };
+  }
+  function A() { var an = tracked || anchorPlaced, h = an.w * 1.18; return { l: an.x - an.w / 2, t: an.y - h / 2, r: an.x + an.w / 2, b: an.y + h / 2, w: an.w, h: h }; }
+
+  // The moments of the wave, by the board's roll: rail over hardest each turn.
+  // The last top turn never released: the board stayed on its rail, bled
+  // speed, and the ride ended there. The card holds on it.
+  var EV = [
+    { t: 0.0, k: 'takeoff' }, { t: 1.1, k: 'bottom turn' }, { t: 3.3, k: 'bottom turn' },
+    { t: 3.8, k: 'top turn' }, { t: 5.1, k: 'bottom turn' }, { t: 5.8, k: 'top turn', fall: true }];
+  var TT1 = 3.8, TT2 = 5.8, FALL_T = TT2, SCORE = 6.4;
+  var BUILT = 3.2;   // overlay seconds by which every cue has landed and settled
+
+  document.getElementById('note').innerHTML = '<div class="note__lede"><span class="note__k">the fall</span><h2>Replay card<span class="dot">.</span></h2>' +
+    '<p>The film opens on the wipeout. When the watch comes up, <b>the rider appears on the left, held at the moment of the fall</b>, and <b>the verdict grows out of the watch</b>: one thing to do on the next wave, and one number that shows why.</p></div>' +
+    '<dl><div><dt>what it shows</dt><dd>Your real ride as the point-cloud rider on the board, held at the last top turn, with the board\'s rail angle, turn rate, speed and nose angle at that moment, and the wave\'s timeline up to it. Then the score, one cue, and one measured comparison: how long the board stayed on its rail after the last top turn, against your first.</dd></div>' +
+    '<div><dt>motion only</dt><dd>Everything on screen is the board\'s own motion, measured by RIPPLsense. Nothing about body position, which the model can infer but the site doesn\'t claim yet.</dd></div>' +
+    '<div><dt>on phones</dt><dd>The vertical edit, with the two cards stacked above the watch and solid backgrounds instead of frosted glass.</dd></div></dl>';
+
+  IQ.loadStill('fall-still.json').then(function (still) {
+    function fmt(t) { var s = Math.max(0, t); return Math.floor(s / 60) + ':' + (s % 60 < 10 ? '0' : '') + (s % 60).toFixed(1); }
+    function ease(x) { x = Math.max(0, Math.min(1, x)); return 1 - Math.pow(1 - x, 3); }
+
+    // ---- how long the board stayed on its rail after a top turn: from the
+    // peak rail angle at tp until the rail drops back under 20 deg (measured)
+    function onRail(tp) {
+      var held = 0;
+      for (var t = tp; t < tp + 1.2; t += 0.02) { if (Math.abs(IQ.at(still, still.roll, t)) < 20) break; held = t - tp; }
+      return held;
+    }
+
+    // ---- the verdict's one number: time on the rail off the last top turn
+    // (measured), against surfers one skill level up on waves this size.
+    // Shorter is better: the green marker is the next level.
+    // PLACEHOLDER: NEXT_LEVEL is not measured yet. Replace it with the real
+    // average from RIPPL data before this goes on the live site.
+    var NEXT_LEVEL = 0.3;
+    var last = onRail(TT2).toFixed(1), next = NEXT_LEVEL.toFixed(1), bar = document.getElementById('v-bar');
+    var SCALE = 1.0;   // the bar runs 0-1 s
+    document.getElementById('v-cue').textContent = 'You held the rail ' + last + ' s on your last top turn. Surfers in the next skill level, on average, release in ' + next + ' s on waves of this size. Try transitioning sooner to maintain speed and avoid the stall that caused you to fall.';
+    document.getElementById('v-val').textContent = last + ' s';
+    document.getElementById('v-ref').textContent = '/ ' + next + ' s next level';
+    document.getElementById('v-ref-under').textContent = next + ' s next skill level, average';
+    bar.style.setProperty('--v', Math.min(100, last / SCALE * 100).toFixed(1) + '%');
+    bar.style.setProperty('--m', Math.min(100, NEXT_LEVEL / SCALE * 100).toFixed(1) + '%');
+
+    // ---- the card: the rider still, drawn once (and on resize) ----------------
+    function drawRider(sf) {
+      sf.clear();
+      var w = sf.w, h = sf.h;
+      var view = IQ.view(still, { cx: w * 0.4, cy: h * 0.52, scale: Math.min(w / 2.4, h / 1.5), az: Math.PI + 0.42, el: 0.16, centre: still.centre });
+      IQ.drawStill(sf.ctx, still, view, { ink: '#F2EBDC', size: Math.max(1.2, w / 300), board: 0.55 });
+    }
+    IQ.surface(document.getElementById('a-canvas'), drawRider);
+    // the board at that moment, and the timeline up to it
+    function set(id, html) { document.getElementById(id).innerHTML = html; }
+    var pitch = IQ.at(still, still.pitch, FALL_T);
+    set('a-rail', Math.round(Math.abs(IQ.at(still, still.roll, FALL_T))) + '°');
+    set('a-turn', Math.round(Math.abs(IQ.at(still, still.turn, FALL_T))) + '<span class="k"> °/s</span>');
+    set('a-speed', Math.round(IQ.at(still, still.speed, FALL_T) * 3.6) + '<span class="k"> km/h</span>');
+    // the board's pitch: negative is nose up
+    set('a-nose', Math.abs(pitch) < 4 ? 'level' : (pitch < 0 ? 'up ' : 'down ') + Math.round(Math.abs(pitch)) + '°');
+    set('a-event', '<b class="is-fall">fall</b> · last top turn');
+    set('a-time', fmt(FALL_T));
+    var trackEl = document.getElementById('a-track'), fill = document.getElementById('a-fill');
+    var dots = EV.map(function (e) { var i = document.createElement('i'); i.style.left = (e.t / still.duration * 100) + '%'; if (e.fall) i.className = 'fall'; trackEl.appendChild(i); return i; });
+    var aScore = document.getElementById('a-score');
+
+    // ---- layout: positions per orientation, the watch, the tether -------------
+    function place(el, r) { el.style.setProperty('--x', r.x); el.style.setProperty('--y', r.y); el.style.setProperty('--w', r.w); el.style.setProperty('--h', r.h); }
+    function layout() {
+      var a = A(), k = 100 / L.W;   // stage units to cqw
+      anchorEl.style.left = (a.l * k) + 'cqw'; anchorEl.style.top = (a.t * k) + 'cqw';
+      anchorEl.style.width = (a.w * k) + 'cqw'; anchorEl.style.height = (a.h * k) + 'cqw';
+      // corner to corner: the bracket's outer corner to the card's nearest one
+      // (7 units in, onto its 24-unit radius); landscape only
+      var c = L.card, x0 = a.l - 26, y0 = a.t - 22;
+      document.getElementById('a-t1').setAttribute('d', 'M' + x0 + ' ' + y0 + ' L' + (c.x + c.w - 7) + ' ' + (c.y + c.h - 7));
+      var dot = document.getElementById('a-t1d'); dot.setAttribute('cx', x0); dot.setAttribute('cy', y0);
+      // the verdict grows out of the watch screen: its start transform is the
+      // screen's rect
+      var v = L.verdict;
+      vCard.style.setProperty('--fx', a.l - v.x); vCard.style.setProperty('--fy', a.t - v.y);
+      vCard.style.setProperty('--fsx', (a.w / v.w).toFixed(3)); vCard.style.setProperty('--fsy', (a.h / v.h).toFixed(3));
+    }
+
+    // ---- clock and cues --------------------------------------------------------
+    // The clock follows the film while it plays, then runs on while the film
+    // holds its last frame. The loop only runs while something moves.
+    var cueEls = Array.prototype.slice.call(document.querySelectorAll('#ov-a [data-at]')).map(function (el) { return { el: el, at: parseFloat(el.dataset.at), on: false }; });
+    var delayIn = document.getElementById('delay'), delay = 0;
+    var testT = null, clock = 0, last = 0, raf = 0, seen = false, started = false;
+    function cues(c) {
+      cueEls.forEach(function (q) { var on = c >= q.at; if (on !== q.on) { q.on = on; q.el.classList.toggle('is-on', on); } });
+      anchorEl.classList.toggle('is-on', c >= 0);
+      var built = c >= 0.7 || IQ.reduce;
+      fill.style.width = built ? (FALL_T / still.duration * 100) + '%' : '0%';
+      dots.forEach(function (d, i) { d.classList.toggle('is-past', built && FALL_T >= EV[i].t); });
+      aScore.textContent = (SCORE * (IQ.reduce ? 1 : ease((c - 1.6) / 0.6))).toFixed(1);
+    }
+    function filmActive() { return !vid.hidden && vid.getAttribute('src'); }
+    function tick(now) {
+      raf = 0;
+      var dt = last ? Math.min(0.05, (now - last) / 1000) : 0; last = now;
+      if (testT != null) clock = testT;
+      else if (!IQ.reduce && filmActive() && !vid.ended && vid.readyState >= 2) clock = vid.currentTime; else clock += dt;
+      if (source === 'film' && filmActive()) { tracked = watchAt(vid.currentTime); layout(); }
+      var c = clock - delay;
+      cues(c);
+      var moving = filmActive() && !vid.paused && !vid.ended;
+      if (seen && testT == null && (moving || c < BUILT)) wake(); else last = 0;
+    }
+    function wake() { if (!raf) raf = requestAnimationFrame(tick); }
+    function reset() {
+      cueEls.forEach(function (q) { q.on = false; q.el.style.transition = 'none'; q.el.classList.remove('is-on'); });
+      anchorEl.style.transition = 'none'; anchorEl.classList.remove('is-on');
+      void stage.offsetWidth;
+      cueEls.forEach(function (q) { q.el.style.transition = ''; }); anchorEl.style.transition = '';
+      clock = IQ.reduce ? 99 : 0; testT = null; last = 0;
+      if (filmActive()) { vid.currentTime = IQ.reduce ? Math.max(0, (vid.duration || 5) - 0.05) : 0; if (!IQ.reduce && seen) vid.play().catch(function () {}); }
+      wake();
+    }
+    vid.addEventListener('play', wake);
+    vid.addEventListener('loadedmetadata', function () { if (IQ.reduce) vid.currentTime = Math.max(0, vid.duration - 0.05); });
+
+    // Load and play only while the section is on screen; pause when it leaves.
+    function onScreen(on) {
+      seen = on;
+      if (!seen) { vid.pause(); return; }
+      if (source === 'film' && !vid.getAttribute('src')) { vid.src = L.film; }
+      if (!started) { started = true; reset(); }
+      else if (filmActive() && !vid.ended && !IQ.reduce) vid.play().catch(function () {});
+      wake();
+    }
+    new IntersectionObserver(function (e) { onScreen(e[0].isIntersecting); }, { threshold: 0.35 }).observe(stage);
+
+    // ---- orientation: vertical on phones, or by the toggle --------------------
+    var orientBtn = document.getElementById('orient'), forced = null;
+    var phone = matchMedia('(max-width: 700px)');
+    function applyMode() {
+      var m = forced || (phone.matches ? 'v' : 'h');
+      var changed = m !== mode; mode = m; L = LAYOUTS[m];
+      document.body.classList.toggle('is-vert', m === 'v');
+      orientBtn.setAttribute('aria-pressed', String(m === 'v'));
+      document.querySelector('.tether').setAttribute('viewBox', m === 'v' ? '0 0 450 800' : '0 0 1600 900');
+      place(card, L.card); place(vCard, L.verdict);
+      try { var sa = JSON.parse(store('anchor-' + m)); anchorPlaced = sa && sa.w ? sa : Object.assign({}, L.anchor); } catch (e) { anchorPlaced = Object.assign({}, L.anchor); }
+      sizeIn.value = anchorPlaced.w;
+      delay = parseFloat(store('delay-' + m)); if (isNaN(delay)) delay = L.delay;
+      delayIn.value = delay;
+      vid.poster = L.poster;
+      if (source === 'film' && (changed || !vid.getAttribute('src')) && started) vid.src = L.film;
+      tracked = null; layout();
+      if (started) reset();
+    }
+    orientBtn.addEventListener('click', function () { forced = mode === 'v' ? 'h' : 'v'; applyMode(); });
+    phone.addEventListener('change', function () { if (!forced) applyMode(); });
+    delayIn.addEventListener('change', function () { delay = Math.max(0, parseFloat(delayIn.value) || 0); store('delay-' + mode, delay); reset(); });
+    document.getElementById('replay').addEventListener('click', reset);
+
+    // ---- backgrounds -----------------------------------------------------------
+    var clip = document.getElementById('clip'), editBtn = document.getElementById('edit'), sizeIn = document.getElementById('anchor-size');
+    var bgBtns = document.querySelectorAll('button[data-bg]'), clipLabel = document.getElementById('clip-label');
+    // film: the Fall video, the watch tracked. photo: the still. clip: yours.
+    function show(src, url, isVideo) {
+      source = src; if (src !== 'clip') store('bg', src);
+      if (isVideo) { img.hidden = true; vid.hidden = false; if (vid.getAttribute('src') !== url && (started || src !== 'film')) vid.src = url; }
+      else { vid.hidden = true; vid.pause(); img.hidden = false; img.src = url; }
+      bgBtns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.bg === src)); });
+      clipLabel.classList.toggle('is-on', src === 'clip');
+      editBtn.hidden = src === 'film';
+      if (src === 'film') { document.body.classList.remove('is-editing'); editBtn.setAttribute('aria-pressed', 'false'); }
+      tracked = null; layout();
+      if (started) reset();
+    }
+    bgBtns.forEach(function (b) { b.addEventListener('click', function () {
+      if (b.dataset.bg === 'film') show('film', L.film, true); else show('photo', 'media/pov-watch.webp', false);
+    }); });
+    clip.addEventListener('change', function () { var f = clip.files[0]; if (f) show('clip', URL.createObjectURL(f), /^video/.test(f.type)); });
+    document.getElementById('green').addEventListener('click', function () {
+      var on = !stage.classList.contains('is-green');
+      stage.classList.toggle('is-green', on); this.setAttribute('aria-pressed', String(on));
+    });
+
+    // ---- the watch anchor: drag it onto the watch in your clip ---------------
+    editBtn.addEventListener('click', function () {
+      var on = !document.body.classList.contains('is-editing');
+      document.body.classList.toggle('is-editing', on); editBtn.setAttribute('aria-pressed', String(on));
+    });
+    sizeIn.addEventListener('input', function () { anchorPlaced.w = +sizeIn.value; layout(); store('anchor-' + mode, JSON.stringify(anchorPlaced)); });
+    anchorEl.addEventListener('pointerdown', function (e) {
+      if (!document.body.classList.contains('is-editing')) return;
+      e.preventDefault(); anchorEl.setPointerCapture(e.pointerId);
+      var r = stage.getBoundingClientRect(), k = L.W / r.width, sx = e.clientX, sy = e.clientY, ox = anchorPlaced.x, oy = anchorPlaced.y;
+      function move(ev) { anchorPlaced.x = Math.round(ox + (ev.clientX - sx) * k); anchorPlaced.y = Math.round(oy + (ev.clientY - sy) * k); layout(); }
+      function up() { anchorEl.removeEventListener('pointermove', move); anchorEl.removeEventListener('pointerup', up); store('anchor-' + mode, JSON.stringify(anchorPlaced)); }
+      anchorEl.addEventListener('pointermove', move); anchorEl.addEventListener('pointerup', up);
+    });
+
+    // ---- clean + fullscreen --------------------------------------------------
+    function clean() { document.body.classList.toggle('clean'); }
+    document.getElementById('clean').addEventListener('click', clean);
+    document.addEventListener('keydown', function (e) { if ((e.key === 'h' || e.key === 'H') && !/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)) clean(); });
+    document.getElementById('full').addEventListener('click', function () { if (stage.requestFullscreen) stage.requestFullscreen(); });
+
+    applyMode();
+    if (store('bg') === 'photo') show('photo', 'media/pov-watch.webp', false); else show('film', L.film, true);
+    // review hook: hold everything at overlay time c (Replay lets go)
+    window.__iq = { at: function (c) { testT = c + delay; if (filmActive()) { vid.pause(); vid.currentTime = Math.min(testT, (vid.duration || 5) - 0.02); } tick(performance.now()); },
+                    mode: function () { return mode; }, running: function () { return !!raf; }, onScreen: onScreen };
+  });
+})();
+</script>
+</body>
+</html>
