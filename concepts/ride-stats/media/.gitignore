@@ -1,2 +1,4 @@
 # The 4K source stays local; the page only needs the web encodes and posters.
 ride-stats-source.mp4
+# Leftovers from the swift encoder when it runs sandboxed
+*.sb-*

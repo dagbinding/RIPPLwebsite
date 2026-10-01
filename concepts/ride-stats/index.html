@@ -52,9 +52,6 @@
   }
   .seg button:hover { color: var(--rippl-cream); background: rgba(242, 235, 220, 0.06); }
   .seg button[aria-pressed="true"] { background: var(--rippl-cream); color: var(--rippl-ink); }
-  .frame { display: inline-flex; align-items: center; gap: 8px; }
-  .frame input { width: 84px; min-height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid rgba(242, 235, 220, 0.22); background: var(--rippl-ink-soft); font-family: var(--font-mono); font-size: 15px; }
-  .frame output { font-family: var(--font-mono); color: rgba(242, 235, 220, 0.55); min-width: 6ch; }
 
   /* ============ Ride stats ============
      The cutback, frozen at its apex: what RIPPLsense measured on the left,
@@ -98,6 +95,7 @@
   @media (max-width: 1024px), (hover: none), (pointer: coarse) {
     .rs-glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(14, 14, 14, 0.86); }
   }
+  .rs-glass:not(.is-on) { -webkit-backdrop-filter: none; backdrop-filter: none; }
   .rs.is-vert .rs-glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(14, 14, 14, 0.86); border-radius: calc(16 * var(--u)); }
   .rs-wm { font-weight: 900; letter-spacing: -0.02em; font-size: calc(22 * var(--u)); white-space: nowrap; }
   .rs-wm span { font-weight: 300; }
@@ -145,8 +143,7 @@
   /* ---- Right: the leaderboard ---------------------------------------- */
   .rs-board { position: absolute; right: calc(40 * var(--u)); top: calc(40 * var(--u)); width: calc(520 * var(--u)); display: grid; gap: calc(14 * var(--u)); padding: calc(22 * var(--u)) calc(22 * var(--u)) calc(20 * var(--u)); }
   .rs-board__head { padding-inline: calc(4 * var(--u)); }
-  .rs-board__title { margin: 0; padding-inline: calc(4 * var(--u)); display: grid; gap: calc(6 * var(--u)); }
-  .rs-board__title b { font-size: calc(32 * var(--u)); font-weight: 900; letter-spacing: -0.03em; line-height: 1; }
+  .rs-board__title { margin: 0; padding-inline: calc(4 * var(--u)); font-size: calc(32 * var(--u)); font-weight: 900; letter-spacing: -0.03em; line-height: 1; }
   .rs-list { --rh: 58; position: relative; height: calc(var(--rows, 7) * var(--rh) * var(--u)); margin: 0; padding: 0; list-style: none; overflow: hidden; }
   .rs-row {
     position: absolute; left: 0; right: 0; top: 0; height: calc((var(--rh) - 6) * var(--u));
@@ -204,6 +201,14 @@
   .rs.is-vert .rs-row__score { font-size: calc(16 * var(--u)); }
   .rs.is-vert .rs-board__foot { padding-top: calc(8 * var(--u)); font-size: calc(13.5 * var(--u)); }
 
+  /* ---- After the run: a short dip, then back on the apex with its numbers.
+     On phones the board drops under the rider, top four only. ---- */
+  .rs__film, .rs-ov { transition: opacity 320ms var(--ease-out); }
+  .rs.is-dipping .rs__film, .rs.is-dipping .rs-ov { opacity: 0; transition-duration: 220ms; }
+  .rs.is-vert.is-key .rs-board { top: auto; bottom: calc(12 * var(--u)); }
+  .rs.is-vert.is-key .rs-list { --rows: 4 !important; }
+  .rs.is-vert.is-key .rs-board__foot { display: none; }
+
   /* ---- Under the film: replay ------------------------------------------- */
   .rs__transport { max-width: 1600px; margin: 0 auto; display: flex; justify-content: flex-end; padding: 14px clamp(24px, 6vw, 100px) 0; }
   .rs.is-vert .rs__transport { max-width: min(100%, calc(92svh * 9 / 16)); padding-inline: 16px; }
@@ -217,7 +222,7 @@
   @media (max-width: 700px) { .rs__transport { padding-inline: 16px; } }
 
   @media (prefers-reduced-motion: reduce) {
-    .rs-bi.is-on, .rs-anchor.is-on, .rs-row, .rs-row__rank::before, .rs-tether.is-on path, .rs-tether.is-on circle { transition: none; }
+    .rs__film, .rs-ov, .rs-bi.is-on, .rs-anchor.is-on, .rs-row, .rs-row__rank::before, .rs-tether.is-on path, .rs-tether.is-on circle { transition: none; }
   }
 </style>
 </head>
@@ -225,10 +230,6 @@
   <header class="bar">
     <p class="bar__name"><b>Ride</b> stats<span>concept · 04b</span></p>
     <div class="bar__spacer"></div>
-    <label class="bar__group frame">freeze on frame
-      <input id="rs-frame" type="number" min="1" max="190" step="1" value="122" />
-      <output id="rs-frame-t" class="mono">4.88 s</output>
-    </label>
     <div class="bar__group">rider
       <div class="seg" id="rs-who">
         <button type="button" data-who="name" aria-pressed="true">Name</button>
@@ -254,7 +255,7 @@
       </div>
       <div class="rs__body">
         <p class="rs__display">Every turn,<br />measured<span>.</span></p>
-        <p class="rs__blurb">Before any coaching, there's the fun part. RIPPLsense measures every wave you ride — how fast you went, how far you laid the rail over, how much power you put through the turn — and puts your best one on the board <b>next to surfers from Trestles to the Mentawais</b>.</p>
+        <p class="rs__blurb">RIPPLsense measures every wave you ride — how fast you went, how far you laid the rail over, how much power you put through the turn, the height of the wave — and puts you on the board <b>next to surfers from Trestles to the Mentawais</b>.</p>
       </div>
     </div>
 
@@ -266,7 +267,7 @@
         </svg>
         <div class="rs-anchor" aria-hidden="true">
           <i></i><i></i><i></i><i></i>
-          <span class="rs-anchor__label"><span class="rs-k">turn apex</span><span class="rs-mono" data-apex-t>0:04.88</span></span>
+          <span class="rs-anchor__label"><span class="rs-k">turn apex</span><span class="rs-mono">0:04.88</span></span>
         </div>
 
         <div class="rs-glass rs-card rs-bi" data-at="0.2">
@@ -288,9 +289,9 @@
           </div>
         </div>
 
-        <div class="rs-glass rs-board rs-bi" data-at="2.7">
-          <div class="rs-board__head"><span class="rs-wm">RIPPL<span>social</span></span><span class="rs-k"><span class="rs-long">worldwide · this month</span><span class="rs-short">best cutback · worldwide</span></span></div>
-          <p class="rs-board__title"><b>Best cutback</b><span class="rs-k">ranked by turn power</span></p>
+        <div class="rs-glass rs-board rs-bi" data-at="2.6">
+          <div class="rs-board__head"><span class="rs-wm">RIPPL<span>social</span></span><span class="rs-k"><span class="rs-long">leaderboard · live</span><span class="rs-short">labor day pro-am</span></span></div>
+          <p class="rs-board__title">Labor Day Pro-Am</p>
           <ol class="rs-list" aria-hidden="true"></ol>
           <p class="rs-board__foot rs-bi" data-foot data-at="6"></p>
         </div>
@@ -315,17 +316,15 @@
     };
 
     // ---- The film -----------------------------------------------------------
-    var FPS = 25, DUR = 8;                                // the film ends on frame 200, the last with the rider in shot
-    var frame = Math.max(1, Math.min(190, parseInt(store.get('rs.frame', '122'), 10) || 122));
-    function freezeT() { return (frame + 0.5) / FPS; }   // middle of the frame
-    // The source is shot slow, so it runs fast and eases back to true speed
-    // into the apex (never below 1x: slower than that the 25 fps film stutters).
-    var FAST = 2.25, SLOW_IN = 0.9, RAMP_OUT = 0.6;       // SLOW_IN in film seconds, RAMP_OUT in real ones
-    var HOLD = 3.0;                                       // seconds frozen on the apex
+    // The edit is baked into the file (build_film.py): fast, easing to true
+    // speed into the apex (source frame 122), held there, then fast to the
+    // end. The page plays it at 1x and only reads its clock.
+    var APEX = 2.34, HOLD = 3.0;           // the hold starts at APEX (film s) and lasts HOLD
+    var KEY = APEX + 1.5;                  // where the film rests afterwards: mid-hold, on the apex
 
     var LAYOUTS = {
-      h: { film: 'media/ride-stats-1600.mp4', poster: 'media/poster-0.jpg', still: 'media/poster-122.jpg', rows: 7 },
-      v: { film: 'media/ride-stats-vert-720.mp4', poster: 'media/poster-vert-0.jpg', still: 'media/poster-vert-122.jpg', rows: 5 }
+      h: { film: 'media/ride-stats-1600.mp4', poster: 'media/poster-0.jpg', still: 'media/poster-apex.jpg', rows: 7 },
+      v: { film: 'media/ride-stats-vert-720.mp4', poster: 'media/poster-vert-0.jpg', still: 'media/poster-vert-apex.jpg', rows: 5 }
     };
 
     // ---- The board ------------------------------------------------------------
@@ -333,19 +332,20 @@
     // this goes live it needs real RIPPL data and the surfers' sign-off.
     var PROS = [
       ['John John Florence', 'Pipeline', 'Hawaiʻi', 9.12],
-      ['Gabriel Medina', 'Maresias', 'Brazil', 8.96],
+      ['Molly Picklum', 'Shelly Beach', 'Australia', 8.96],
       ['Griffin Colapinto', 'Lower Trestles', 'California', 8.71],
-      ['Ítalo Ferreira', 'Baía Formosa', 'Brazil', 8.58],
-      ['Jack Robinson', 'Margaret River', 'Australia', 8.40],
-      ['Ethan Ewing', 'Snapper Rocks', 'Australia', 8.22],
-      ['Kanoa Igarashi', 'Huntington Beach', 'California', 8.05]
+      ['Caitlin Simmers', 'Oceanside', 'California', 8.63],
+      ['Gabriel Medina', 'Maresias', 'Brazil', 8.49],
+      ['Ítalo Ferreira', 'Baía Formosa', 'Brazil', 8.40],
+      ['Jack Robinson', 'Margaret River', 'Australia', 8.22]
     ];
     var RIDER = { name: 'Liam Archer', spot: "Lance's Right", region: 'Indonesia', score: 8.74 };
+    var EVENT = 'Labor Day Pro-Am';
     var who = store.get('rs.who', 'name');
-    var ENTER = 3.05, STEP = 0.32;                            // the rider's row arrives, then climbs one place per step
+    var ENTER = 2.95, STEP = 0.32;         // the rider's row arrives as the film runs on, then climbs a place per step
 
     var list = root.querySelector('.rs-list'), foot = root.querySelector('[data-foot]');
-    var rows = [], riderRow = null, V = 7, FINAL = PROS.filter(function (p) { return p[3] > RIDER.score; }).length;
+    var rows = [], riderRow = null, V = 7, STEPS = 0, FINAL = PROS.filter(function (p) { return p[3] > RIDER.score; }).length;
     function initials(n) { var w = n.split(' '); return (w[0][0] + (w.length > 1 ? w[w.length - 1][0] : '')).toUpperCase(); }
     function rowEl(name, spot, region, score, you) {
       var li = document.createElement('li');
@@ -366,13 +366,11 @@
       if (who === 'you') riderRow.el.querySelector('.rs-row__av').textContent = 'You';
       list.style.setProperty('--rows', V);
       var ahead = PROS[FINAL - 1];
-      foot.innerHTML = 'Up to <b>#' + (FINAL + 1) + ' worldwide</b> · ' + (ahead[3] - RIDER.score).toFixed(2) + ' behind ' + ahead[0] + '.';
-      document.getElementById('rs-sr').textContent = 'Leaderboard, best cutback by turn power, worldwide this month: ' +
-        PROS.slice(0, FINAL).map(function (p, i) { return (i + 1) + ', ' + p[0] + ', ' + p[1] + ', ' + p[3]; }).concat(
-        [(FINAL + 1) + ', ' + riderName() + ', ' + RIDER.spot + ', ' + RIDER.score]).concat(
-        PROS.slice(FINAL, V - 1).map(function (p, i) { return (FINAL + i + 2) + ', ' + p[0] + ', ' + p[1] + ', ' + p[3]; })).join('; ') + '.';
+      foot.innerHTML = 'Up to <b>#' + (FINAL + 1) + '</b> · ' + (ahead[3] - RIDER.score).toFixed(2) + ' behind ' + ahead[0] + '.';
+      var final = PROS.slice(0, FINAL).concat([[riderName(), RIDER.spot, RIDER.region, RIDER.score]]).concat(PROS.slice(FINAL, V - 1));
+      document.getElementById('rs-sr').textContent = EVENT + ' leaderboard: ' +
+        final.map(function (p, i) { return (i + 1) + ', ' + p[0] + ', ' + p[1] + ', ' + p[3].toFixed(2); }).join('; ') + '.';
     }
-    var STEPS = 0;   // places to climb once on the board: from the bottom slot to FINAL
     // k = 0: rider below the board. k >= 1: on it, one place higher per step.
     function renderBoard(k, animate) {
       var at = k === 0 ? V : Math.max(FINAL, V - k);
@@ -391,8 +389,9 @@
     }
 
     // ---- The timeline ---------------------------------------------------------
-    // T is seconds since the film froze on the apex (-1 before it). Everything
-    // on screen is a pure function of T, so a replay or a jump just re-applies.
+    // T is seconds since the hold began (negative before it). Everything on
+    // screen is a pure function of T, plus `key` once the film has come back
+    // to rest on the apex.
     var cues = Array.prototype.map.call(root.querySelectorAll('.rs-ov [data-at]'), function (el) { return { el: el, at: parseFloat(el.dataset.at), on: false }; });
     var counts = Array.prototype.map.call(root.querySelectorAll('[data-n]'), function (b) {
       var host = b.closest('[data-at]');
@@ -402,12 +401,12 @@
     var footCue = cues.filter(function (q) { return q.el === foot; })[0];
     var boardCue = cues.filter(function (q) { return q.el.classList.contains('rs-board'); })[0];
     function ease(x) { x = Math.max(0, Math.min(1, x)); return 1 - Math.pow(1 - x, 3); }
-    var boardK = -1;
+    var boardK = -1, key = false;
     function apply(T, animate) {
-      var holding = T >= 0 && T < HOLD;
-      anchor.classList.toggle('is-on', holding);
-      card.classList.toggle('is-handed', mode === 'v' && T >= boardCue.at);
-      tether.classList.toggle('is-on', T >= 0.1 && T < HOLD);
+      var onApex = key || (T >= 0 && T < HOLD);
+      anchor.classList.toggle('is-on', onApex);
+      tether.classList.toggle('is-on', key || (T >= 0.1 && T < HOLD));
+      card.classList.toggle('is-handed', mode === 'v' && !key && T >= boardCue.at);
       footCue.at = ENTER + (STEPS - 1) * STEP + 0.45;
       cues.forEach(function (q) { var on = T >= q.at; if (on !== q.on) { q.on = on; q.el.classList.toggle('is-on', on); } });
       counts.forEach(function (c) {
@@ -420,53 +419,58 @@
     }
 
     // ---- The clock --------------------------------------------------------------
-    // 'in': the film plays, slowing into the apex. 'hold': frozen on it.
-    // 'out': the film runs on while the board climbs. 'done': all settled.
-    var phase = 'idle', T = -1, raf = 0, last = 0, seen = false, rate = 1;
-    function setRate(r) { if (Math.abs(r - rate) > 0.02 || r === 1 || r === FAST) { rate = r; if (vid.playbackRate !== r) vid.playbackRate = r; } }
+    // 'play': T follows the film, then runs on past its end. 'back': the dip
+    // back to the apex. 'rest': on the apex with its numbers, until a replay.
+    var phase = 'idle', T = -99, raf = 0, last = 0, seen = false;
+    var RETURN = 1.4;                     // seconds after the board settles before heading back to the apex
     function tick(now) {
       raf = 0;
       var dt = last ? Math.min(0.05, (now - last) / 1000) : 0; last = now;
-      if (phase === 'in') {
-        var ft = freezeT(), t = vid.currentTime, into = t - (ft - SLOW_IN);
-        setRate(into <= 0 ? FAST : FAST - (FAST - 1) * ease(into / SLOW_IN));
-        if (t >= ft - 0.5 / FPS) { vid.pause(); vid.currentTime = ft; setRate(1); phase = 'hold'; T = 0; }
-      } else if (phase === 'hold' || phase === 'out') {
-        T += dt;
-        if (phase === 'hold' && T >= HOLD) { phase = 'out'; setRate(1); vid.play().catch(function () {}); }
-        if (phase === 'out') {
-          setRate(1 + (FAST - 1) * ease((T - HOLD) / RAMP_OUT));
-          if (vid.currentTime >= DUR && !vid.paused) { vid.pause(); vid.currentTime = DUR; }
-          if ((vid.paused || vid.ended) && T > footCue.at + 0.5) phase = 'done';
-        }
+      if (phase === 'play') {
+        if (!vid.ended && vid.readyState >= 2) T = vid.currentTime - APEX; else T += dt;
+        apply(T, true);
+        if (vid.ended && T >= footCue.at + RETURN) back();
       }
-      apply(T, true);
-      if (seen && phase !== 'done' && phase !== 'idle') wake(); else last = 0;
+      if (seen && phase === 'play') wake(); else last = 0;
     }
     function wake() { if (!raf) raf = requestAnimationFrame(tick); }
 
     function quiet(fn) {   // change state with transitions off, so a reset snaps
-      root.classList.add('is-resetting');
-      var els = root.querySelectorAll('.rs-bi, .rs-anchor, .rs-row, .rs-tether path, .rs-tether circle');
+      var els = root.querySelectorAll('.rs-bi, .rs-anchor, .rs-row, .rs-tether path, .rs-tether circle, .rs__film, .rs-ov');
       Array.prototype.forEach.call(els, function (e) { e.style.transition = 'none'; });
       fn(); void stage.offsetWidth;
       Array.prototype.forEach.call(els, function (e) { e.style.transition = ''; });
-      root.classList.remove('is-resetting');
     }
+    function reset(T0) { boardK = -1; rows.concat(riderRow).forEach(function (r) { r.idx = -1; }); apply(T0, false); }
     function restart() {
-      quiet(function () { boardK = -1; rows.concat(riderRow).forEach(function (r) { r.idx = -1; }); apply(-1, false); });
-      phase = 'in'; T = -1; last = 0; setRate(FAST);
+      quiet(function () { key = false; root.classList.remove('is-key', 'is-dipping'); reset(-99); });
+      phase = 'play'; T = -99; last = 0;
       if (vid.getAttribute('src') !== L.film) vid.src = L.film;
       vid.currentTime = 0;
       vid.play().catch(function () {});
       replayLabel.textContent = 'Replay';
       wake();
     }
-    // reduced motion: the apex, every number and the final board, nothing moving
-    function finished() {
-      phase = 'idle'; vid.removeAttribute('src'); vid.load(); vid.poster = L.still;
-      quiet(function () { boardK = -1; rows.concat(riderRow).forEach(function (r) { r.idx = -1; }); apply(99, false); });
-      anchor.classList.remove('is-on'); tether.classList.remove('is-on');
+    // Back to the apex: a short dip, the film rests on the held frame, and
+    // the apex's graphics come back with it (the board keeps its final order).
+    function rest() { key = true; root.classList.add('is-key'); apply(99, false); }
+    function back() {
+      phase = 'back';
+      root.classList.add('is-dipping');
+      setTimeout(function () {
+        if (phase !== 'back') return;     // replayed mid-dip
+        vid.pause(); vid.currentTime = KEY;
+        var shown = false;
+        function show() { if (shown || phase !== 'back') return; shown = true; rest(); root.classList.remove('is-dipping'); phase = 'rest'; }
+        vid.addEventListener('seeked', show, { once: true }); setTimeout(show, 600);
+      }, 240);
+    }
+    // reduced motion: straight to the apex at rest, nothing moving
+    function still() {
+      phase = 'rest'; vid.pause();
+      vid.poster = L.still; vid.preload = 'auto'; vid.src = L.film;
+      vid.addEventListener('loadedmetadata', function () { vid.currentTime = KEY; }, { once: true });
+      quiet(function () { root.classList.remove('is-dipping'); reset(99); rest(); });
       replayLabel.textContent = 'Play';
     }
 
@@ -481,24 +485,13 @@
       root.classList.toggle('is-vert', m === 'v');
       vid.poster = L.poster;
       buildBoard();
-      if (reduce) finished();
+      if (reduce) still();
       else if (seen) restart();
-      else { vid.src = L.film; quiet(function () { boardK = -1; apply(-1, false); }); }
+      else { phase = 'idle'; vid.src = L.film; quiet(function () { key = false; root.classList.remove('is-key'); reset(-99); }); }
     }
     narrow.addEventListener('change', function () { setMode(false); });
 
-    // ---- Apex marker on the progress line, and the review controls --------------
-    var frameIn = document.getElementById('rs-frame'), frameOut = document.getElementById('rs-frame-t');
-    function showFrame() {
-      frameIn.value = frame; frameOut.textContent = (frame / FPS).toFixed(2) + ' s';
-      root.querySelector('[data-apex-t]').textContent = '0:0' + (frame / FPS).toFixed(2);
-    }
-    frameIn.addEventListener('change', function () {
-      var f = parseInt(frameIn.value, 10);
-      if (!(f >= 1 && f <= 190)) { showFrame(); return; }
-      frame = f; store.set('rs.frame', f); showFrame();
-      if (reduce) finished(); else restart();
-    });
+    // ---- Review controls ---------------------------------------------------------
     function pressGroup(id, attr, val) {
       Array.prototype.forEach.call(document.querySelectorAll('#' + id + ' button'), function (b) { b.setAttribute('aria-pressed', String(b.dataset[attr] === val)); });
     }
@@ -513,19 +506,17 @@
       setMode(true);
     });
     pressGroup('rs-who', 'who', who); pressGroup('rs-view', 'view', view);
-    showFrame();
 
     root.querySelector('.rs-replay').addEventListener('click', function () { seen = true; restart(); });
 
     setMode(true);
 
-    // ---- Play while it's on screen; pause the film and the clock when it isn't ----
+    // ---- Play while it's on screen; the film and the clock pause when it isn't ----
     if (!reduce) new IntersectionObserver(function (e) {
       seen = e[0].isIntersecting;
-      if (!seen) { vid.pause(); return; }
+      if (!seen) { if (phase === 'play') vid.pause(); return; }
       if (phase === 'idle') restart();
-      else if (phase === 'in' || (phase === 'out' && vid.currentTime < DUR)) { vid.play().catch(function () {}); wake(); }
-      else wake();
+      else if (phase === 'play') { if (!vid.ended) vid.play().catch(function () {}); wake(); }
     }, { threshold: 0.35 }).observe(stage);
   })();
   </script>
