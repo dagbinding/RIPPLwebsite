@@ -1244,9 +1244,9 @@
      The cutback, frozen at its apex: what RIPPLsense measured on the left,
      then the film runs on while the turn climbs the leaderboard on the right.
      Everything inside the film is in stage units (--u): 1600 x 900
-     landscape, 450 x 800 for the vertical edit (phones, tablets, narrow
-     windows). Concept: concepts/ride-stats/ (the film is built by
-     concepts/ride-stats/build_film.py). */
+     landscape, 450 x 800 for the vertical edit on phones. Full window width
+     at every size, as the lineup film. Concept: concepts/ride-stats/ (the
+     film is built by concepts/ride-stats/build_film.py). */
   .rs {
     --rs-sheet: 420ms; --rs-alert: #C9523C;
     --rs-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
@@ -1269,7 +1269,7 @@
 
   .rs__stage { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #000; container-type: inline-size; }
   .rs__stage > * { --u: calc(100cqw / 1600); }
-  .rs.is-vert .rs__stage { aspect-ratio: 9 / 16; width: min(100%, calc(92svh * 9 / 16)); margin-inline: auto; }
+  .rs.is-vert .rs__stage { aspect-ratio: 9 / 16; }
   .rs.is-vert .rs__stage > * { --u: calc(100cqw / 450); }
   .rs__film { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 
@@ -1404,7 +1404,6 @@
 
   /* ---- Under the film: replay ------------------------------------------- */
   .rs__transport { max-width: 1600px; margin: 0 auto; display: flex; justify-content: flex-end; padding: 14px clamp(24px, 6vw, 100px) 0; }
-  .rs.is-vert .rs__transport { max-width: min(100%, calc(92svh * 9 / 16)); padding-inline: 16px; }
   .rs-replay {
     display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 999px; cursor: pointer;
     border: 1px solid rgba(242, 235, 220, 0.22); background: transparent; color: var(--rippl-cream); font-size: 15px; font-weight: 600;
@@ -2028,9 +2027,9 @@
         replayLabel.textContent = 'Play';
       }
 
-      // ---- Layout per screen: the vertical edit below 1200 px ------------------------
+      // ---- Layout per screen: the vertical edit on phones, as the lineup film ------------------------
       var replayLabel = root.querySelector('.rs-replay__label');
-      var narrow = matchMedia('(max-width: 1199px)');
+      var narrow = matchMedia('(max-width: 700px)');
       var mode = null, L = LAYOUTS.h, loading = false, near = false;
       function setMode(force) {
         var m = narrow.matches ? 'v' : 'h';
