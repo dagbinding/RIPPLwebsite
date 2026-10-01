@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>Ride stats concept</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&amp;display=swap" />
+<style>
+  @font-face { font-family: "Inter"; font-weight: 300; font-display: swap; src: url("../../styles/fonts/Inter-Light.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 400; font-display: swap; src: url("../../styles/fonts/Inter-Regular.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 500; font-display: swap; src: url("../../styles/fonts/Inter-Medium.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 600; font-display: swap; src: url("../../styles/fonts/Inter-SemiBold.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 700; font-display: swap; src: url("../../styles/fonts/Inter-Bold.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 900; font-display: swap; src: url("../../styles/fonts/Inter-Black.woff2") format("woff2"); }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; }
+  :root {
+    --rippl-cream: #F2EBDC; --rippl-bone: #FAF6EC;
+    --rippl-cocoa: #2E1E10;
+    --rippl-ink: #0E0E0E; --rippl-ink-soft: #1A1A1A; --rippl-ink-line: #2A2A2A; --rippl-ink-fg-mute: #8A8378;
+    --rippl-sun: #D97740; --rippl-glow: #F4C04A; --rippl-wave: #4A7C8A; --rippl-score: #7FBE5F; --rippl-alert: #C9523C;
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --dur-fast: 120ms; --dur-base: 220ms; --dur-sheet: 420ms;
+    --gutter: clamp(16px, 3vw, 40px);
+  }
+  body { font-family: var(--font-body); background: var(--rippl-ink); color: var(--rippl-cream); -webkit-font-smoothing: antialiased; }
+  button, input { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--rippl-wave); outline-offset: 2px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  /* ---- Review chrome (concept only) ---------------------------------- */
+  .bar {
+    position: sticky; top: 0; z-index: 20; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px;
+    padding: 12px var(--gutter); background: rgba(14, 14, 14, 0.94); border-bottom: 1px solid var(--rippl-ink-line);
+  }
+  @media (max-width: 700px) { .bar { position: static; } }
+  .bar__name { margin: 0; font-size: 18px; font-weight: 300; letter-spacing: -0.01em; white-space: nowrap; }
+  .bar__name b { font-weight: 900; letter-spacing: -0.02em; }
+  .bar__name span { margin-left: 8px; font-size: 13px; font-weight: 600; letter-spacing: 0.16em; text-transform: lowercase; color: var(--rippl-ink-fg-mute); }
+  .bar__spacer { flex: 1; }
+  .bar__group { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; color: rgba(242, 235, 220, 0.7); }
+  .seg { display: flex; gap: 2px; padding: 3px; border-radius: 999px; background: var(--rippl-ink-soft); }
+  .seg button {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 0; border-radius: 999px;
+    background: transparent; color: rgba(242, 235, 220, 0.7); font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap;
+    transition: background-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  }
+  .seg button:hover { color: var(--rippl-cream); background: rgba(242, 235, 220, 0.06); }
+  .seg button[aria-pressed="true"] { background: var(--rippl-cream); color: var(--rippl-ink); }
+  .frame { display: inline-flex; align-items: center; gap: 8px; }
+  .frame input { width: 84px; min-height: 44px; padding: 0 10px; border-radius: 10px; border: 1px solid rgba(242, 235, 220, 0.22); background: var(--rippl-ink-soft); font-family: var(--font-mono); font-size: 15px; }
+  .frame output { font-family: var(--font-mono); color: rgba(242, 235, 220, 0.55); min-width: 6ch; }
+
+  /* ============ Ride stats ============
+     The cutback, frozen at its apex: what RIPPLsense measured on the left,
+     then the film runs on while the turn climbs the leaderboard on the right.
+     Everything inside the film is in stage units (--u): 1600 x 900
+     landscape, 450 x 800 for the vertical edit (phones, tablets, narrow
+     windows). */
+  .rs { --rs-sheet: 420ms; background: var(--rippl-ink); color: var(--rippl-cream); padding: clamp(64px, 10vh, 120px) 0 clamp(64px, 10vh, 120px); }
+  .rs__head {
+    max-width: 1600px; margin: 0 auto; display: grid; gap: clamp(20px, 3vh, 32px);
+    padding: clamp(24px, 4vh, 48px) clamp(24px, 6vw, 100px) clamp(40px, 6vh, 72px);
+    border-top: 1px solid rgba(242, 235, 220, 0.12);
+  }
+  .rs__row { display: flex; align-items: baseline; gap: 20px; flex-wrap: wrap; }
+  .rs__name { margin: 0; font-size: clamp(22px, 2.4vw, 34px); font-weight: 300; letter-spacing: -0.01em; line-height: 1; color: rgba(242, 235, 220, 0.95); }
+  .rs__name b { font-weight: 900; letter-spacing: -0.02em; }
+  .rs__tag { font-size: clamp(11px, 0.85vw, 13px); font-weight: 600; letter-spacing: 0.18em; text-transform: lowercase; color: rgba(242, 235, 220, 0.5); padding: 4px 10px; border: 1px solid rgba(242, 235, 220, 0.18); border-radius: 999px; }
+  .rs__body { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(24px, 4vw, 64px); align-items: end; }
+  .rs__display { margin: 0; font-size: clamp(44px, 6.4vw, 96px); font-weight: 900; text-transform: uppercase; line-height: 0.9; letter-spacing: -0.045em; text-wrap: balance; }
+  .rs__display span { color: var(--rippl-sun); }
+  .rs__blurb { margin: 0; max-width: 40ch; font-size: clamp(17px, 1.3vw, 20px); line-height: 1.55; color: rgba(242, 235, 220, 0.8); text-wrap: pretty; }
+  .rs__blurb b { font-weight: 600; color: var(--rippl-cream); }
+  @media (max-width: 900px) { .rs__body { grid-template-columns: 1fr; } }
+
+  .rs__stage { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: #000; container-type: inline-size; }
+  .rs__stage > * { --u: calc(100cqw / 1600); }
+  .rs.is-vert .rs__stage { aspect-ratio: 9 / 16; width: min(100%, calc(92svh * 9 / 16)); margin-inline: auto; }
+  .rs.is-vert .rs__stage > * { --u: calc(100cqw / 450); }
+  .rs__film { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+
+  .rs-ov { position: absolute; inset: 0; font-size: calc(18 * var(--u)); }
+  .rs-bi { opacity: 0; transform: translateY(calc(16 * var(--u))); }
+  .rs-bi.is-on { opacity: 1; transform: none; transition: opacity var(--rs-sheet) var(--ease-out), transform var(--rs-sheet) var(--ease-out); }
+  .rs-glass {
+    border-radius: calc(24 * var(--u)); background: rgba(14, 14, 14, 0.66); color: var(--rippl-cream);
+    -webkit-backdrop-filter: blur(calc(18 * var(--u))) saturate(1.1); backdrop-filter: blur(calc(18 * var(--u))) saturate(1.1);
+    box-shadow: 0 calc(18 * var(--u)) calc(50 * var(--u)) rgba(46, 30, 16, 0.4);
+  }
+  /* phones, tablets, touch: solid cards; re-blurring the film every frame is
+     the costliest thing here on those devices */
+  @media (max-width: 1024px), (hover: none), (pointer: coarse) {
+    .rs-glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(14, 14, 14, 0.86); }
+  }
+  .rs.is-vert .rs-glass { -webkit-backdrop-filter: none; backdrop-filter: none; background: rgba(14, 14, 14, 0.86); border-radius: calc(16 * var(--u)); }
+  .rs-wm { font-weight: 900; letter-spacing: -0.02em; font-size: calc(22 * var(--u)); white-space: nowrap; }
+  .rs-wm span { font-weight: 300; }
+  .rs-k { font-size: calc(15 * var(--u)); font-weight: 600; letter-spacing: 0.14em; text-transform: lowercase; color: rgba(242, 235, 220, 0.6); }
+  .rs-mono { font-family: var(--font-mono); font-weight: 500; font-variant-numeric: tabular-nums; }
+  .rs-short { display: none; }
+
+  /* ---- The apex: brackets on the rider while the film holds ------------ */
+  .rs-anchor { position: absolute; left: calc(612 * var(--u)); top: calc(292 * var(--u)); width: calc(240 * var(--u)); height: calc(322 * var(--u)); pointer-events: none; opacity: 0; transform: scale(1.08); }
+  .rs-anchor.is-on { opacity: 1; transform: none; transition: opacity var(--rs-sheet) var(--ease-out), transform var(--rs-sheet) var(--ease-out); }
+  .rs-anchor i { position: absolute; width: 20%; height: 16%; border: 0 solid var(--rippl-cream); filter: drop-shadow(0 0 calc(4 * var(--u)) rgba(14, 14, 14, 0.7)); }
+  .rs-anchor i:nth-child(1) { left: 0; top: 0; border-left-width: calc(3 * var(--u)); border-top-width: calc(3 * var(--u)); border-top-left-radius: calc(14 * var(--u)); }
+  .rs-anchor i:nth-child(2) { right: 0; top: 0; border-right-width: calc(3 * var(--u)); border-top-width: calc(3 * var(--u)); border-top-right-radius: calc(14 * var(--u)); }
+  .rs-anchor i:nth-child(3) { left: 0; bottom: 0; border-left-width: calc(3 * var(--u)); border-bottom-width: calc(3 * var(--u)); border-bottom-left-radius: calc(14 * var(--u)); }
+  .rs-anchor i:nth-child(4) { right: 0; bottom: 0; border-right-width: calc(3 * var(--u)); border-bottom-width: calc(3 * var(--u)); border-bottom-right-radius: calc(14 * var(--u)); }
+  .rs-anchor__label { position: absolute; left: 0; top: calc(100% + 10 * var(--u)); display: flex; gap: calc(8 * var(--u)); align-items: baseline; white-space: nowrap; color: var(--rippl-cream); text-shadow: 0 0 calc(8 * var(--u)) rgba(14, 14, 14, 0.75); }
+  .rs-anchor__label .rs-k { color: var(--rippl-cream); }
+  .rs-anchor__label .rs-mono { font-size: calc(15 * var(--u)); }
+  .rs-tether { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+  .rs-tether path { fill: none; stroke: var(--rippl-cream); stroke-width: calc(2 * var(--u)); stroke-dasharray: 1; stroke-dashoffset: 1; filter: drop-shadow(0 0 calc(3 * var(--u)) rgba(14, 14, 14, 0.6)); }
+  .rs-tether circle { fill: var(--rippl-cream); opacity: 0; }
+  .rs-tether.is-on path { stroke-dashoffset: 0; transition: stroke-dashoffset var(--rs-sheet) var(--ease-out); }
+  .rs-tether.is-on circle { opacity: 1; transition: opacity var(--dur-base) var(--ease-out); }
+
+  /* ---- Left: what RIPPLsense measured -------------------------------- */
+  .rs-card { position: absolute; left: calc(40 * var(--u)); top: calc(40 * var(--u)); width: calc(460 * var(--u)); display: grid; gap: calc(18 * var(--u)); padding: calc(24 * var(--u)) calc(26 * var(--u)); }
+  .rs-card__head, .rs-board__head { display: flex; align-items: baseline; justify-content: space-between; gap: calc(12 * var(--u)); }
+  .rs-stats { margin: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: calc(16 * var(--u)) calc(22 * var(--u)); }
+  .rs-stat { display: grid; gap: calc(6 * var(--u)); padding-top: calc(12 * var(--u)); border-top: 1px solid rgba(242, 235, 220, 0.14); }
+  .rs-stat dt { margin: 0; white-space: nowrap; }
+  .rs-stat dd { margin: 0; display: flex; align-items: baseline; gap: calc(6 * var(--u)); white-space: nowrap; }
+  .rs-stat dd b { font-size: calc(38 * var(--u)); line-height: 1; letter-spacing: -0.02em; }
+  .rs-stat dd span { font-size: calc(16 * var(--u)); color: rgba(242, 235, 220, 0.6); }
+  .rs-hero { display: grid; gap: calc(10 * var(--u)); padding-top: calc(16 * var(--u)); border-top: 1px solid rgba(242, 235, 220, 0.3); }
+  .rs-hero__row { display: flex; align-items: baseline; justify-content: space-between; gap: calc(12 * var(--u)); }
+  .rs-hero__label { display: grid; gap: calc(4 * var(--u)); }
+  .rs-hero__label .rs-k { color: var(--rippl-cream); }
+  .rs-hero__label small { font-size: calc(14 * var(--u)); color: rgba(242, 235, 220, 0.55); }
+  .rs-hero__num { display: flex; align-items: baseline; gap: calc(8 * var(--u)); white-space: nowrap; }
+  .rs-hero__num b { font-size: calc(64 * var(--u)); line-height: 0.9; letter-spacing: -0.03em; }
+  .rs-hero__num span { font-size: calc(18 * var(--u)); color: rgba(242, 235, 220, 0.55); }
+  .rs-meter { position: relative; height: calc(6 * var(--u)); border-radius: 999px; background: rgba(242, 235, 220, 0.16); }
+  .rs-meter span { position: absolute; left: 0; top: 0; bottom: 0; width: 0; border-radius: inherit; background: var(--rippl-glow); }
+
+  /* ---- Right: the leaderboard ---------------------------------------- */
+  .rs-board { position: absolute; right: calc(40 * var(--u)); top: calc(40 * var(--u)); width: calc(520 * var(--u)); display: grid; gap: calc(14 * var(--u)); padding: calc(22 * var(--u)) calc(22 * var(--u)) calc(20 * var(--u)); }
+  .rs-board__head { padding-inline: calc(4 * var(--u)); }
+  .rs-board__title { margin: 0; padding-inline: calc(4 * var(--u)); display: grid; gap: calc(6 * var(--u)); }
+  .rs-board__title b { font-size: calc(32 * var(--u)); font-weight: 900; letter-spacing: -0.03em; line-height: 1; }
+  .rs-list { --rh: 58; position: relative; height: calc(var(--rows, 7) * var(--rh) * var(--u)); margin: 0; padding: 0; list-style: none; overflow: hidden; }
+  .rs-row {
+    position: absolute; left: 0; right: 0; top: 0; height: calc((var(--rh) - 6) * var(--u));
+    display: grid; grid-template-columns: calc(30 * var(--u)) calc(40 * var(--u)) minmax(0, 1fr) auto; align-items: center; gap: calc(12 * var(--u));
+    padding: 0 calc(14 * var(--u)) 0 calc(10 * var(--u)); border-radius: calc(10 * var(--u));
+    transform: translateY(calc(var(--i, 0) * var(--rh) * var(--u)));
+    transition: transform var(--rs-sheet) var(--ease-out), background-color var(--dur-base) var(--ease-out);
+  }
+  .rs-row__rank { position: relative; font-size: calc(17 * var(--u)); color: rgba(242, 235, 220, 0.6); text-align: right; }
+  .rs-row__av { display: grid; place-items: center; width: calc(40 * var(--u)); height: calc(40 * var(--u)); border-radius: 50%; background: rgba(242, 235, 220, 0.1); font-size: calc(13 * var(--u)); font-weight: 600; letter-spacing: 0.02em; }
+  .rs-row__who { display: grid; gap: calc(2 * var(--u)); min-width: 0; }
+  .rs-row__name { font-size: calc(18 * var(--u)); font-weight: 600; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rs-row__spot { font-size: calc(14 * var(--u)); color: rgba(242, 235, 220, 0.6); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rs-row__score { font-size: calc(20 * var(--u)); }
+  /* passed: a beat of red on the way down */
+  .rs-row__rank::before { content: "\25BC"; position: absolute; right: calc(100% + 4 * var(--u)); top: 50%; transform: translateY(-50%); font-size: calc(9 * var(--u)); color: var(--rippl-alert); opacity: 0; transition: opacity var(--rs-sheet) var(--ease-out); }
+  .rs-row.is-knocked .rs-row__rank::before { opacity: 1; transition-duration: var(--dur-fast); }
+  /* the rider: the one bright row */
+  .rs-row.is-you { z-index: 2; background: var(--rippl-cream); color: var(--rippl-ink); box-shadow: 0 calc(10 * var(--u)) calc(28 * var(--u)) rgba(46, 30, 16, 0.45); }
+  .rs-row.is-you .rs-row__rank, .rs-row.is-you .rs-row__spot { color: rgba(14, 14, 14, 0.62); }
+  .rs-row.is-you .rs-row__av { background: var(--rippl-ink); color: var(--rippl-cream); }
+  .rs-board__foot { margin: 0; padding: calc(12 * var(--u)) calc(4 * var(--u)) 0; border-top: 1px solid rgba(242, 235, 220, 0.14); font-size: calc(16 * var(--u)); color: rgba(242, 235, 220, 0.75); }
+  .rs-board__foot b { font-weight: 600; color: var(--rippl-cream); }
+
+  /* ---- The vertical edit: the rider finishes low in the frame, so the top
+     is the only clear space: the measures hold it on the apex, then hand it
+     to the board when the film runs on ---- */
+  .rs.is-vert .rs-short { display: inline; }
+  .rs.is-vert .rs-long, .rs.is-vert .rs-tether, .rs.is-vert .rs-board__title { display: none; }
+  .rs.is-vert .rs-k { font-size: calc(13 * var(--u)); letter-spacing: 0.1em; }
+  .rs.is-vert .rs-wm { font-size: calc(18 * var(--u)); }
+  .rs.is-vert .rs-anchor { left: calc(100 * var(--u)); top: calc(264 * var(--u)); width: calc(168 * var(--u)); height: calc(276 * var(--u)); }
+  .rs.is-vert .rs-anchor__label { left: auto; right: calc(-6 * var(--u)); top: calc(100% + 6 * var(--u)); }
+  .rs.is-vert .rs-anchor__label .rs-mono { font-size: calc(13 * var(--u)); }
+  .rs.is-vert .rs-card { left: calc(12 * var(--u)); top: calc(12 * var(--u)); width: calc(426 * var(--u)); gap: calc(10 * var(--u)); padding: calc(13 * var(--u)) calc(16 * var(--u)); }
+  .rs.is-vert .rs-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: calc(8 * var(--u)) calc(12 * var(--u)); }
+  .rs.is-vert .rs-stat { gap: calc(3 * var(--u)); padding-top: calc(7 * var(--u)); }
+  .rs.is-vert .rs-stat dd { gap: calc(4 * var(--u)); }
+  .rs.is-vert .rs-stat dd b { font-size: calc(23 * var(--u)); }
+  .rs.is-vert .rs-stat dd span { font-size: calc(13 * var(--u)); }
+  .rs.is-vert .rs-hero { gap: calc(7 * var(--u)); padding-top: calc(9 * var(--u)); }
+  .rs.is-vert .rs-hero__label small { font-size: calc(12.5 * var(--u)); }
+  .rs.is-vert .rs-hero__num b { font-size: calc(38 * var(--u)); }
+  .rs.is-vert .rs-hero__num span { font-size: calc(14 * var(--u)); }
+  .rs.is-vert .rs-meter { height: calc(5 * var(--u)); }
+  .rs.is-vert .rs-card.rs-bi.is-handed { opacity: 0; transform: translateY(calc(-16 * var(--u))); }
+  .rs.is-vert .rs-board { right: auto; left: calc(12 * var(--u)); top: calc(12 * var(--u)); width: calc(426 * var(--u)); gap: calc(8 * var(--u)); padding: calc(12 * var(--u)) calc(12 * var(--u)) calc(11 * var(--u)); }
+  .rs.is-vert .rs-list { --rh: 46; }
+  .rs.is-vert .rs-row { grid-template-columns: calc(22 * var(--u)) calc(30 * var(--u)) minmax(0, 1fr) auto; gap: calc(9 * var(--u)); padding: 0 calc(10 * var(--u)) 0 calc(6 * var(--u)); border-radius: calc(8 * var(--u)); }
+  .rs.is-vert .rs-row__rank { font-size: calc(14 * var(--u)); }
+  .rs.is-vert .rs-row__av { width: calc(32 * var(--u)); height: calc(32 * var(--u)); font-size: calc(11.5 * var(--u)); }
+  .rs.is-vert .rs-row__who { gap: 0; }
+  .rs.is-vert .rs-row__name { font-size: calc(15.5 * var(--u)); }
+  .rs.is-vert .rs-row__spot { font-size: calc(12.5 * var(--u)); }
+  .rs.is-vert .rs-row__score { font-size: calc(16 * var(--u)); }
+  .rs.is-vert .rs-board__foot { padding-top: calc(8 * var(--u)); font-size: calc(13.5 * var(--u)); }
+
+  /* ---- Under the film: replay ------------------------------------------- */
+  .rs__transport { max-width: 1600px; margin: 0 auto; display: flex; justify-content: flex-end; padding: 14px clamp(24px, 6vw, 100px) 0; }
+  .rs.is-vert .rs__transport { max-width: min(100%, calc(92svh * 9 / 16)); padding-inline: 16px; }
+  .rs-replay {
+    display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 18px; border-radius: 999px; cursor: pointer;
+    border: 1px solid rgba(242, 235, 220, 0.22); background: transparent; color: var(--rippl-cream); font-size: 15px; font-weight: 600;
+    transition: background-color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+  }
+  .rs-replay:hover { background: rgba(242, 235, 220, 0.08); border-color: rgba(242, 235, 220, 0.4); }
+  .rs-replay:active { background: rgba(242, 235, 220, 0.14); }
+  @media (max-width: 700px) { .rs__transport { padding-inline: 16px; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rs-bi.is-on, .rs-anchor.is-on, .rs-row, .rs-row__rank::before, .rs-tether.is-on path, .rs-tether.is-on circle { transition: none; }
+  }
+</style>
+</head>
+<body>
+  <header class="bar">
+    <p class="bar__name"><b>Ride</b> stats<span>concept · 04b</span></p>
+    <div class="bar__spacer"></div>
+    <label class="bar__group frame">freeze on frame
+      <input id="rs-frame" type="number" min="1" max="190" step="1" value="122" />
+      <output id="rs-frame-t" class="mono">4.88 s</output>
+    </label>
+    <div class="bar__group">rider
+      <div class="seg" id="rs-who">
+        <button type="button" data-who="name" aria-pressed="true">Name</button>
+        <button type="button" data-who="you" aria-pressed="false">You</button>
+      </div>
+    </div>
+    <div class="bar__group">view
+      <div class="seg" id="rs-view">
+        <button type="button" data-view="auto" aria-pressed="true">Auto</button>
+        <button type="button" data-view="h" aria-pressed="false">Landscape</button>
+        <button type="button" data-view="v" aria-pressed="false">Vertical</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+  <!-- ============ Ride stats — the apex, then the leaderboard ============ -->
+  <section class="rs" data-screen-label="04b Ride stats" id="ride-stats" aria-labelledby="rs-title">
+    <div class="rs__head">
+      <div class="rs__row">
+        <h2 class="rs__name" id="rs-title"><b>Ride</b> stats</h2>
+        <span class="rs__tag">straight off the board</span>
+      </div>
+      <div class="rs__body">
+        <p class="rs__display">Every turn,<br />measured<span>.</span></p>
+        <p class="rs__blurb">Before any coaching, there's the fun part. RIPPLsense measures every wave you ride — how fast you went, how far you laid the rail over, how much power you put through the turn — and puts your best one on the board <b>next to surfers from Trestles to the Mentawais</b>.</p>
+      </div>
+    </div>
+
+    <div class="rs__stage">
+      <video class="rs__film" muted playsinline preload="auto" aria-hidden="true"></video>
+      <div class="rs-ov">
+        <svg class="rs-tether" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">
+          <path pathLength="1" d="M500 330 L598 330" /><circle cx="598" cy="330" r="5" />
+        </svg>
+        <div class="rs-anchor" aria-hidden="true">
+          <i></i><i></i><i></i><i></i>
+          <span class="rs-anchor__label"><span class="rs-k">turn apex</span><span class="rs-mono" data-apex-t>0:04.88</span></span>
+        </div>
+
+        <div class="rs-glass rs-card rs-bi" data-at="0.2">
+          <div class="rs-card__head"><span class="rs-wm">RIPPL<span>sense</span></span><span class="rs-k">wave 4 · cutback</span></div>
+          <dl class="rs-stats">
+            <div class="rs-stat rs-bi" data-at="0.42"><dt class="rs-k">speed</dt><dd class="rs-mono"><b data-n="32">32</b><span>km/h</span></dd></div>
+            <div class="rs-stat rs-bi" data-at="0.51"><dt class="rs-k">g-force</dt><dd class="rs-mono"><b data-n="2.4" data-d="1">2.4</b><span>g</span></dd></div>
+            <div class="rs-stat rs-bi" data-at="0.60"><dt class="rs-k">rail<span class="rs-long"> engagement</span></dt><dd class="rs-mono"><b data-n="58">58</b><span>°</span></dd></div>
+            <div class="rs-stat rs-bi" data-at="0.69"><dt class="rs-k">turn arc</dt><dd class="rs-mono"><b data-n="168">168</b><span>°</span></dd></div>
+            <div class="rs-stat rs-bi" data-at="0.78"><dt class="rs-k">wave<span class="rs-long"> height</span></dt><dd class="rs-mono"><b data-n="1.8" data-d="1">1.8</b><span>m</span></dd></div>
+            <div class="rs-stat rs-bi" data-at="0.87"><dt class="rs-k">ride<span class="rs-long"> length</span></dt><dd class="rs-mono"><b data-n="86">86</b><span>m</span></dd></div>
+          </dl>
+          <div class="rs-hero rs-bi" data-at="1.2">
+            <div class="rs-hero__row">
+              <div class="rs-hero__label"><span class="rs-k">turn power</span><small>speed · load · arc</small></div>
+              <div class="rs-hero__num rs-mono"><b data-n="8.74" data-d="2" data-dur="0.9">8.74</b><span>/ 10</span></div>
+            </div>
+            <div class="rs-meter"><span></span></div>
+          </div>
+        </div>
+
+        <div class="rs-glass rs-board rs-bi" data-at="2.7">
+          <div class="rs-board__head"><span class="rs-wm">RIPPL<span>social</span></span><span class="rs-k"><span class="rs-long">worldwide · this month</span><span class="rs-short">best cutback · worldwide</span></span></div>
+          <p class="rs-board__title"><b>Best cutback</b><span class="rs-k">ranked by turn power</span></p>
+          <ol class="rs-list" aria-hidden="true"></ol>
+          <p class="rs-board__foot rs-bi" data-foot data-at="6"></p>
+        </div>
+        <p class="sr-only" id="rs-sr"></p>
+      </div>
+    </div>
+
+    <div class="rs__transport">
+      <button class="rs-replay" type="button"><span aria-hidden="true">↺</span> <span class="rs-replay__label">Replay</span></button>
+    </div>
+  </section>
+  </main>
+
+  <script>
+  (function () {
+    var root = document.getElementById('ride-stats');
+    var stage = root.querySelector('.rs__stage'), vid = root.querySelector('.rs__film');
+    var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var store = {
+      get: function (k, d) { try { var v = localStorage.getItem(k); return v === null ? d : v; } catch (e) { return d; } },
+      set: function (k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+    };
+
+    // ---- The film -----------------------------------------------------------
+    var FPS = 25, DUR = 8;                                // the film ends on frame 200, the last with the rider in shot
+    var frame = Math.max(1, Math.min(190, parseInt(store.get('rs.frame', '122'), 10) || 122));
+    function freezeT() { return (frame + 0.5) / FPS; }   // middle of the frame
+    // The source is shot slow, so it runs fast and eases back to true speed
+    // into the apex (never below 1x: slower than that the 25 fps film stutters).
+    var FAST = 2.25, SLOW_IN = 0.9, RAMP_OUT = 0.6;       // SLOW_IN in film seconds, RAMP_OUT in real ones
+    var HOLD = 3.0;                                       // seconds frozen on the apex
+
+    var LAYOUTS = {
+      h: { film: 'media/ride-stats-1600.mp4', poster: 'media/poster-0.jpg', still: 'media/poster-122.jpg', rows: 7 },
+      v: { film: 'media/ride-stats-vert-720.mp4', poster: 'media/poster-vert-0.jpg', still: 'media/poster-vert-122.jpg', rows: 5 }
+    };
+
+    // ---- The board ------------------------------------------------------------
+    // PLACEHOLDER scores: real surfers, made-up numbers. Before anything like
+    // this goes live it needs real RIPPL data and the surfers' sign-off.
+    var PROS = [
+      ['John John Florence', 'Pipeline', 'Hawaiʻi', 9.12],
+      ['Gabriel Medina', 'Maresias', 'Brazil', 8.96],
+      ['Griffin Colapinto', 'Lower Trestles', 'California', 8.71],
+      ['Ítalo Ferreira', 'Baía Formosa', 'Brazil', 8.58],
+      ['Jack Robinson', 'Margaret River', 'Australia', 8.40],
+      ['Ethan Ewing', 'Snapper Rocks', 'Australia', 8.22],
+      ['Kanoa Igarashi', 'Huntington Beach', 'California', 8.05]
+    ];
+    var RIDER = { name: 'Liam Archer', spot: "Lance's Right", region: 'Indonesia', score: 8.74 };
+    var who = store.get('rs.who', 'name');
+    var ENTER = 3.05, STEP = 0.32;                            // the rider's row arrives, then climbs one place per step
+
+    var list = root.querySelector('.rs-list'), foot = root.querySelector('[data-foot]');
+    var rows = [], riderRow = null, V = 7, FINAL = PROS.filter(function (p) { return p[3] > RIDER.score; }).length;
+    function initials(n) { var w = n.split(' '); return (w[0][0] + (w.length > 1 ? w[w.length - 1][0] : '')).toUpperCase(); }
+    function rowEl(name, spot, region, score, you) {
+      var li = document.createElement('li');
+      li.className = 'rs-row' + (you ? ' is-you' : '');
+      li.innerHTML = '<span class="rs-row__rank rs-mono"></span><span class="rs-row__av"></span>' +
+        '<span class="rs-row__who"><span class="rs-row__name"></span><span class="rs-row__spot"></span></span>' +
+        '<span class="rs-row__score rs-mono">' + score.toFixed(2) + '</span>';
+      li.querySelector('.rs-row__name').textContent = name;
+      li.querySelector('.rs-row__av').textContent = initials(name);
+      li.querySelector('.rs-row__spot').textContent = spot + ' · ' + region;
+      list.appendChild(li);
+      return { el: li, rank: li.querySelector('.rs-row__rank'), idx: -1 };
+    }
+    function riderName() { return who === 'you' ? 'You' : RIDER.name; }
+    function buildBoard() {
+      list.textContent = ''; rows = PROS.map(function (p) { return rowEl(p[0], p[1], p[2], p[3], false); });
+      riderRow = rowEl(riderName(), RIDER.spot, RIDER.region, RIDER.score, true);
+      if (who === 'you') riderRow.el.querySelector('.rs-row__av').textContent = 'You';
+      list.style.setProperty('--rows', V);
+      var ahead = PROS[FINAL - 1];
+      foot.innerHTML = 'Up to <b>#' + (FINAL + 1) + ' worldwide</b> · ' + (ahead[3] - RIDER.score).toFixed(2) + ' behind ' + ahead[0] + '.';
+      document.getElementById('rs-sr').textContent = 'Leaderboard, best cutback by turn power, worldwide this month: ' +
+        PROS.slice(0, FINAL).map(function (p, i) { return (i + 1) + ', ' + p[0] + ', ' + p[1] + ', ' + p[3]; }).concat(
+        [(FINAL + 1) + ', ' + riderName() + ', ' + RIDER.spot + ', ' + RIDER.score]).concat(
+        PROS.slice(FINAL, V - 1).map(function (p, i) { return (FINAL + i + 2) + ', ' + p[0] + ', ' + p[1] + ', ' + p[3]; })).join('; ') + '.';
+    }
+    var STEPS = 0;   // places to climb once on the board: from the bottom slot to FINAL
+    // k = 0: rider below the board. k >= 1: on it, one place higher per step.
+    function renderBoard(k, animate) {
+      var at = k === 0 ? V : Math.max(FINAL, V - k);
+      var order = rows.slice(); order.splice(at, 0, riderRow);
+      order.forEach(function (r, i) {
+        if (animate && r !== riderRow && r.idx >= 0 && i > r.idx && i < V + 1) knock(r);
+        if (r.idx === i) return;
+        r.idx = i;
+        r.el.style.setProperty('--i', Math.min(i, V));   // everything past the board waits just under it
+        r.rank.textContent = i + 1;
+      });
+    }
+    function knock(r) {
+      r.el.classList.add('is-knocked');
+      clearTimeout(r.t); r.t = setTimeout(function () { r.el.classList.remove('is-knocked'); }, 900);
+    }
+
+    // ---- The timeline ---------------------------------------------------------
+    // T is seconds since the film froze on the apex (-1 before it). Everything
+    // on screen is a pure function of T, so a replay or a jump just re-applies.
+    var cues = Array.prototype.map.call(root.querySelectorAll('.rs-ov [data-at]'), function (el) { return { el: el, at: parseFloat(el.dataset.at), on: false }; });
+    var counts = Array.prototype.map.call(root.querySelectorAll('[data-n]'), function (b) {
+      var host = b.closest('[data-at]');
+      return { el: b, n: parseFloat(b.dataset.n), d: parseInt(b.dataset.d || '0', 10), at: parseFloat(host.dataset.at), dur: parseFloat(b.dataset.dur || '0.7'), shown: null };
+    });
+    var card = root.querySelector('.rs-card'), anchor = root.querySelector('.rs-anchor'), tether = root.querySelector('.rs-tether'), meter = root.querySelector('.rs-meter span');
+    var footCue = cues.filter(function (q) { return q.el === foot; })[0];
+    var boardCue = cues.filter(function (q) { return q.el.classList.contains('rs-board'); })[0];
+    function ease(x) { x = Math.max(0, Math.min(1, x)); return 1 - Math.pow(1 - x, 3); }
+    var boardK = -1;
+    function apply(T, animate) {
+      var holding = T >= 0 && T < HOLD;
+      anchor.classList.toggle('is-on', holding);
+      card.classList.toggle('is-handed', mode === 'v' && T >= boardCue.at);
+      tether.classList.toggle('is-on', T >= 0.1 && T < HOLD);
+      footCue.at = ENTER + (STEPS - 1) * STEP + 0.45;
+      cues.forEach(function (q) { var on = T >= q.at; if (on !== q.on) { q.on = on; q.el.classList.toggle('is-on', on); } });
+      counts.forEach(function (c) {
+        var v = (c.n * ease((T - c.at) / c.dur)).toFixed(c.d);
+        if (v !== c.shown) { c.shown = v; c.el.textContent = v; }
+      });
+      meter.style.width = (RIDER.score * 10 * ease((T - 1.2) / 0.9)) + '%';
+      var k = T < ENTER ? 0 : Math.min(STEPS, 1 + Math.floor((T - ENTER) / STEP));
+      if (k !== boardK) { boardK = k; renderBoard(k, animate); }
+    }
+
+    // ---- The clock --------------------------------------------------------------
+    // 'in': the film plays, slowing into the apex. 'hold': frozen on it.
+    // 'out': the film runs on while the board climbs. 'done': all settled.
+    var phase = 'idle', T = -1, raf = 0, last = 0, seen = false, rate = 1;
+    function setRate(r) { if (Math.abs(r - rate) > 0.02 || r === 1 || r === FAST) { rate = r; if (vid.playbackRate !== r) vid.playbackRate = r; } }
+    function tick(now) {
+      raf = 0;
+      var dt = last ? Math.min(0.05, (now - last) / 1000) : 0; last = now;
+      if (phase === 'in') {
+        var ft = freezeT(), t = vid.currentTime, into = t - (ft - SLOW_IN);
+        setRate(into <= 0 ? FAST : FAST - (FAST - 1) * ease(into / SLOW_IN));
+        if (t >= ft - 0.5 / FPS) { vid.pause(); vid.currentTime = ft; setRate(1); phase = 'hold'; T = 0; }
+      } else if (phase === 'hold' || phase === 'out') {
+        T += dt;
+        if (phase === 'hold' && T >= HOLD) { phase = 'out'; setRate(1); vid.play().catch(function () {}); }
+        if (phase === 'out') {
+          setRate(1 + (FAST - 1) * ease((T - HOLD) / RAMP_OUT));
+          if (vid.currentTime >= DUR && !vid.paused) { vid.pause(); vid.currentTime = DUR; }
+          if ((vid.paused || vid.ended) && T > footCue.at + 0.5) phase = 'done';
+        }
+      }
+      apply(T, true);
+      if (seen && phase !== 'done' && phase !== 'idle') wake(); else last = 0;
+    }
+    function wake() { if (!raf) raf = requestAnimationFrame(tick); }
+
+    function quiet(fn) {   // change state with transitions off, so a reset snaps
+      root.classList.add('is-resetting');
+      var els = root.querySelectorAll('.rs-bi, .rs-anchor, .rs-row, .rs-tether path, .rs-tether circle');
+      Array.prototype.forEach.call(els, function (e) { e.style.transition = 'none'; });
+      fn(); void stage.offsetWidth;
+      Array.prototype.forEach.call(els, function (e) { e.style.transition = ''; });
+      root.classList.remove('is-resetting');
+    }
+    function restart() {
+      quiet(function () { boardK = -1; rows.concat(riderRow).forEach(function (r) { r.idx = -1; }); apply(-1, false); });
+      phase = 'in'; T = -1; last = 0; setRate(FAST);
+      if (vid.getAttribute('src') !== L.film) vid.src = L.film;
+      vid.currentTime = 0;
+      vid.play().catch(function () {});
+      replayLabel.textContent = 'Replay';
+      wake();
+    }
+    // reduced motion: the apex, every number and the final board, nothing moving
+    function finished() {
+      phase = 'idle'; vid.removeAttribute('src'); vid.load(); vid.poster = L.still;
+      quiet(function () { boardK = -1; rows.concat(riderRow).forEach(function (r) { r.idx = -1; }); apply(99, false); });
+      anchor.classList.remove('is-on'); tether.classList.remove('is-on');
+      replayLabel.textContent = 'Play';
+    }
+
+    // ---- Layout per screen: the vertical edit below 1200 px ------------------------
+    var replayLabel = root.querySelector('.rs-replay__label');
+    var narrow = matchMedia('(max-width: 1199px)');
+    var view = store.get('rs.view', 'auto'), mode = null, L = LAYOUTS.h;
+    function setMode(force) {
+      var m = view === 'auto' ? (narrow.matches ? 'v' : 'h') : view;
+      if (m === mode && !force) return;
+      mode = m; L = LAYOUTS[m]; V = L.rows; STEPS = V - FINAL;
+      root.classList.toggle('is-vert', m === 'v');
+      vid.poster = L.poster;
+      buildBoard();
+      if (reduce) finished();
+      else if (seen) restart();
+      else { vid.src = L.film; quiet(function () { boardK = -1; apply(-1, false); }); }
+    }
+    narrow.addEventListener('change', function () { setMode(false); });
+
+    // ---- Apex marker on the progress line, and the review controls --------------
+    var frameIn = document.getElementById('rs-frame'), frameOut = document.getElementById('rs-frame-t');
+    function showFrame() {
+      frameIn.value = frame; frameOut.textContent = (frame / FPS).toFixed(2) + ' s';
+      root.querySelector('[data-apex-t]').textContent = '0:0' + (frame / FPS).toFixed(2);
+    }
+    frameIn.addEventListener('change', function () {
+      var f = parseInt(frameIn.value, 10);
+      if (!(f >= 1 && f <= 190)) { showFrame(); return; }
+      frame = f; store.set('rs.frame', f); showFrame();
+      if (reduce) finished(); else restart();
+    });
+    function pressGroup(id, attr, val) {
+      Array.prototype.forEach.call(document.querySelectorAll('#' + id + ' button'), function (b) { b.setAttribute('aria-pressed', String(b.dataset[attr] === val)); });
+    }
+    document.getElementById('rs-who').addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      who = b.dataset.who; store.set('rs.who', who); pressGroup('rs-who', 'who', who);
+      setMode(true);
+    });
+    document.getElementById('rs-view').addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      view = b.dataset.view; store.set('rs.view', view); pressGroup('rs-view', 'view', view);
+      setMode(true);
+    });
+    pressGroup('rs-who', 'who', who); pressGroup('rs-view', 'view', view);
+    showFrame();
+
+    root.querySelector('.rs-replay').addEventListener('click', function () { seen = true; restart(); });
+
+    setMode(true);
+
+    // ---- Play while it's on screen; pause the film and the clock when it isn't ----
+    if (!reduce) new IntersectionObserver(function (e) {
+      seen = e[0].isIntersecting;
+      if (!seen) { vid.pause(); return; }
+      if (phase === 'idle') restart();
+      else if (phase === 'in' || (phase === 'out' && vid.currentTime < DUR)) { vid.play().catch(function () {}); wake(); }
+      else wake();
+    }, { threshold: 0.35 }).observe(stage);
+  })();
+  </script>
+</body>
+</html>
