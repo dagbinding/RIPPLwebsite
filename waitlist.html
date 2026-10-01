@@ -144,12 +144,6 @@
   .btn__arrow { transition: transform 220ms var(--ease-out); }
   .btn:hover .btn__arrow { transform: translateX(3px); }
 
-  .meta {
-    margin: 0; display: flex; flex-wrap: wrap; gap: 6px 14px;
-    font-size: 13px; font-weight: 600; letter-spacing: 0.06em; color: rgba(242, 235, 220, 0.7);
-  }
-  .meta span + span::before { content: "·"; margin-right: 14px; color: var(--rippl-sun); }
-
   /* ============ Footer ============ */
   .footer {
     display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
@@ -231,7 +225,6 @@
         <input id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="Your email" required />
         <button class="btn" type="submit">Join the waitlist <span class="btn__arrow" aria-hidden="true">→</span></button>
       </form>
-      <p class="meta" data-in style="--d: 380ms"><span>Early access</span><span>No spam</span><span>Leave anytime</span></p>
     </div>
   </main>
 
