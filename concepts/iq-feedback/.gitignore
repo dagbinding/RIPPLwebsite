@@ -1,0 +1,6 @@
+# Ride data and the pipeline scripts that make it stay off this public repo
+# (kept locally). The pages only need fall-still.json and the web videos.
+ride.bin
+ride.json
+export_ride.py
+export_still.py
