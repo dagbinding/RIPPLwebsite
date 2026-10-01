@@ -1,0 +1,820 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Join the RIPPL Tester Program — Free Surf Sensor</title>
+<meta name="description" content="Get a free RIPPLsense sensor for your board, early access to the RIPPL app and a direct line to the team. Join the tester program and help shape RIPPL." />
+<link rel="canonical" href="https://www.ripplsurf.com/waitlist" />
+
+<!-- Link previews -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="RIPPL" />
+<meta property="og:title" content="Join the RIPPL Tester Program — Free Surf Sensor" />
+<meta property="og:description" content="Get a free RIPPLsense sensor for your board, early access to the RIPPL app and a direct line to the team. Join the tester program and help shape RIPPL." />
+<meta property="og:url" content="https://www.ripplsurf.com/waitlist" />
+<meta property="og:image" content="https://www.ripplsurf.com/assets/og-image.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="A surfer's feet on a white board at golden hour, the RIPPL sensor mounted on the tail" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Join the RIPPL Tester Program — Free Surf Sensor" />
+<meta name="twitter:description" content="Get a free RIPPLsense sensor for your board, early access to the RIPPL app and a direct line to the team. Join the tester program and help shape RIPPL." />
+<meta name="twitter:image" content="https://www.ripplsurf.com/assets/og-image.jpg" />
+
+<!-- Icons -->
+<link rel="icon" href="/favicon.ico" sizes="48x48" />
+<link rel="icon" href="/assets/icons/icon-192.png" type="image/png" sizes="192x192" />
+<link rel="apple-touch-icon" href="/assets/icons/apple-touch-icon.png" />
+<meta name="theme-color" content="#2E1E10" />
+
+<!-- Fonts used in the first screen -->
+<link rel="preload" as="font" type="font/woff2" href="styles/fonts/Inter-Black.woff2" crossorigin />
+<link rel="preload" as="font" type="font/woff2" href="styles/fonts/Inter-Regular.woff2" crossorigin />
+
+<!-- Hero background: fetch early so it's there when the loader lifts -->
+<link rel="preload" as="image" type="image/webp" fetchpriority="high" href="assets/img/signup-waxing-1536.webp" />
+<style>
+  @font-face { font-family: "Inter"; font-weight: 300; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Light.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 400; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Regular.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 500; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Medium.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 600; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-SemiBold.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 700; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Bold.woff2") format("woff2"); }
+  @font-face { font-family: "Inter"; font-weight: 900; font-style: normal; font-display: swap; src: url("styles/fonts/Inter-Black.woff2") format("woff2"); }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+
+  :root {
+    --rippl-cream: #F2EBDC;
+    --rippl-bone: #FAF6EC;
+    --rippl-cocoa: #2E1E10;
+    --rippl-cocoa-soft: #4A3220;
+    --rippl-cocoa-mute: #7A6450;
+    --rippl-ink: #0E0E0E;
+    --rippl-sun: #D97740;
+    --rippl-glow: #F4C04A;
+    --rippl-wave: #4A7C8A;
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  body {
+    font-family: var(--font-body);
+    color: var(--rippl-cocoa);
+    background: var(--rippl-ink);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ============ Top nav ============ */
+  .nav {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px clamp(24px, 4vw, 56px);
+    color: #fff;
+  }
+  .nav__brand img { display: block; height: 22px; width: auto; opacity: 0.92; }
+  .nav__back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.7);
+    transition: color 160ms var(--ease-out);
+  }
+  .nav__back:hover { color: #fff; }
+
+  /* ============ Hero ============ */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background: var(--rippl-ink);
+    color: #fff;
+    padding: 120px clamp(24px, 6vw, 96px) 80px;
+  }
+  .hero__bg {
+    position: absolute;
+    inset: -4%;
+    background-image: url("assets/img/signup-waxing-1536.webp");
+    background-position: center 60%;
+    background-size: cover;
+    background-repeat: no-repeat;
+    opacity: 0.45;
+    filter: saturate(0.85);
+  }
+  .hero__scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(14,14,14,0.55) 0%, rgba(14,14,14,0.25) 30%, rgba(14,14,14,0.85) 100%),
+      radial-gradient(ellipse at 30% 80%, rgba(217,119,64,0.18) 0%, transparent 55%);
+  }
+  .hero__inner {
+    position: relative;
+    z-index: 2;
+    max-width: 1280px;
+    margin: 0 auto;
+    width: 100%;
+  }
+  .hero__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: lowercase;
+    color: rgba(255,255,255,0.78);
+    margin-bottom: clamp(24px, 4vh, 36px);
+  }
+  .hero__eyebrow::before {
+    content: "";
+    width: 36px;
+    height: 1px;
+    background: var(--rippl-sun);
+  }
+  .hero__title {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: clamp(64px, 11vw, 168px);
+    line-height: 0.88;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    margin: 0;
+    max-width: 16ch;
+  }
+  .hero__title em {
+    font-style: normal;
+    color: var(--rippl-sun);
+  }
+  .hero__sub {
+    font-family: var(--font-body);
+    font-size: clamp(18px, 1.6vw, 24px);
+    line-height: 1.45;
+    color: rgba(255,255,255,0.82);
+    max-width: 52ch;
+    margin: clamp(28px, 4vh, 44px) 0 0;
+  }
+  .hero__sub b { color: #fff; font-weight: 700; }
+
+  /* ============ Benefits ============ */
+  .benefits {
+    background: var(--rippl-cream);
+    color: var(--rippl-cocoa);
+    padding: clamp(80px, 12vh, 140px) clamp(24px, 6vw, 96px);
+  }
+  .benefits__inner { max-width: 1280px; margin: 0 auto; }
+  .benefits__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: lowercase;
+    color: var(--rippl-cocoa-mute);
+    margin-bottom: clamp(24px, 4vh, 32px);
+  }
+  .benefits__eyebrow::before {
+    content: "";
+    width: 32px;
+    height: 1px;
+    background: var(--rippl-cocoa-mute);
+  }
+  .benefits__title {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: clamp(48px, 7vw, 96px);
+    line-height: 0.9;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+    margin: 0 0 clamp(48px, 7vh, 80px);
+    color: var(--rippl-cocoa);
+    max-width: 14ch;
+  }
+  .benefits__title em {
+    font-style: normal;
+    color: var(--rippl-sun);
+  }
+  .benefits__list {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1px;
+    background: rgba(46,30,16,0.16);
+  }
+  .benefit {
+    background: var(--rippl-cream);
+    padding: clamp(32px, 4vw, 48px) clamp(24px, 3vw, 40px);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-height: 360px;
+  }
+  .benefit__num {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    color: var(--rippl-sun);
+  }
+  .benefit__h {
+    font-size: clamp(28px, 2.8vw, 40px);
+    font-weight: 900;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--rippl-cocoa);
+  }
+  .benefit__p {
+    font-size: clamp(15px, 1.05vw, 17px);
+    line-height: 1.5;
+    color: var(--rippl-cocoa-soft);
+    margin: 0;
+    max-width: 32ch;
+  }
+  .benefit__tag {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--rippl-cocoa);
+    border: 1px solid var(--rippl-cocoa);
+    padding: 8px 14px;
+    border-radius: 999px;
+    align-self: flex-start;
+  }
+  .benefit__tag b { color: var(--rippl-sun); font-weight: 700; }
+
+  /* ============ Referrals ============ */
+  .refer {
+    background: var(--rippl-cocoa);
+    color: #fff;
+    padding: clamp(80px, 14vh, 160px) clamp(24px, 6vw, 96px);
+    position: relative;
+    overflow: hidden;
+  }
+  .refer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 75% 30%, rgba(217,119,64,0.26) 0%, transparent 55%);
+    pointer-events: none;
+  }
+  .refer__inner {
+    position: relative;
+    max-width: 1280px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+    gap: clamp(48px, 6vw, 96px);
+    align-items: center;
+  }
+  .refer__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: lowercase;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: clamp(20px, 3vh, 28px);
+  }
+  .refer__eyebrow::before {
+    content: "";
+    width: 32px;
+    height: 1px;
+    background: var(--rippl-sun);
+  }
+  .refer__title {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: clamp(48px, 6.5vw, 88px);
+    line-height: 0.9;
+    letter-spacing: -0.025em;
+    text-transform: uppercase;
+    margin: 0;
+    color: #fff;
+    max-width: 16ch;
+  }
+  .refer__title em {
+    font-style: normal;
+    color: var(--rippl-sun);
+  }
+  .refer__lede {
+    font-size: clamp(16px, 1.3vw, 19px);
+    line-height: 1.55;
+    color: rgba(255,255,255,0.78);
+    margin: clamp(20px, 3vh, 28px) 0 0;
+    max-width: 42ch;
+  }
+  .refer__lede b { color: #fff; font-weight: 700; }
+
+  .tiers { display: flex; flex-direction: column; list-style: none; margin: 0; padding: 0; }
+  .tier {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr) auto;
+    gap: clamp(16px, 2.5vw, 32px);
+    align-items: center;
+    padding: clamp(22px, 3vh, 30px) 0;
+    border-top: 1px solid rgba(255,255,255,0.14);
+  }
+  .tier:last-child { border-bottom: 1px solid rgba(255,255,255,0.14); }
+  .tier__count {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: clamp(40px, 4vw, 56px);
+    line-height: 1;
+    color: var(--rippl-glow);
+    letter-spacing: -0.04em;
+    font-feature-settings: "tnum" 1;
+  }
+  .tier__label {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.55);
+    margin-top: 2px;
+  }
+  .tier__reward {
+    font-size: clamp(18px, 1.5vw, 22px);
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .tier__sub {
+    margin-top: 4px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.62);
+    font-weight: 400;
+    line-height: 1.4;
+  }
+  .tier__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    background: rgba(217,119,64,0.16);
+    color: var(--rippl-sun);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  /* ============ Signup form ============ */
+  .signup {
+    background: var(--rippl-bone);
+    color: var(--rippl-cocoa);
+    padding: clamp(80px, 14vh, 160px) clamp(24px, 6vw, 96px);
+    position: relative;
+  }
+  .signup__inner {
+    max-width: 720px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .signup__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: lowercase;
+    color: var(--rippl-cocoa-mute);
+    margin-bottom: clamp(20px, 3vh, 28px);
+  }
+  .signup__eyebrow::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--rippl-sun);
+  }
+  .signup__title {
+    font-family: var(--font-body);
+    font-weight: 900;
+    font-size: clamp(56px, 8vw, 112px);
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--rippl-cocoa);
+  }
+  .signup__title em {
+    font-style: normal;
+    color: var(--rippl-sun);
+  }
+  .signup__sub {
+    font-size: clamp(16px, 1.3vw, 19px);
+    line-height: 1.55;
+    color: var(--rippl-cocoa-soft);
+    margin: clamp(20px, 3vh, 28px) auto 0;
+    max-width: 42ch;
+  }
+  .signup__form {
+    margin-top: clamp(40px, 6vh, 64px);
+    background: #fff;
+    border: 1px solid rgba(46,30,16,0.10);
+    border-radius: 22px;
+    padding: clamp(24px, 3.5vw, 36px);
+    box-shadow: 0 18px 50px rgba(46,30,16,0.06);
+    text-align: left;
+  }
+  .signup__form iframe {
+    display: block;
+    width: 100%;
+    border: 0;
+  }
+
+  /* ============ Footer ============ */
+  .footer {
+    background: var(--rippl-ink);
+    color: rgba(255,255,255,0.55);
+    padding: 40px clamp(24px, 6vw, 96px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    font-size: 12.5px;
+    letter-spacing: 0.04em;
+  }
+  .footer a:hover { color: #fff; }
+  .footer__brand img { height: 18px; width: auto; display: block; }
+
+  /* ============ Responsive ============ */
+  @media (max-width: 880px) {
+    .hero { padding: 110px 24px 64px; min-height: auto; }
+    .hero__title { font-size: clamp(48px, 14vw, 96px); }
+    .benefits__list { grid-template-columns: 1fr; }
+    .benefit { min-height: auto; }
+    .refer__inner { grid-template-columns: 1fr; }
+    .tier { grid-template-columns: 84px minmax(0, 1fr) auto; }
+    .tier__count { font-size: 36px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+
+  /* ============ Scroll-telling reveals ============ */
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+      opacity 900ms var(--ease-out),
+      transform 1000ms var(--ease-out);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+  [data-reveal="slow"] {
+    transform: translateY(44px);
+    transition-duration: 1100ms, 1200ms;
+  }
+  [data-reveal].is-on {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Hero parallax target */
+  .hero__bg {
+    will-change: transform;
+    transition: transform 60ms linear;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal] { opacity: 1 !important; transform: none !important; }
+    .hero__bg { transform: none !important; }
+  }
+
+  /* ============ Phone refinements (≤600 / ≤420) ============ */
+  @media (max-width: 600px) {
+    .hero { padding: 96px 18px 52px; }
+    .hero__title { font-size: clamp(40px, 15vw, 72px); }
+    .hero__meta { flex-wrap: wrap; gap: 10px 18px; }
+
+    .benefits { padding: 64px 18px; }
+    .benefits__title { font-size: clamp(38px, 11vw, 64px); }
+    .benefit { min-height: auto; padding: 28px 22px; gap: 14px; }
+    .benefit__h { font-size: clamp(26px, 7vw, 34px); }
+
+    .refer { padding-left: 18px; padding-right: 18px; }
+    .refer__inner { gap: 36px; }
+    /* Reward tiers: drop the trailing icon, keep count + reward legible.
+       First column is wide enough for the "referrals" label so it can't
+       overrun into the reward/sub text alongside it. */
+    .tier {
+      grid-template-columns: 96px minmax(0, 1fr);
+      gap: 14px 20px;
+      padding: 20px 0;
+    }
+    .tier__count { font-size: 34px; }
+    .tier__reward { font-size: 17px; }
+    .tier__icon { display: none; }
+
+    .signup { padding: 64px 18px; }
+    .signup__title { font-size: clamp(44px, 14vw, 80px); }
+    .signup__form { padding: 20px 16px; border-radius: 18px; }
+  }
+
+  @media (max-width: 420px) {
+    .hero__title { font-size: clamp(34px, 15vw, 60px); }
+    .benefits__title { font-size: clamp(32px, 11vw, 52px); }
+    .signup__title { font-size: clamp(38px, 14vw, 64px); }
+    .tier { grid-template-columns: 88px minmax(0, 1fr); }
+    .tier__count { font-size: 30px; }
+  }
+</style>
+
+<!-- PostHog Analytics -->
+<script>
+  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+  // Only track the live site — local previews and Netlify deploy previews
+  // stay out of the analytics. PostHog (and the replay/survey scripts it
+  // pulls in) starts once the page has loaded and the browser is idle, so
+  // it never competes with the first screen. Everything is still tracked;
+  // only visitors who leave before the page finishes loading are missed.
+  if (/(^|\.)ripplsurf\.com$/.test(location.hostname)) {
+    var startPosthog = function () {
+      posthog.init('phc_onPTvoga4RPG4wu6cH9zQeLxMGikXapR8HZj7EtZV6a4', {
+        api_host: 'https://eu.i.posthog.com',
+        defaults: '2026-01-30',
+        autocapture: true,
+        capture_pageview: true,
+        capture_pageleave: true,
+      });
+    };
+    var whenIdle = function () {
+      if ('requestIdleCallback' in window) requestIdleCallback(startPosthog, { timeout: 3000 });
+      else setTimeout(startPosthog, 1);
+    };
+    if (document.readyState === 'complete') whenIdle();
+    else window.addEventListener('load', whenIdle);
+  }
+</script>
+</head>
+<body data-screen-label="Tester Signup Page">
+  <!-- ░░ Full-screen brand loader — self-injects, fades out on page ready ░░ -->
+  <script src="assets/loader.js"></script>
+  <nav class="nav" aria-label="Primary">
+    <a href="/" class="nav__brand" aria-label="RIPPL home">
+      <img src="assets/img/logo-wordmark-white-1280.png" width="1280" height="276" alt="RIPPL" />
+    </a>
+  </nav>
+
+  <!-- ============ Hero ============ -->
+  <section class="hero" data-screen-label="01 Hero">
+    <div class="hero__bg" aria-hidden="true"></div>
+    <div class="hero__scrim" aria-hidden="true"></div>
+
+    <div class="hero__inner">
+      <span class="hero__eyebrow">waitlist · open now</span>
+
+      <h1 class="hero__title">
+        Build the<br />future of<br /><em>surf,</em><br />with us.
+      </h1>
+
+      <p class="hero__sub">We're hand-picking the first surfers to shape RIPPL. You get a free RIPPLsense on your board, platform access during the testing window, and a direct line to the team building it.</p>
+    </div>
+  </section>
+
+  <!-- ============ What you get ============ -->
+  <section class="benefits" data-screen-label="02 Benefits">
+    <div class="benefits__inner">
+      <span class="benefits__eyebrow">what you get</span>
+      <h2 class="benefits__title">FREE SENSOR.<br />EARLY ACCESS.<br />REAL INFLUENCE.</h2>
+
+      <div class="benefits__list">
+        <div class="benefit">
+          <span class="benefit__num">/ 01</span>
+          <h3 class="benefit__h">A RIPPLsense<br />on your board.</h3>
+          <p class="benefit__p">We ship you the hardware — ready to surf. For free.</p>
+          <span class="benefit__tag"><b>Free</b> · shipped worldwide</span>
+        </div>
+        <div class="benefit">
+          <span class="benefit__num">/ 02</span>
+          <h3 class="benefit__h">First platform access.</h3>
+          <p class="benefit__p">Every feature, every new update — you're the first in line.</p>
+          <span class="benefit__tag">First · testing new features</span>
+        </div>
+        <div class="benefit">
+          <span class="benefit__num">/ 03</span>
+          <h3 class="benefit__h">A direct line<br />to the team.</h3>
+          <p class="benefit__p">Private line with the founders. Your feedback shapes what we build next — for real, not for show.</p>
+          <span class="benefit__tag">founder access</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Refer & earn ============ -->
+  <section class="refer" data-screen-label="03 Refer">
+    <div class="refer__inner">
+      <div>
+        <span class="refer__eyebrow">bring your crew</span>
+        <h2 class="refer__title">
+          Refer surfers.<br /><em>GET RIPPL SOONER.</em>
+        </h2>
+        <p class="refer__lede">At signup we'll give you a unique referral link. Every surfer that uses your referral link moves you and them up the waitlist.</p>
+      </div>
+
+      <ul class="tiers" aria-label="Referral tiers">
+        <li class="tier">
+          <div>
+            <div class="tier__count">+1</div>
+            <div class="tier__label">referral</div>
+          </div>
+          <div>
+            <div class="tier__reward">Jump the queue</div>
+            <div class="tier__sub">Every accepted referral bumps you up the waitlist.</div>
+          </div>
+          <span class="tier__icon" aria-hidden="true">→</span>
+        </li>
+        <li class="tier">
+          <div>
+            <div class="tier__count">+5</div>
+            <div class="tier__label">referrals</div>
+          </div>
+          <div>
+            <div class="tier__reward">Guaranteed Drop 2</div>
+            <div class="tier__sub">Skip the queue entirely — your sensor ships in the second batch.</div>
+          </div>
+          <span class="tier__icon" aria-hidden="true">★</span>
+        </li>
+        <li class="tier">
+          <div>
+            <div class="tier__count">+10</div>
+            <div class="tier__label">referrals</div>
+          </div>
+          <div>
+            <div class="tier__reward">Drop 1 — with your whole crew</div>
+            <div class="tier__sub">You and every friend you brought in receive your kit in the first drop, together.</div>
+          </div>
+          <span class="tier__icon" aria-hidden="true">◎</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ Signup form (Tally embed) ============ -->
+  <section class="signup" id="signup" data-screen-label="04 Signup form">
+    <div class="signup__inner">
+      <span class="signup__eyebrow">save your spot</span>
+      <h2 class="signup__title">
+        You<br /><em>in?</em>
+      </h2>
+
+      <div class="signup__form" id="tally-embed">
+        <iframe data-tally-src="https://tally.so/embed/7RoY4L?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1&formEventsForwarding=1" loading="lazy" width="100%" height="424" frameborder="0" marginheight="0" marginwidth="0" title="RIPPL Tester Signup"></iframe>
+        <script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ Footer ============ -->
+  <footer class="footer">
+    <a href="/" class="footer__brand" aria-label="RIPPL home">
+      <img src="assets/img/logo-wordmark-white-1280.png" width="1280" height="276" alt="RIPPL" />
+    </a>
+    <span>© 2026 RIPPL · intelligent motion tech for surfing</span>
+  </footer>
+
+  <!-- ============ Scroll-telling ============ -->
+  <script>
+    (function () {
+      // Elements to reveal — [selector, options]
+      // options: { delay: ms, stagger: msPerItem, immediate: bool, slow: bool }
+      var groups = [
+        ['.hero__eyebrow', { delay: 120, immediate: true }],
+        ['.hero__title',   { delay: 280, immediate: true, slow: true }],
+        ['.hero__sub',     { delay: 720, immediate: true }],
+        ['.benefits__eyebrow', { delay: 0 }],
+        ['.benefits__title',   { delay: 140, slow: true }],
+        ['.benefit',           { stagger: 130 }],
+        ['.refer__eyebrow',    { delay: 0 }],
+        ['.refer__title',      { delay: 140, slow: true }],
+        ['.refer__lede',       { delay: 280 }],
+        ['.tier',              { stagger: 120 }],
+        ['.signup__eyebrow',   { delay: 0 }],
+        ['.signup__title',     { delay: 140, slow: true }],
+        ['.signup__form',      { delay: 320 }],
+      ];
+
+      groups.forEach(function (g) {
+        var sel = g[0], opts = g[1] || {};
+        document.querySelectorAll(sel).forEach(function (el, i) {
+          el.setAttribute('data-reveal', opts.slow ? 'slow' : '');
+          var d = opts.stagger != null ? (i * opts.stagger) : (opts.delay || 0);
+          el.style.setProperty('--reveal-delay', d + 'ms');
+          if (opts.immediate) {
+            requestAnimationFrame(function () {
+              requestAnimationFrame(function () { el.classList.add('is-on'); });
+            });
+          }
+        });
+      });
+
+      // Scroll-triggered reveals for everything not marked immediate
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) {
+            e.target.classList.add('is-on');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+
+      document.querySelectorAll('[data-reveal]').forEach(function (el) {
+        if (!el.classList.contains('is-on')) io.observe(el);
+      });
+
+      // Subtle hero background parallax
+      var heroBg = document.querySelector('.hero__bg');
+      if (heroBg) {
+        var tick = false;
+        function onScroll() {
+          if (tick) return;
+          tick = true;
+          requestAnimationFrame(function () {
+            tick = false;
+            var y = window.scrollY;
+            if (y > window.innerHeight * 1.2) return;
+            heroBg.style.transform = 'translateY(' + (y * 0.22).toFixed(1) + 'px) scale(1.04)';
+          });
+        }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+      }
+    })();
+  </script>
+
+  <!-- PostHog: scroll depth + Tally form submission -->
+  <script>
+    (function () {
+      // --- Scroll depth milestones ---
+      var reached = {};
+      var milestones = [25, 50, 75, 100];
+      function checkScroll() {
+        var scrollTop = window.scrollY || document.documentElement.scrollTop;
+        var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        if (docHeight <= 0) return;
+        var pct = Math.floor((scrollTop / docHeight) * 100);
+        for (var i = 0; i < milestones.length; i++) {
+          var m = milestones[i];
+          if (pct >= m && !reached[m]) {
+            reached[m] = true;
+            posthog.capture && posthog.capture('scroll_depth_reached', {
+              depth_percent: m,
+              page: location.pathname
+            });
+          }
+        }
+      }
+      window.addEventListener('scroll', checkScroll, { passive: true });
+      checkScroll();
+
+      // --- Tally form submission (postMessage from iframe) ---
+      var formFired = false;
+      window.addEventListener('message', function (e) {
+        if (formFired) return;
+        var data = e.data;
+        if (!data) return;
+        // Tally sends events as objects or JSON strings
+        if (typeof data === 'string') {
+          try { data = JSON.parse(data); } catch (_) { return; }
+        }
+        var name = data.name || data.type || '';
+        if (name === 'tally-form-submit' || name === 'Tally.FormSubmit' ||
+            name === 'tally-form-complete' || name === 'Tally.FormComplete') {
+          formFired = true;
+          posthog.capture && posthog.capture('waitlist_form_submitted', {
+            form_id: '7RoY4L',
+            page: location.pathname
+          });
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex" />
+<title>Waitlist A · One screen</title>
+<link rel="preload" as="image" type="image/webp" fetchpriority="high" href="../../assets/img/hero-2400.webp" />
+<link rel="stylesheet" href="shared.css" />
+<style>
+  .page {
+    display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    min-height: 100vh; min-height: 100svh;
+  }
+  .copy {
+    position: relative; display: flex; flex-direction: column; justify-content: center;
+    padding: 96px var(--gutter) 56px;
+  }
+  .copy__inner { display: grid; gap: clamp(20px, 3vh, 32px); max-width: 560px; }
+  .display { font-size: clamp(48px, min(6.4vw, 11vh), 104px); }
+
+  .form { margin-top: clamp(4px, 1vh, 12px); }
+  .form__row { display: grid; grid-template-columns: 1fr 1.4fr; gap: 12px; }
+  .form .btn { width: 100%; }
+
+  .photo { position: relative; margin: 0; overflow: hidden; background: var(--rippl-ink); }
+  .photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 58% 60%; }
+  .photo figcaption {
+    position: absolute; left: 24px; bottom: 24px; z-index: 1;
+    padding: 8px 14px; border-radius: 999px; background: rgba(14, 14, 14, 0.55);
+    font-size: 13px; font-weight: 600; letter-spacing: 0.04em; color: var(--rippl-cream);
+  }
+
+  @media (max-width: 900px) {
+    .page { grid-template-columns: 1fr; }
+    .photo { order: -1; height: 30vh; height: 30svh; min-height: 200px; }
+    .photo figcaption { left: 16px; bottom: 16px; }
+    .photo::before { content: ""; position: absolute; inset: 0 0 auto; height: 96px; z-index: 1; background: linear-gradient(180deg, rgba(14,14,14,0.45), rgba(14,14,14,0)); }
+    .copy { padding: 32px var(--gutter) 48px; justify-content: flex-start; }
+    .bar { color: var(--rippl-cream); }
+  }
+  @media (max-width: 480px) {
+    .photo { height: 24vh; height: 24svh; min-height: 180px; }
+    .copy { padding-top: 24px; }
+    .copy__inner { gap: 18px; }
+    .form__row { grid-template-columns: 1fr; }
+    .display { font-size: clamp(40px, 13vw, 60px); }
+  }
+</style>
+</head>
+<body>
+<nav class="concept-nav" aria-label="Concepts">
+  <a href="index.html">All</a>
+  <a href="a.html" aria-current="page">A</a>
+  <a href="b.html">B</a>
+  <a href="c.html">C</a>
+</nav>
+
+<header class="bar">
+  <a class="bar__logo" href="/" aria-label="RIPPL home"><span class="logo"></span></a>
+</header>
+
+<main class="page" data-screen-label="Waitlist A · One screen">
+  <section class="copy">
+    <div class="copy__inner">
+      <div data-step="join" class="copy__inner">
+        <p class="eyebrow" data-in style="--d: 60ms">tester program · open now</p>
+        <h1 class="display" data-in style="--d: 140ms">Free sensor.<br />First access<span class="dot">.</span></h1>
+        <p class="lede" data-in style="--d: 240ms">We're picking the first surfers to test RIPPL. We ship a <b>free RIPPLsense</b> to your door. You surf it, and tell us what to build next.</p>
+
+        <form class="form" data-waitlist="done" data-in style="--d: 320ms" novalidate>
+          <div class="form__row">
+            <div class="field">
+              <label for="a-name">First name</label>
+              <input id="a-name" name="first_name" autocomplete="given-name" required />
+            </div>
+            <div class="field">
+              <label for="a-email">Email</label>
+              <input id="a-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required />
+            </div>
+          </div>
+          <button class="btn" type="submit">Join the waitlist <span class="btn__arrow" aria-hidden="true">→</span></button>
+          <p class="meta"><span>Free</span><span>Shipped worldwide</span><span>10 seconds</span></p>
+        </form>
+      </div>
+
+      <div class="done" id="done" data-step="done" hidden>
+        <p class="eyebrow">you're on the list</p>
+        <h2 class="done__title" tabindex="-1">See you in<br />the water<span class="dot">.</span></h2>
+        <p class="done__p">We'll email you when your drop opens. <b>Surf with friends?</b> Send them the link so they can join too.</p>
+        <div class="done__share">
+          <button class="btn" type="button" data-copy>Copy link</button>
+          <button class="btn btn--ghost" type="button" data-share>Share</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <figure class="photo">
+    <img src="../../assets/img/hero-2400.webp" width="2400" height="1340" alt="A surfer's feet on a white board mid-turn, the RIPPL sensor mounted on the tail" decoding="async" fetchpriority="high" />
+    <figcaption>RIPPLsense · on the tail</figcaption>
+  </figure>
+</main>
+
+<script src="shared.js"></script>
+</body>
+</html>
