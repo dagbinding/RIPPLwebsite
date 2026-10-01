@@ -34,24 +34,36 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# The tester signup page moved from "Tester Signup.html" to /waitlist.
-# Netlify's pretty URLs had also been serving it lowercased.
+# The tester signup page moved from "Tester Signup.html" to /waitlist, and
+# now lives on the homepage as the #waitlist section. Netlify's pretty URLs
+# had also been serving it lowercased. Query strings (LaunchList ?ref= codes)
+# pass through the redirect.
 [[redirects]]
   from = "/Tester%20Signup.html"
-  to = "/waitlist"
+  to = "/#waitlist"
   status = 301
 
 [[redirects]]
   from = "/Tester%20Signup"
-  to = "/waitlist"
+  to = "/#waitlist"
   status = 301
 
 [[redirects]]
   from = "/tester%20signup"
-  to = "/waitlist"
+  to = "/#waitlist"
   status = 301
 
 [[redirects]]
   from = "/tester%20signup.html"
-  to = "/waitlist"
+  to = "/#waitlist"
+  status = 301
+
+[[redirects]]
+  from = "/waitlist"
+  to = "/#waitlist"
+  status = 301
+
+[[redirects]]
+  from = "/waitlist.html"
+  to = "/#waitlist"
   status = 301

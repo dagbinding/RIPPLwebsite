@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DIST = ROOT / "dist"
 
 # Pages and root files served at ripplsurf.com.
-PAGES = ["index.html", "waitlist.html"]
+PAGES = ["index.html"]
 ROOT_FILES = ["robots.txt", "sitemap.xml", "favicon.ico"]
 # Folders published whole.
 DIRS = ["assets", "styles"]
